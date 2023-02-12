@@ -172,7 +172,7 @@ class Cartlassi {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart' );
+		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 6, 10 );
 
 	}
 

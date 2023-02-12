@@ -100,8 +100,25 @@ class Cartlassi_Public {
 
 	}
 
-	public function add_to_cart() {
-		echo "AQUI WORLD";
+	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
+		$product = wc_get_product( $product_id );
+		$body = array(
+			'shopId'  		=> 'Jane Smith', // TBD this should be the shopId from options that we burn on activate
+			'sku'     		=> $product->get_sku(), //
+			'description'	=> $product->get_name(), // TBD consider get_short_description?
+		);
+		$args = array(
+			'body'        => $body,
+			// 'timeout'     => '5',
+			// 'redirection' => '5',
+			// 'httpversion' => '1.0',
+			// 'blocking'    => true,
+			// 'headers'     => array(),
+			// 'cookies'     => array(),
+		);
+		$cartId = md5($_SERVER['REMOTE_ADDR']);
+		$response = wp_remote_post( "http://host.docker.internal:3000/carts/${cartId}", $args );
+		print_r($response);
 	} 
 
 }
