@@ -27,9 +27,9 @@ class Cartlassi_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $cartlassi_name    The ID of this cartlassi.
+	 * @var      string    $plugin_name    The ID of this cartlassi.
 	 */
-	private $cartlassi_name;
+	private $plugin_name;
 
 	/**
 	 * The version of this cartlassi.
@@ -44,12 +44,12 @@ class Cartlassi_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $cartlassi_name       The name of this cartlassi.
+	 * @param      string    $plugin_name       The name of this cartlassi.
 	 * @param      string    $version    The version of this cartlassi.
 	 */
-	public function __construct( $cartlassi_name, $version ) {
+	public function __construct( $plugin_name, $version ) {
 
-		$this->cartlassi_name = $cartlassi_name;
+		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
 	}
@@ -73,7 +73,7 @@ class Cartlassi_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->cartlassi_name, cartlassi_dir_url( __FILE__ ) . 'css/cartlassi-name-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cartlassi-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -96,7 +96,7 @@ class Cartlassi_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->cartlassi_name, cartlassi_dir_url( __FILE__ ) . 'js/cartlassi-name-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cartlassi-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 
