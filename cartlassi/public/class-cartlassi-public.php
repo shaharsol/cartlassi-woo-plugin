@@ -121,4 +121,33 @@ class Cartlassi_Public {
 		print_r($response);
 	} 
 
+	public function remove_from_cart($cart_item_key, $that) {
+		global $woocommerce;
+		$product_id = $woocommerce->cart->get_cart()[$cart_item_key]->product_id;
+		error_log("cart item key is {$cart_item_key}");
+		$keys = array_keys($woocommerce->cart->get_cart());
+		foreach($woocommerce->cart->get_cart() as $key => $value) {
+			error_log("key is {$key}");
+		}
+		$product = wc_get_product( $product_id );
+		$body = array(
+			'shopId'  		=> 'Jane Smith', // TBD this should be the shopId from options that we burn on activate
+			'sku'     		=> $product->get_sku(), //
+			'description'	=> $product->get_name(), // TBD consider get_short_description?
+		);
+		$args = array(
+			'method'	  => 'DELETE',
+			'body'        => $body,
+			// 'timeout'     => '5',
+			// 'redirection' => '5',
+			// 'httpversion' => '1.0',
+			// 'blocking'    => true,
+			// 'headers'     => array(),
+			// 'cookies'     => array(),
+		);
+		$cartId = md5($_SERVER['REMOTE_ADDR']);
+		$response = wp_remote_request( "http://host.docker.internal:3000/carts/${cartId}", $args );
+		print_r($response);
+	}
+
 }
