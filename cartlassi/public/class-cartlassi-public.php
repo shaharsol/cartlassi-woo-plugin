@@ -101,6 +101,7 @@ class Cartlassi_Public {
 	}
 
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
+		$apiKey = get_option('cartlassi_api_key');
 		$product = wc_get_product( $product_id );
 		$body = array(
 			'shopId'  		=> '0fffc9a3-8a7b-44a4-9dd2-c45c68ebf11b', // TBD this should be the shopId from options that we burn on activate
@@ -114,7 +115,9 @@ class Cartlassi_Public {
 			// 'redirection' => '5',
 			// 'httpversion' => '1.0',
 			// 'blocking'    => true,
-			// 'headers'     => array(),
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
 			// 'cookies'     => array(),
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
@@ -122,6 +125,7 @@ class Cartlassi_Public {
 	} 
 
 	public function remove_from_cart($cart_item_key, $that) {
+		$apiKey = get_option('cartlassi_api_key');
 		global $woocommerce;
 		$product_id = $woocommerce->cart->get_cart()[$cart_item_key]->product_id;
 		error_log("cart item key is {$cart_item_key}");
@@ -141,7 +145,9 @@ class Cartlassi_Public {
 			// 'redirection' => '5',
 			// 'httpversion' => '1.0',
 			// 'blocking'    => true,
-			// 'headers'     => array(),
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
 			// 'cookies'     => array(),
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
