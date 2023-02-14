@@ -103,7 +103,8 @@ class Cartlassi_Public {
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
 		$product = wc_get_product( $product_id );
 		$body = array(
-			'shopId'  		=> 'Jane Smith', // TBD this should be the shopId from options that we burn on activate
+			'shopId'  		=> '0fffc9a3-8a7b-44a4-9dd2-c45c68ebf11b', // TBD this should be the shopId from options that we burn on activate
+			'shopProductId' => strval($product_id),
 			'sku'     		=> $product->get_sku(), //
 			'description'	=> $product->get_name(), // TBD consider get_short_description?
 		);
@@ -118,7 +119,6 @@ class Cartlassi_Public {
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
 		$response = wp_remote_post( "http://host.docker.internal:3000/carts/${cartId}", $args );
-		print_r($response);
 	} 
 
 	public function remove_from_cart($cart_item_key, $that) {
@@ -131,9 +131,8 @@ class Cartlassi_Public {
 		}
 		$product = wc_get_product( $product_id );
 		$body = array(
-			'shopId'  		=> 'Jane Smith', // TBD this should be the shopId from options that we burn on activate
-			'sku'     		=> $product->get_sku(), //
-			'description'	=> $product->get_name(), // TBD consider get_short_description?
+			'shopId'  		=> '0fffc9a3-8a7b-44a4-9dd2-c45c68ebf11b', // TBD this should be the shopId from options that we burn on activate
+			'shopProductId' => strval($product_id),
 		);
 		$args = array(
 			'method'	  => 'DELETE',
