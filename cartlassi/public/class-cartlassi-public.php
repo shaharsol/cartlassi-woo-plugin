@@ -104,7 +104,6 @@ class Cartlassi_Public {
 		$apiKey = get_option('cartlassi_api_key');
 		$product = wc_get_product( $product_id );
 		$body = array(
-			'shopId'  		=> '0fffc9a3-8a7b-44a4-9dd2-c45c68ebf11b', // TBD this should be the shopId from options that we burn on activate
 			'shopProductId' => strval($product_id),
 			'sku'     		=> $product->get_sku(), //
 			'description'	=> $product->get_name(), // TBD consider get_short_description?
@@ -133,7 +132,6 @@ class Cartlassi_Public {
 
 		$product = wc_get_product( $product_id );
 		$body = array(
-			'shopId'  		=> '0fffc9a3-8a7b-44a4-9dd2-c45c68ebf11b', // TBD this should be the shopId from options that we burn on activate
 			'shopProductId' => strval($product_id),
 		);
 		$args = array(
