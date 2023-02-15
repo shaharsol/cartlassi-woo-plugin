@@ -53,7 +53,6 @@ class Cartlassi_Activator {
 			echo "Something went wrong: $error_message";
 		} else {
 			$body = wp_remote_retrieve_body( $response );
-
 			$data = json_decode( $body );
 	
 			add_option ('cartlassi_api_key', $data->apiKey);
