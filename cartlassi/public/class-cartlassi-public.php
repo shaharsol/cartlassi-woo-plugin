@@ -126,13 +126,11 @@ class Cartlassi_Public {
 
 	public function remove_from_cart($cart_item_key, $that) {
 		$apiKey = get_option('cartlassi_api_key');
-		global $woocommerce;
-		$product_id = $woocommerce->cart->get_cart()[$cart_item_key]->product_id;
-		error_log("cart item key is {$cart_item_key}");
-		$keys = array_keys($woocommerce->cart->get_cart());
-		foreach($woocommerce->cart->get_cart() as $key => $value) {
-			error_log("key is {$key}");
-		}
+
+		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
+		
+		error_log("product id is {$product_id}");
+
 		$product = wc_get_product( $product_id );
 		$body = array(
 			'shopId'  		=> '0fffc9a3-8a7b-44a4-9dd2-c45c68ebf11b', // TBD this should be the shopId from options that we burn on activate
@@ -152,7 +150,6 @@ class Cartlassi_Public {
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
 		$response = wp_remote_request( "http://host.docker.internal:3000/carts/${cartId}", $args );
-		print_r($response);
 	}
 
 }
