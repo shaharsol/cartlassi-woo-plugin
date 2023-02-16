@@ -150,4 +150,51 @@ class Cartlassi_Public {
 		$response = wp_remote_request( "http://host.docker.internal:3000/carts/${cartId}", $args );
 	}
 
+	public function show_widget() {
+		if ( is_admin() ) { 
+			return;
+		}
+
+		$apiKey = get_option('cartlassi_api_key');
+
+		$args = array(
+			// 'body'        => $body,
+			// 'timeout'     => '5',
+			// 'redirection' => '5',
+			// 'httpversion' => '1.0',
+			// 'blocking'    => true,
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
+			// 'cookies'     => array(),
+		);
+		$cartId = md5($_SERVER['REMOTE_ADDR']);
+		$response = wp_remote_get( "http://host.docker.internal:3000/carts/${cartId}", $args );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			echo "Something went wrong: $error_message";
+			return;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body );
+
+		$products = array();
+		foreach($data as $product) {
+			$the_query = new WP_Query( array( 's' => $product->description ) );
+			if ( $the_query->have_posts() ) {
+				while ( $the_query->have_posts() ) {
+					$the_query->the_post();
+					array_push($products, get_the_ID());
+				}
+			}
+			/* Restore original Post Data */
+			wp_reset_postdata();
+		}
+
+		$cnt = count($products);	
+		error_log("AAAAAAAA found ${cnt}");
+	}
+
 }
