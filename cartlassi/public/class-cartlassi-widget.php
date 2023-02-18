@@ -1,0 +1,91 @@
+<?php
+
+class Cartlassi_Widget extends WP_Widget {
+	public function __construct() {
+		parent::__construct(
+			'cartlassi_widget', // Base ID
+			'Cartlassi_Widget', // Name
+			array( 'description' => __( 'Cartlassi Widget', 'text_domain' ) ) // Args
+		);
+	}
+
+	public function widget( $args, $instance ) {
+		if ( is_admin() ) { 
+			return;
+		}
+		
+		extract( $args );
+		$title = apply_filters( 'widget_title', $instance['title'] );
+		
+		$apiKey = get_option('cartlassi_api_key');
+
+		$args = array(
+			// 'body'        => $body,
+			// 'timeout'     => '5',
+			// 'redirection' => '5',
+			// 'httpversion' => '1.0',
+			// 'blocking'    => true,
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
+			// 'cookies'     => array(),
+		);
+		$cartId = md5($_SERVER['REMOTE_ADDR']);
+		$response = wp_remote_get( "http://host.docker.internal:3000/carts/${cartId}", $args );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			echo "Something went wrong: $error_message";
+			return;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body );
+
+		$products = array();
+		foreach($data as $product) {
+			$the_query = new WP_Query( array( 's' => $product->description ) );
+			if ( $the_query->have_posts() ) {
+				while ( $the_query->have_posts() ) {
+					$the_query->the_post();
+					array_push($products, get_the_ID());
+				}
+			}
+			/* Restore original Post Data */
+			wp_reset_postdata();
+		}
+
+		$cnt = count($products);	
+		error_log("AAAAAAAA found ${cnt}");
+
+		$block_name = 'woocommerce/handpicked-products';
+		$converted_block = new WP_Block_Parser_Block( $block_name, array(
+			'query' => new WP_Query( array ( 
+				'post__in' => $products,
+				'post_type' => 'product'			
+			) )
+		), array(), '', array() );
+		// $serialized_block = serialize_block( (array) $converted_block );
+		// echo $serialized_block;
+		$rendered_block = render_block( (array) $converted_block );
+
+		echo $before_widget;
+		echo '<div style="border:1px solid;"><span>We think you may like</span>';
+		if ( ! empty( $title ) ) {
+			echo $before_title . $title . $after_title;
+		}
+		echo $rendered_block;
+		echo '</div>';
+		echo $after_widget;
+
+		
+	}
+
+	public function form( $instance ) {
+		// outputs the options form in the admin
+	}
+
+	public function update( $new_instance, $old_instance ) {
+		// processes widget options to be saved
+	}
+}

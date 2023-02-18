@@ -122,6 +122,8 @@ class Cartlassi {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-cartlassi-public.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-cartlassi-widget.php';
+
 		$this->loader = new Cartlassi_Loader();
 
 	}
@@ -174,7 +176,7 @@ class Cartlassi {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 6, 10 );
 		$this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_public, 'remove_from_cart', 2, 10 );
-		$this->loader->add_action( 'wp_loaded', $plugin_public, 'show_widget');
+		$this->loader->add_action( 'widgets_init', $plugin_public, 'cartlassi_widgets_init' );
 	}
 
 	/**

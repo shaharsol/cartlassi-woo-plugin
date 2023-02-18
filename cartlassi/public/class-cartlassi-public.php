@@ -221,11 +221,27 @@ class Cartlassi_Public {
 				'post_type' => 'product'			
 			) )
 		), array(), '', array() );
-		$serialized_block = serialize_block( (array) $converted_block );
-		echo $serialized_block;
+		// $serialized_block = serialize_block( (array) $converted_block );
+		// echo $serialized_block;
 		$rendered_block = render_block( (array) $converted_block );
 		echo $rendered_block;
 
+		var_dump( wp_get_sidebars_widgets() );
+
+	}
+
+	function cartlassi_widgets_init() {
+		register_sidebar( array(
+			'name'          => __( 'Cartlassi Sidebar', 'textdomain' ),
+			'id'            => 'sidebar-cartlassi',
+			'description'   => __( 'A sidebar for cartlassi plugin.', 'textdomain' ),
+			'before_widget' => '<li id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</li>',
+			'before_title'  => '<h2 class="widgettitle">',
+			'after_title'   => '</h2>',
+		) );
+
+		register_widget( 'Cartlassi_Widget' );
 	}
 
 }
