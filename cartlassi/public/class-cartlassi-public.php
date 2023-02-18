@@ -195,6 +195,37 @@ class Cartlassi_Public {
 
 		$cnt = count($products);	
 		error_log("AAAAAAAA found ${cnt}");
+
+		// $block_name = 'core/paragraph';
+		// $innerHTML  = "AAAAAAAA found ${cnt}";
+		// $converted_block = new WP_Block_Parser_Block( $block_name, array(), array(), 
+		// $innerHTML, array( $innerHTML ) );
+		// $serialized_block = serialize_block( (array) $converted_block );
+		// echo $serialized_block;
+
+		// $block_name = 'core/query';
+		// $converted_block = new WP_Block_Parser_Block( $block_name, array(
+		// 	'namespace' => 'cartlassi',
+		// 	'query' => new WP_Query( array ( 'post__in' => $products ) )
+		// ), array(), '', array() );
+		// $serialized_block = serialize_block( (array) $converted_block );
+		// echo $serialized_block;
+		// // var_dump( $converted_block );
+		// var_dump ($serialized_block);
+
+
+		$block_name = 'woocommerce/handpicked-products';
+		$converted_block = new WP_Block_Parser_Block( $block_name, array(
+			'query' => new WP_Query( array ( 
+				'post__in' => $products,
+				'post_type' => 'product'			
+			) )
+		), array(), '', array() );
+		$serialized_block = serialize_block( (array) $converted_block );
+		echo $serialized_block;
+		$rendered_block = render_block( (array) $converted_block );
+		echo $rendered_block;
+
 	}
 
 }
