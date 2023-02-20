@@ -61,18 +61,11 @@ class Cartlassi_Widget extends WP_Widget {
 		}
 
 		$block_name = 'woocommerce/handpicked-products';
-		// $converted_block = new WP_Block_Parser_Block( $block_name, array(
-		// 	'query' => new WP_Query( array ( 
-		// 		'post__in' => $products,
-		// 		'post_type' => 'product'			
-		// 	) )
-		// ), array(), '', array() );
 		$converted_block = new WP_Block_Parser_Block( $block_name, array(
 			'products' => $products,
 		), array(), '', array() );
-		// $serialized_block = serialize_block( (array) $converted_block );
-		// echo $serialized_block;
 		$rendered_block = render_block( (array) $converted_block );
+
 		echo $before_widget;
 		echo '<div style="border:1px solid;"><span>We think you may like</span>';
 		if ( ! empty( $title ) ) {
