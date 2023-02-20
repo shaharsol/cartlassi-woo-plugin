@@ -178,7 +178,6 @@ class Cartlassi {
 		$this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_public, 'remove_from_cart', 2, 10 );
 		$this->loader->add_action( 'widgets_init', $plugin_public, 'cartlassi_widgets_init' );
 		$this->loader->add_action( 'dynamic_sidebar_params', $plugin_public, 'display_widget' );
-		// $this->loader->add_action( 'wp_loaded', $plugin_public, 'show_widget' );
 	}
 
 	/**
