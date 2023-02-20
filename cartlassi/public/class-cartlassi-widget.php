@@ -15,7 +15,9 @@ class Cartlassi_Widget extends WP_Widget {
 		}
 		
 		extract( $args );
-		$title = apply_filters( 'widget_title', $instance['title'] );
+		// $title = apply_filters( 'widget_title', $instance['title'] );
+		
+		$title = $instance['title'];
 		
 		$apiKey = get_option('cartlassi_api_key');
 
@@ -46,29 +48,31 @@ class Cartlassi_Widget extends WP_Widget {
 		foreach($data as $product) {
 			$the_query = new WP_Query( array( 's' => $product->description ) );
 			if ( $the_query->have_posts() ) {
-				while ( $the_query->have_posts() ) {
-					$the_query->the_post();
-					array_push($products, get_the_ID());
-				}
+				$the_query->the_post();
+				array_push($products, get_the_ID());
 			}
 			/* Restore original Post Data */
 			wp_reset_postdata();
+
+			// limit the items in widget (need to find the default # of items per line from woo config)
+			if ( count($products) == 3) {
+				break;
+			}
 		}
 
-		$cnt = count($products);	
-		error_log("AAAAAAAA found ${cnt}");
-
 		$block_name = 'woocommerce/handpicked-products';
+		// $converted_block = new WP_Block_Parser_Block( $block_name, array(
+		// 	'query' => new WP_Query( array ( 
+		// 		'post__in' => $products,
+		// 		'post_type' => 'product'			
+		// 	) )
+		// ), array(), '', array() );
 		$converted_block = new WP_Block_Parser_Block( $block_name, array(
-			'query' => new WP_Query( array ( 
-				'post__in' => $products,
-				'post_type' => 'product'			
-			) )
+			'products' => $products,
 		), array(), '', array() );
 		// $serialized_block = serialize_block( (array) $converted_block );
 		// echo $serialized_block;
 		$rendered_block = render_block( (array) $converted_block );
-
 		echo $before_widget;
 		echo '<div style="border:1px solid;"><span>We think you may like</span>';
 		if ( ! empty( $title ) ) {
