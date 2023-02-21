@@ -56,56 +56,10 @@ class Cartlassi_Activator {
 			$data = json_decode( $body );
 	
 			add_option ('cartlassi_api_key', $data->apiKey);
+			add_option ('cartlassi_options', array (
+				'cartlassi_field_api_key' => $data->apiKey
+			));
+			
 		}
-
-		// $cartlassi_sidebar = register_sidebar( array(
-		// 	'name'          => __( 'Cartlassi Sidebar', 'textdomain' ),
-		// 	'id'            => 'sidebar-cartlassi',
-		// 	'description'   => __( 'A sidebar for cartlassi plugin.', 'textdomain' ),
-		// 	'before_widget' => '<li id="%1$s" class="widget %2$s">',
-		// 	'after_widget'  => '</li>',
-		// 	'before_title'  => '<h2 class="widgettitle">',
-		// 	'after_title'   => '</h2>',
-		// ) );
-		// error_log("cartlassi_sidebar is {$cartlassi_sidebar}");
-		// // register_widget( 'Cartlassi_Widget' );
-
-		// Self::insert_widget_in_sidebar('cartlassi_widget', array(), $cartlassi_sidebar);
-
-		// $ok	 = dynamic_sidebar($cartlassi_sidebar);
-		// if ( $ok ) {
-		// 	error_log('sidebar ok!');
-		// } else {
-		// 	error_log('sidebar NOT ok!');
-		// }
-
-		
 	}
-
-	protected static function insert_widget_in_sidebar( $widget_id, $widget_data, $sidebar ) {
-		// Retrieve sidebars, widgets and their instances
-		$sidebars_widgets = get_option( 'sidebars_widgets', array() );
-		$widget_instances = get_option( 'widget_' . $widget_id, array() );
-	
-		error_log(var_export($sidebars_widgets, true));
-		error_log(var_export($widget_instances, true));
-
-		// Retrieve the key of the next widget instance
-		$numeric_keys = array_filter( array_keys( $widget_instances ), 'is_int' );
-		$next_key = $numeric_keys ? max( $numeric_keys ) + 1 : 2;
-	
-		// Add this widget to the sidebar
-		if ( ! isset( $sidebars_widgets[ $sidebar ] ) ) {
-			$sidebars_widgets[ $sidebar ] = array();
-		}
-		$sidebars_widgets[ $sidebar ][] = $widget_id . '-' . $next_key;
-	
-		// Add the new widget instance
-		$widget_instances[ $next_key ] = $widget_data;
-	
-		// Store updated sidebars, widgets and their instances
-		update_option( 'sidebars_widgets', $sidebars_widgets );
-		update_option( 'widget_' . $widget_id, $widget_instances );
-	}	
-
 }
