@@ -194,7 +194,7 @@ class Cartlassi_Public {
 	function display_widget($params) {
 		$sidebarId = $params[0]['id'];
 		$cartlassiOptions = get_option('cartlassi_options');
-		if ($sidebarId == strtolower($cartlassiOptions['cartlassi_field_before_sidebar'])) {
+		if ($sidebarId == $cartlassiOptions['cartlassi_field_before_sidebar']) {
 			echo dynamic_sidebar('sidebar-cartlassi');
 		}
 		return $params;

@@ -133,24 +133,22 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_field_before_sidebar_cb( $args ) {
+		var_dump($args['label_for']);
 		// Get the value of the setting we've registered with register_setting()
-		$options = get_option( 'cqartlassi_options' );
+		$options = get_option( 'cartlassi_options' );
 		?>
 		<select
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
 				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
 				name="cartlassi_options[<?php echo esc_attr( $args['label_for'] ); ?>]">
 				<?php foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) { ?>
-					<option value="<?php echo ucwords( $sidebar['id'] ); ?>" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], ucwords( $sidebar['id'] ) , false ) ) : ( '' ); ?>>
-							<?php echo ucwords( $sidebar['name'] ); ?>
+					<option value="<?php echo ( $sidebar['id'] ); ?>" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], $sidebar['id'] , false ) ) : ( '' ); ?>>
+							<?php echo ( $sidebar['name'] ); ?>
 					</option>
 				<?php } ?>
 		</select>
 		<p class="description">
-			<?php esc_html_e( 'You take the blue pill and the story ends. You wake in your bed and you believe whatever you want to believe.', 'cartlassi' ); ?>
-		</p>
-		<p class="description">
-			<?php esc_html_e( 'You take the red pill and you stay in Wonderland and I show you how deep the rabbit-hole goes.', 'cartlassi' ); ?>
+			<?php esc_html_e( 'In order not to mess with your template files, we\'ll hook into an existing sidebar and display the Cartlassi widget just before it. Please select which sidebar it should be.', 'cartlassi' ); ?>
 		</p>
 		<?php
 	}
