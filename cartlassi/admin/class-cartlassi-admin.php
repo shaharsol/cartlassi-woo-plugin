@@ -141,14 +141,20 @@ class Cartlassi_Admin {
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
 				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
 				name="cartlassi_options[<?php echo esc_attr( $args['label_for'] ); ?>]">
-				<?php foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) { ?>
-					<option value="<?php echo ( $sidebar['id'] ); ?>" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], $sidebar['id'] , false ) ) : ( '' ); ?>>
-							<?php echo ( $sidebar['name'] ); ?>
-					</option>
-				<?php } ?>
+				<?php 
+					foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) { 
+						if (is_active_sidebar($sidebar['id'])) {
+				?>
+							<option value="<?php echo ( $sidebar['id'] ); ?>" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], $sidebar['id'] , false ) ) : ( '' ); ?>>
+									<?php echo ( $sidebar['name'] ); ?>
+							</option>
+				<?php
+						}
+					} 
+				?>
 		</select>
 		<p class="description">
-			<?php esc_html_e( 'In order not to mess with your template files, we\'ll hook into an existing sidebar and display the Cartlassi widget just before it. Please select which sidebar it should be.', 'cartlassi' ); ?>
+			<?php esc_html_e( 'In order not to mess with your template files, we\'ll hook into an existing and active sidebar and display the Cartlassi widget just before it. Please select which sidebar it should be.', 'cartlassi' ); ?>
 		</p>
 		<?php
 	}
