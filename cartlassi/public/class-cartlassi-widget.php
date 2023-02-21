@@ -19,7 +19,7 @@ class Cartlassi_Widget extends WP_Widget {
 		
 		$title = $instance['title'];
 		
-		$apiKey = get_option('cartlassi_api_key');
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
 		$args = array(
 			// 'body'        => $body,
@@ -38,6 +38,7 @@ class Cartlassi_Widget extends WP_Widget {
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			echo "Something went wrong: $error_message";
+			error_log($error_message);
 			return;
 		}
 

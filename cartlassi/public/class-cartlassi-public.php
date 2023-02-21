@@ -101,7 +101,7 @@ class Cartlassi_Public {
 	}
 
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
-		$apiKey = get_option('cartlassi_api_key');
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$product = wc_get_product( $product_id );
 		$body = array(
 			'shopProductId' => strval($product_id),
@@ -124,7 +124,7 @@ class Cartlassi_Public {
 	} 
 
 	public function remove_from_cart($cart_item_key, $that) {
-		$apiKey = get_option('cartlassi_api_key');
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
 		

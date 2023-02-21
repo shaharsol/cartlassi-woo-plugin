@@ -30,7 +30,7 @@ class Cartlassi_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-		$apiKey = get_option('cartlassi_api_key');
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$args = array(
 			'method'	  => 'DELETE',
 			// 'body'        => $body,

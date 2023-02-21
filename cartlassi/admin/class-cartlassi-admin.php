@@ -124,16 +124,29 @@ class Cartlassi_Admin {
 				'cartlassi_custom_data' => 'custom',
 			)
 		);
+
+		add_settings_field(
+			'cartlassi_field_api_key', // As of WP 4.6 this value is used only internally.
+									// Use $args' label_for to populate the id inside the callback.
+			__( 'Your Cartlassi API Key', 'cartlassi' ),
+			array($this, 'cartlassi_field_api_key_cb'),
+			'cartlassi',
+			'cartlassi_section_default',
+			array(
+				'label_for'         => 'cartlassi_field_api_key',
+				'class'             => 'cartlassi_row',
+				'cartlassi_custom_data' => 'custom',
+			)
+		);
 	}
 
 	function cartlassi_section_default_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Follow the white rabbit.', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'The place to configure Cartlassi.', 'cartlassi' ); ?></p>
 		<?php
 	}
 
 	function cartlassi_field_before_sidebar_cb( $args ) {
-		var_dump($args['label_for']);
 		// Get the value of the setting we've registered with register_setting()
 		$options = get_option( 'cartlassi_options' );
 		?>
@@ -143,7 +156,7 @@ class Cartlassi_Admin {
 				name="cartlassi_options[<?php echo esc_attr( $args['label_for'] ); ?>]">
 				<?php 
 					foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) { 
-						if (is_active_sidebar($sidebar['id'])) {
+						if (is_active_sidebar($sidebar['id']) && $sidebar['id'] !== 'sidebar-cartlassi') {
 				?>
 							<option value="<?php echo ( $sidebar['id'] ); ?>" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], $sidebar['id'] , false ) ) : ( '' ); ?>>
 									<?php echo ( $sidebar['name'] ); ?>
@@ -154,8 +167,29 @@ class Cartlassi_Admin {
 				?>
 		</select>
 		<p class="description">
-			<?php esc_html_e( 'In order not to mess with your template files, we\'ll hook into an existing and active sidebar and display the Cartlassi widget just before it. Please select which sidebar it should be.', 'cartlassi' ); ?>
+			<?php esc_attr_e( 'In order not to mess with your template files, we\'ll hook into an existing and *active* sidebar and display the Cartlassi widget just before it. Please select which sidebar it should be.', 'cartlassi' ); ?>
 		</p>
+		<?php
+	}
+
+	function cartlassi_field_api_key_cb( $args ) {
+		// Get the value of the setting we've registered with register_setting()
+		$options = get_option( 'cartlassi_options' );
+		?>
+		<input type="text"
+				readonly
+				id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				name="cartlassi_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				value="<?php echo isset( $options[ $args['label_for'] ] ) ? $options[ $args['label_for'] ] : '' ; ?>"
+				class="regular-text"
+				>
+		<p class="description">
+			<?php esc_attr_e( 'This is the key your shop use to authenticate with Cartlassi servers. To regenarate the API Key, please click the Regenerate button below', 'cartlassi' ); ?>
+		</p>
+		<button
+			id="regenerate-api-key-button"
+			class=""
+		><?php esc_html_e( 'Regenerate API Key', 'cartlassi' ); ?></button>
 		<?php
 	}
 
@@ -165,7 +199,7 @@ class Cartlassi_Admin {
 			'Cartlassi Options',
 			'manage_options',
 			'cartlassi',
-			// 'cartlassi_options_page_html'
+			// 'cartlassi_options_page_html'	
 			array($this, 'cartlassi_options_page_html')
 		);
 	}
@@ -203,6 +237,70 @@ class Cartlassi_Admin {
 			</form>
 		</div>
 		<?php
+	}
+
+	function regenerate_api_key () {
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+
+		$args = array(
+			// 'timeout'     => '5',
+			// 'redirection' => '5',
+			// 'httpversion' => '1.0',
+			// 'blocking'    => true,
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
+			// 'cookies'     => array(),
+		);
+		$response = wp_remote_post( "http://host.docker.internal:3000/shops/regenerate-api-key", $args );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			error_log("WWWWWWWWWWW ${error_message}");
+			wp_send_json_error($response);
+		} else {
+			$body = wp_remote_retrieve_body( $response );
+			$data = json_decode( $body );
+			$options = get_option('cartlassi_options');
+			$options['cartlassi_field_api_key'] = $data->apiKey;
+			update_option('cartlassi_options', $options);
+			// error_log("WWWWWWWWWWW $body");
+			echo $body;
+		}
+		wp_die();
+	}
+
+	function cartlassi_admin_javascript () { 
+		?>
+		
+			<script type="text/javascript" >
+				function regenerateAPIKey () {
+		
+					const data = {
+						'action': 'cartlassi_regenerate_api_key',
+					};
+					return jQuery.post(ajaxurl, data, function(response, status) {
+						if (status === "success") {
+							const { apiKey } = JSON.parse(JSON.stringify(response));
+							jQuery('#cartlassi_field_api_key').val(apiKey);	
+						} else {
+							alert('error regenerating API key', data);
+							
+						}
+						return false;
+					}, 'json');
+				};
+
+				jQuery(document).ready(function() {
+					jQuery('#regenerate-api-key-button').click(function(event) {
+						alert('aki');
+						regenerateAPIKey();
+						Event.stop(event); // suppress default click behavior, cancel the event
+					});
+				})
+			</script> 
+
+		<?php 
 	}
 	
 

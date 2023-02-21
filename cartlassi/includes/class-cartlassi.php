@@ -160,6 +160,8 @@ class Cartlassi {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'cartlassi_settings_init' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'cartlassi_options_page' );
+		$this->loader->add_action( 'wp_ajax_cartlassi_regenerate_api_key', $plugin_admin, 'regenerate_api_key' );
+		$this->loader->add_action( 'admin_footer', $plugin_admin, 'cartlassi_admin_javascript' );
 
 	}
 
