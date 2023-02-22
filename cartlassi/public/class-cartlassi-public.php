@@ -200,4 +200,55 @@ class Cartlassi_Public {
 		return $params;
 	}
 
+	function add_tag_to_block_product_link ($html, $data) {
+
+		// // find starting "
+		// $begin = strpos($html, '<a href="') + 9;
+		// $end = strpos($html, '"', $begin + 1);
+
+		// $href = substr($html, $begin, $end - $begin);
+
+		// $html = str_replace($href, $href.'&cartlassi=1', $html);
+
+		global $product;
+
+		$options = get_option('cartlassi_options');
+		var_dump($options['current_map']);
+		$cartItemId = array_search( $product->id, $options['current_map'] ); 
+		$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartItemId.'"', $html);
+		return $withCartlassiHrefs;
+	}
+
+	function log_click_to_product () {
+		global $product;
+
+		$cartlassi = get_query_var('cartlassi');
+		if ( $cartlassi ) {
+			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+
+			$body = array(
+				// 'fromCartItemId' => ,
+				'toProductId' => strval($product->id),
+			);
+			$args = array(
+				'method'	  => 'DELETE',
+				'body'        => $body,
+				// 'timeout'     => '5',
+				// 'redirection' => '5',
+				// 'httpversion' => '1.0',
+				// 'blocking'    => true,
+				'headers'     => array(
+					'Authorization' => "Bearer {$apiKey}"
+				),
+				// 'cookies'     => array(),
+			);
+			$response = wp_remote_post( "http://host.docker.internal:3000/clicks", $args );
+		}
+	}
+
+	function log_click_to_cart (	) {
+		
+	}
+
+
 }

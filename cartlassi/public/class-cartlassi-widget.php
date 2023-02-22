@@ -46,11 +46,14 @@ class Cartlassi_Widget extends WP_Widget {
 		$data = json_decode( $body );
 
 		$products = array();
+		$cartItemToProductMap = array();
 		foreach($data as $product) {
 			$the_query = new WP_Query( array( 's' => $product->description ) );
 			if ( $the_query->have_posts() ) {
 				$the_query->the_post();
-				array_push($products, get_the_ID());
+				$postID = get_the_ID();
+				array_push($products, $postID);
+				$cartItemToProductMap += [$product->id => $postID];
 			}
 			/* Restore original Post Data */
 			wp_reset_postdata();
@@ -61,10 +64,15 @@ class Cartlassi_Widget extends WP_Widget {
 			}
 		}
 
+		$options = get_option('cartlassi_options');
+		$options['current_map'] = $cartItemToProductMap;
+		update_option( 'cartlassi_options', $options );
+
 		$block_name = 'woocommerce/handpicked-products';
 		$converted_block = new WP_Block_Parser_Block( $block_name, array(
 			'products' => $products,
 		), array(), '', array() );
+
 		$rendered_block = render_block( (array) $converted_block );
 
 		echo $before_widget;
