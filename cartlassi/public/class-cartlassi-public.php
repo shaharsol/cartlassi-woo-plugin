@@ -219,7 +219,6 @@ class Cartlassi_Public {
 				'toProductId' => strval($product->id),
 			);
 			$args = array(
-				'method'	  => 'DELETE',
 				'body'        => $body,
 				// 'timeout'     => '5',
 				// 'redirection' => '5',
@@ -276,6 +275,11 @@ class Cartlassi_Public {
 			);
 			$response = wp_remote_post( "http://host.docker.internal:3000/clicks", $args );
 		}
+	}
+
+	function expose_cartlassi_query_var ($qvars) {
+		$qvars[]= 'cartlassi';
+		return $qvars;
 	}
 
 

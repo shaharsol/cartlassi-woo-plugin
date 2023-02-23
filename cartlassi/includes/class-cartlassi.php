@@ -187,7 +187,12 @@ class Cartlassi {
 		$this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' , 1, 10);
 		$this->loader->add_action( 'woocommerce_ajax_added_to_cart', $plugin_public, 'log_ajax_add_to_cart', 1, 10);
 
+		// TBD checkout
+		// TBD refund
+
+
 		$this->loader->add_filter( 'woocommerce_blocks_product_grid_item_html', $plugin_public, 'add_tag_to_block_product_link', 10, 3 );
+		$this->loader->add_filter( 'query_vars', $plugin_public, 'expose_cartlassi_query_var' );
 	}
 
 	/**
