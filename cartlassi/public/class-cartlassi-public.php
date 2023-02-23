@@ -101,10 +101,12 @@ class Cartlassi_Public {
 	}
 
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
+		var_dump($cart_id);
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$product = wc_get_product( $product_id );
 		$body = array(
 			'shopProductId' => strval($product_id),
+			'shopCartId' 	=> strval($cart_id),
 			'sku'     		=> $product->get_sku(), //
 			'description'	=> $product->get_name(), // TBD consider get_short_description?
 		);
@@ -121,18 +123,24 @@ class Cartlassi_Public {
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
 		$response = wp_remote_post( "http://host.docker.internal:3000/carts/${cartId}", $args );
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			error_log("WWWWWWWWWWW ${error_message}");
+		}
 	} 
 
 	public function remove_from_cart($cart_item_key, $that) {
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
+		$cart_id = json_decode(json_encode($that))->id;
 		
 		error_log("product id is {$product_id}");
 
-		$product = wc_get_product( $product_id );
+		//$product = wc_get_product( $product_id );
 		$body = array(
 			'shopProductId' => strval($product_id),
+			'shopCartId'	=> strval($cart_id),
 		);
 		$args = array(
 			'method'	  => 'DELETE',
@@ -202,8 +210,11 @@ class Cartlassi_Public {
 
 	function add_tag_to_block_product_link ($html, $data, $product) {
 
-		$cartItemId = array_search( $product->id, WC()->session->get( 'cartlassi_current_map' ) ); 
-		$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartItemId.'"', $html);
+		// TBD make sure this happens ONLY in cartlassi widget
+		// otherwise we take over links from every widget in the site...
+
+		$cartlassiCartItemId = array_search( $product->id, WC()->session->get( 'cartlassi_current_map' ) ); 
+		$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
 		return $withCartlassiHrefs;
 	}
 
@@ -280,6 +291,39 @@ class Cartlassi_Public {
 	function expose_cartlassi_query_var ($qvars) {
 		$qvars[]= 'cartlassi';
 		return $qvars;
+	}
+
+	function payment_complete ( $orderId ) {
+		$order = wc_get_order( $order_id );
+		$order_items = $order->get_items();
+
+		foreach( $order_items as $item_id => $item ){
+		
+			$product_id = $item->get_product_id(); // the Product id
+
+			// TBD probably need shop_cart_id also to make this unique.
+			// let's think...
+
+
+		
+			// // order item data as an array
+			// $item_data = $item->get_data();
+		
+			// echo $item_data['name'];
+			// echo $item_data['product_id'];
+			// echo $item_data['variation_id'];
+			// echo $item_data['quantity'];
+			// echo $item_data['tax_class'];
+			// echo $item_data['subtotal'];
+			// echo $item_data['subtotal_tax'];
+			// echo $item_data['total'];
+			// echo $item_data['total_tax'];
+		
+		}
+	}
+
+	function order_refunded ( $orderId ) {
+		$order = wc_get_order( $order_id );
 	}
 
 

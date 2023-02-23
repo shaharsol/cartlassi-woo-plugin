@@ -186,7 +186,8 @@ class Cartlassi {
 		$this->loader->add_action( 'woocommerce_init', $plugin_public, 'initiate_wc_sessions' );
 		$this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' , 1, 10);
 		$this->loader->add_action( 'woocommerce_ajax_added_to_cart', $plugin_public, 'log_ajax_add_to_cart', 1, 10);
-
+		$this->loader->add_action( 'woocommerce_payment_complete', $plugin_public, 'payment_complete' );
+		$this->loader->add_action( 'woocommerce_order_refunded', $plugin_public, 'order_refunded' );
 		// TBD checkout
 		// TBD refund
 
