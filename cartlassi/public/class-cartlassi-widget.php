@@ -64,10 +64,11 @@ class Cartlassi_Widget extends WP_Widget {
 			}
 		}
 
-		$options = get_option('cartlassi_options');
-		$options['current_map'] = $cartItemToProductMap;
-		update_option( 'cartlassi_options', $options );
-
+		// $options = get_option('cartlassi_options');
+		// $options['current_map'] = $cartItemToProductMap;
+		// update_option( 'cartlassi_options', $options );
+		WC()->session->set('cartlassi_current_map', $cartItemToProductMap);
+		var_dump(WC()->session->get('cartlassi_current_map'));
 		$block_name = 'woocommerce/handpicked-products';
 		$converted_block = new WP_Block_Parser_Block( $block_name, array(
 			'products' => $products,

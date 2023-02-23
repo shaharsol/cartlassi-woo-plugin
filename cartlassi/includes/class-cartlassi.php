@@ -183,9 +183,11 @@ class Cartlassi {
 		$this->loader->add_action( 'widgets_init', $plugin_public, 'cartlassi_widgets_init' );
 		$this->loader->add_action( 'dynamic_sidebar_params', $plugin_public, 'display_widget' );
 		$this->loader->add_action( 'woocommerce_before_single_product', $plugin_public, 'log_click_to_product' );
-		// $this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' );
+		$this->loader->add_action( 'woocommerce_init', $plugin_public, 'initiate_wc_sessions' );
+		$this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' , 1, 10);
+		$this->loader->add_action( 'woocommerce_ajax_added_to_cart', $plugin_public, 'log_ajax_add_to_cart', 1, 10);
 
-		$this->loader->add_filter( 'woocommerce_blocks_product_grid_item_html', $plugin_public, 'add_tag_to_block_product_link', 10, 2 );
+		$this->loader->add_filter( 'woocommerce_blocks_product_grid_item_html', $plugin_public, 'add_tag_to_block_product_link', 10, 3 );
 	}
 
 	/**

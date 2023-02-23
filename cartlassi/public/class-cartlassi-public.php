@@ -200,21 +200,9 @@ class Cartlassi_Public {
 		return $params;
 	}
 
-	function add_tag_to_block_product_link ($html, $data) {
+	function add_tag_to_block_product_link ($html, $data, $product) {
 
-		// // find starting "
-		// $begin = strpos($html, '<a href="') + 9;
-		// $end = strpos($html, '"', $begin + 1);
-
-		// $href = substr($html, $begin, $end - $begin);
-
-		// $html = str_replace($href, $href.'&cartlassi=1', $html);
-
-		global $product;
-
-		$options = get_option('cartlassi_options');
-		var_dump($options['current_map']);
-		$cartItemId = array_search( $product->id, $options['current_map'] ); 
+		$cartItemId = array_search( $product->id, WC()->session->get( 'cartlassi_current_map' ) ); 
 		$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartItemId.'"', $html);
 		return $withCartlassiHrefs;
 	}
@@ -246,8 +234,23 @@ class Cartlassi_Public {
 		}
 	}
 
-	function log_click_to_cart (	) {
-		
+	function initiate_wc_sessions () {
+		if ( is_user_logged_in() || is_admin() ) {
+			return;
+		}
+		if ( isset( WC()->session ) ) {
+			if ( !WC()->session->has_session() ) {
+				WC()->session->set_customer_session_cookie(true);
+			}
+		}
+	}
+
+	function log_click_to_cart ( $data	) {
+		error_log($data);
+	}
+
+	function log_ajax_add_to_cart (	$data ) {
+		error_log($data);
 	}
 
 
