@@ -246,11 +246,36 @@ class Cartlassi_Public {
 	}
 
 	function log_click_to_cart ( $data	) {
-		error_log($data);
+		error_log('log_click_to_cart');
 	}
 
-	function log_ajax_add_to_cart (	$data ) {
-		error_log($data);
+	function log_ajax_add_to_cart (	$productId ) {
+		error_log('log_ajax_add_to_cart');
+		error_log(wp_get_referer());
+		error_log(wp_get_original_referer());
+		error_log(var_export($_POST, true));
+		$cartlassi = get_query_var('cartlassi');
+		if ( $cartlassi ) {
+			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+
+			$body = array(
+				// 'fromCartItemId' => ,
+				'toProductId' => strval($productId),
+			);
+			$args = array(
+				'method'	  => 'DELETE',
+				'body'        => $body,
+				// 'timeout'     => '5',
+				// 'redirection' => '5',
+				// 'httpversion' => '1.0',
+				// 'blocking'    => true,
+				'headers'     => array(
+					'Authorization' => "Bearer {$apiKey}"
+				),
+				// 'cookies'     => array(),
+			);
+			$response = wp_remote_post( "http://host.docker.internal:3000/clicks", $args );
+		}
 	}
 
 
