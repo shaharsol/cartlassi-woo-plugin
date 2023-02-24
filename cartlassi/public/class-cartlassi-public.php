@@ -268,11 +268,11 @@ class Cartlassi_Public {
 	}
 
 	function log_ajax_add_to_cart (	$productId ) {
-		error_log('log_ajax_add_to_cart');
-		error_log(wp_get_referer());
-		error_log(wp_get_original_referer());
-		error_log(var_export($_POST, true));
-		$cartlassi = get_query_var('cartlassi');
+		// error_log('log_ajax_add_to_cart');
+		// error_log(wp_get_referer());
+		// error_log(wp_get_original_referer());
+		// error_log(var_export($_POST, true));
+		$cartlassi = $_POST['cartlassi'];
 		if ( $cartlassi ) {
 			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
