@@ -131,10 +131,11 @@ class Cartlassi_Public {
 
 	public function remove_from_cart($cart_item_key, $that) {
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
-
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
-		$cart_id = json_decode(json_encode($that))->id;
-		
+		// $cart_id = json_decode(json_encode($that))->id;
+		// $cart_id = $that->get_cart_id();
+		$cart_id = WC()->cart->get_cart_id();
+
 		error_log("product id is {$product_id}");
 
 		//$product = wc_get_product( $product_id );
@@ -142,6 +143,8 @@ class Cartlassi_Public {
 			'shopProductId' => strval($product_id),
 			'shopCartId'	=> strval($cart_id),
 		);
+		error_log(var_export($body,true));
+		var_dump($cart_id);
 		$args = array(
 			'method'	  => 'DELETE',
 			'body'        => $body,
@@ -226,7 +229,7 @@ class Cartlassi_Public {
 			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
 			$body = array(
-				// 'fromCartItemId' => ,
+				'fromCartItemId' => $cartlassi,
 				'toProductId' => strval($product->id),
 			);
 			$args = array(
