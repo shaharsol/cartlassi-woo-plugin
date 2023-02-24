@@ -16,8 +16,7 @@ class Cartlassi_Widget extends WP_Widget {
 		
 		extract( $args );
 		// $title = apply_filters( 'widget_title', $instance['title'] );
-		
-		$title = $instance['title'];
+		$title = 'We think you may like...';
 		
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 

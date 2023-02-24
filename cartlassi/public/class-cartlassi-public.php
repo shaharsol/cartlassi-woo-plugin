@@ -101,7 +101,6 @@ class Cartlassi_Public {
 	}
 
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
-		var_dump($cart_id);
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$product = wc_get_product( $product_id );
 		$body = array(
@@ -130,11 +129,13 @@ class Cartlassi_Public {
 	} 
 
 	public function remove_from_cart($cart_item_key, $that) {
+		var_dump($that);
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
 		// $cart_id = json_decode(json_encode($that))->id;
 		// $cart_id = $that->get_cart_id();
-		$cart_id = WC()->cart->get_cart_id();
+		// $cart_id = WC()->cart->get_cart_id();
+
 
 		error_log("product id is {$product_id}");
 
@@ -174,7 +175,7 @@ class Cartlassi_Public {
 		register_widget( 'Cartlassi_Widget' );
 
 		if ( !is_active_sidebar($cartlassi_sidebar) ) {
-			$this->insert_widget_in_sidebar('cartlassi_widget', array(), $cartlassi_sidebar);
+			$this->insert_widget_in_sidebar('cartlassi_widget', array('title' => 'We think you may like...'), $cartlassi_sidebar);
 		}
 
 	}
@@ -217,8 +218,12 @@ class Cartlassi_Public {
 		// otherwise we take over links from every widget in the site...
 
 		$cartlassiCartItemId = array_search( $product->id, WC()->session->get( 'cartlassi_current_map' ) ); 
-		$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
-		return $withCartlassiHrefs;
+		if ($cartlassiCartItemId) {
+			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
+			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-cartlassi="'.$cartlassiCartItemId.'"', $html);
+			return $withCartlassiHrefs;
+		}
+		return $html;
 	}
 
 	function log_click_to_product () {
@@ -272,11 +277,10 @@ class Cartlassi_Public {
 			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
 			$body = array(
-				// 'fromCartItemId' => ,
+				'fromCartItemId' => $cartlassi,
 				'toProductId' => strval($productId),
 			);
 			$args = array(
-				'method'	  => 'DELETE',
 				'body'        => $body,
 				// 'timeout'     => '5',
 				// 'redirection' => '5',
