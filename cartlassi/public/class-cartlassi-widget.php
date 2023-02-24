@@ -32,7 +32,7 @@ class Cartlassi_Widget extends WP_Widget {
 			// 'cookies'     => array(),
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
-		$response = wp_remote_get( "http://host.docker.internal:3000/carts/${cartId}", $args );
+		$response = wp_remote_get( "http://host.docker.internal:3000/carts/${cartId}/shop", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -63,6 +63,9 @@ class Cartlassi_Widget extends WP_Widget {
 			}
 		}
 
+		if (count($products) == 0) {
+			return;
+		}
 		// $options = get_option('cartlassi_options');
 		// $options['current_map'] = $cartItemToProductMap;
 		// update_option( 'cartlassi_options', $options );
