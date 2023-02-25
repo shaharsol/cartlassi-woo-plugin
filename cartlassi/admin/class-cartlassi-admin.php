@@ -138,6 +138,20 @@ class Cartlassi_Admin {
 				'cartlassi_custom_data' => 'custom',
 			)
 		);
+
+		add_settings_field(
+			'cartlassi_field_payment_method', // As of WP 4.6 this value is used only internally.
+									// Use $args' label_for to populate the id inside the callback.
+			__( 'Payment Method', 'cartlassi' ),
+			array($this, 'cartlassi_field_payment_method_cb'),
+			'cartlassi',
+			'cartlassi_section_default',
+			array(
+				'label_for'         => 'cartlassi_field_payment_method',
+				'class'             => 'cartlassi_row',
+				'cartlassi_custom_data' => 'custom',
+			)
+		);
 	}
 
 	function cartlassi_section_default_callback( $args ) {
@@ -193,6 +207,18 @@ class Cartlassi_Admin {
 		<?php
 	}
 
+	function cartlassi_field_payment_method_cb( $args ) {
+		// Get the value of the setting we've registered with register_setting()
+		$options = get_option( 'cartlassi_options' );
+		?>
+		
+		<button type="submit"
+			id="pay-button"
+			class=""
+		><?php esc_html_e( 'Payment Method', 'cartlassi' ); ?></button>
+		<?php
+	}
+
 	function cartlassi_options_page() {
 		add_menu_page(
 			'Cartlassi',
@@ -210,6 +236,22 @@ class Cartlassi_Admin {
 			return;
 		}
 	
+		$stripeSessionId = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
+		var_dump($stripeSessionId );
+		error_log($stripeSessionId );
+		if ($stripeSessionId) {
+			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+
+			$args = array(
+				'body'			=> array(
+					'session_id' => $stripeSessionId
+				),
+				'headers'     => array(
+					'Authorization' => "token {$apiKey}"
+				),
+			);
+			$response = wp_remote_post( "http://host.docker.internal:3000/shops/complete-stripe", $args );
+		}
 		// add error/update messages
 	
 		// check if the user have submitted the settings
@@ -297,11 +339,22 @@ class Cartlassi_Admin {
 						regenerateAPIKey();
 						Event.stop(event); // suppress default click behavior, cancel the event
 					});
+					$form = jQuery('<form></form>');
+					$form.attr('id', 'pay-form');
+					$form.attr('method', 'POST');
+					$form.attr('action', 'http://localhost:3000/shops/payment-method')
+					$form.append('<input type="hidden" name="apiKey" value="<?=get_option('cartlassi_options')['cartlassi_field_api_key']?>">');
+					jQuery('body').append($form);
+					jQuery('#pay-button').click(function(event) {
+						event.preventDefault();
+						// alert('aloha');
+						jQuery('#pay-form').submit();
+						// alert('shaloa');
+					});
 				})
 			</script> 
 
 		<?php 
 	}
-	
 
 }

@@ -188,6 +188,8 @@ class Cartlassi {
 		$this->loader->add_action( 'woocommerce_ajax_added_to_cart', $plugin_public, 'log_ajax_add_to_cart', 1, 10);
 		$this->loader->add_action( 'woocommerce_payment_complete', $plugin_public, 'payment_complete' );
 		$this->loader->add_action( 'woocommerce_order_refunded', $plugin_public, 'order_refunded' );
+		$this->loader->add_action( 'woocommerce_checkout_create_order_line_item', $plugin_public, 'save_cart_item_key_as_custom_order_item_metadata', 10, 4 );
+
 		// TBD checkout
 		// TBD refund
 
