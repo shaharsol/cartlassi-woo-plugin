@@ -129,34 +129,23 @@ class Cartlassi_Public {
 	} 
 
 	public function remove_from_cart($cart_item_key, $that) {
-		var_dump($that);
+		error_log(var_export($that, true));
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
-		// $cart_id = json_decode(json_encode($that))->id;
-		// $cart_id = $that->get_cart_id();
-		// $cart_id = WC()->cart->get_cart_id();
-
 
 		error_log("product id is {$product_id}");
 
-		//$product = wc_get_product( $product_id );
 		$body = array(
 			'shopProductId' => strval($product_id),
-			'shopCartId'	=> strval($cart_id),
+			'shopCartId'	=> strval($cart_item_key),
 		);
 		error_log(var_export($body,true));
-		var_dump($cart_id);
 		$args = array(
 			'method'	  => 'DELETE',
 			'body'        => $body,
-			// 'timeout'     => '5',
-			// 'redirection' => '5',
-			// 'httpversion' => '1.0',
-			// 'blocking'    => true,
 			'headers'     => array(
 				'Authorization' => "token {$apiKey}"
 			),
-			// 'cookies'     => array(),
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
 		$response = wp_remote_request( "http://host.docker.internal:3000/carts/${cartId}", $args );
@@ -307,6 +296,7 @@ class Cartlassi_Public {
 		foreach( $order_items as $item_id => $item ){
 		
 			$product_id = $item->get_product_id(); // the Product id
+			$cart_item_key = $item->get_meta( '_cartlassi_cart_item_key' );
 
 			// TBD probably need shop_cart_id also to make this unique.
 			// let's think...
@@ -333,5 +323,10 @@ class Cartlassi_Public {
 		$order = wc_get_order( $order_id );
 	}
 
+	function save_cart_item_key_as_custom_order_item_metadata( $item, $cart_item_key, $values, $order ) {
+		// Save the cart item key as hidden order item meta data
+		$item->update_meta_data( '_cartlassi_cart_item_key', $cart_item_key );
+	}
+	
 
 }
