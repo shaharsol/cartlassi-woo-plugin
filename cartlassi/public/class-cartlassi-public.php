@@ -289,7 +289,7 @@ class Cartlassi_Public {
 		return $qvars;
 	}
 
-	function payment_complete ( $orderId ) {
+	function payment_complete ( $order_id ) {
 		$order = wc_get_order( $order_id );
 		$order_items = $order->get_items();
 
@@ -297,6 +297,11 @@ class Cartlassi_Public {
 		
 			$product_id = $item->get_product_id(); // the Product id
 			$cart_item_key = $item->get_meta( '_cartlassi_cart_item_key' );
+
+			var_dump($product_id);
+			var_dump($cart_item_key);
+			error_log($product_id);
+			error_log($cart_item_key);
 
 			// TBD probably need shop_cart_id also to make this unique.
 			// let's think...
