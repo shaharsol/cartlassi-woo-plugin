@@ -208,15 +208,41 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_field_payment_method_cb( $args ) {
-		// Get the value of the setting we've registered with register_setting()
-		$options = get_option( 'cartlassi_options' );
-		?>
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+
+		$args = array(
+			// 'timeout'     => '5',
+			// 'redirection' => '5',
+			// 'httpversion' => '1.0',
+			// 'blocking'    => true,
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
+			// 'cookies'     => array(),
+		);
 		
-		<button type="submit"
-			id="pay-button"
-			class=""
-		><?php esc_html_e( 'Payment Method', 'cartlassi' ); ?></button>
-		<?php
+		$response = wp_remote_get( "http://host.docker.internal:3000/shops/payment-method", $args );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			error_log("WWWWWWWWWWW ${error_message}");
+			wp_send_json_error($response);
+		} else {
+			$body = wp_remote_retrieve_body( $response );
+			$data = json_decode( $body );
+			if ($data->brand && $data->last4) {
+				echo "{$data->brand} {$data->last4}";
+			} else {
+				?>
+		
+				<button type="submit"
+					id="pay-button"
+					class=""
+				><?php esc_html_e( 'Payment Method', 'cartlassi' ); ?></button>
+				<?php
+			}
+		}		
+		
 	}
 
 	function cartlassi_options_page() {
