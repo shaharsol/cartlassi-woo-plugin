@@ -21,15 +21,9 @@ class Cartlassi_Widget extends WP_Widget {
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
 		$args = array(
-			// 'body'        => $body,
-			// 'timeout'     => '5',
-			// 'redirection' => '5',
-			// 'httpversion' => '1.0',
-			// 'blocking'    => true,
 			'headers'     => array(
 				'Authorization' => "token {$apiKey}"
 			),
-			// 'cookies'     => array(),
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
 		$response = wp_remote_get( "http://host.docker.internal:3000/carts/${cartId}/shop", $args );

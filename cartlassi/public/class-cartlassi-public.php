@@ -100,6 +100,13 @@ class Cartlassi_Public {
 
 	}
 
+	/**
+	 * action: woocommerce_add_to_cart
+	 *
+	 * Whenevr a shoper adds any product to cart, we want to register that in the global cart
+	 * 
+	 * @since    1.0.0
+	 */
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$product = wc_get_product( $product_id );
@@ -111,35 +118,35 @@ class Cartlassi_Public {
 		);
 		$args = array(
 			'body'        => $body,
-			// 'timeout'     => '5',
-			// 'redirection' => '5',
-			// 'httpversion' => '1.0',
-			// 'blocking'    => true,
 			'headers'     => array(
 				'Authorization' => "token {$apiKey}"
 			),
-			// 'cookies'     => array(),
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
 		$response = wp_remote_post( "http://host.docker.internal:3000/carts/${cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW ${error_message}");
+			error_log("error in add_to_cart: ${error_message}");
 		}
 	} 
 
+	/**
+	 * action: woocommerce_cart_item_removed
+	 *
+	 * Whenevr a shoper removes any product from cart, we want to register that in the global cart
+	 * 
+	 * @since    1.0.0
+	 */
 	public function remove_from_cart($cart_item_key, $that) {
-		error_log(var_export($that, true));
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		// TBD get rid of the jsin_decode(jsin_encode)... make it work in another way
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
-
-		error_log("product id is {$product_id}");
 
 		$body = array(
 			'shopProductId' => strval($product_id),
 			'shopCartId'	=> strval($cart_item_key),
 		);
-		error_log(var_export($body,true));
+
 		$args = array(
 			'method'	  => 'DELETE',
 			'body'        => $body,
@@ -149,6 +156,10 @@ class Cartlassi_Public {
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
 		$response = wp_remote_request( "http://host.docker.internal:3000/carts/${cartId}", $args );
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			error_log("error in remove_from_cart: ${error_message}");
+		}
 	}
 
 	function cartlassi_widgets_init() {
@@ -169,7 +180,7 @@ class Cartlassi_Public {
 
 	}
 
-	function insert_widget_in_sidebar( $widget_id, $widget_data, $sidebar ) {
+	protected function insert_widget_in_sidebar( $widget_id, $widget_data, $sidebar ) {
 		// Retrieve sidebars, widgets and their instances
 		$sidebars_widgets = get_option( 'sidebars_widgets', array() );
 		$widget_instances = get_option( 'widget_' . $widget_id, array() );
@@ -192,6 +203,17 @@ class Cartlassi_Public {
 		update_option( 'widget_' . $widget_id, $widget_instances );
 	}	
 
+	/**
+	 * action: dynamic_sidebar_params
+	 *
+	 * Since we can't modify the theme, the only way to place the cartlassi widget
+	 * is relative to another widget. 
+	 * In the admin options we let the user select before which other sidebar
+	 * the cartlassi widget should appear. 
+	 * This is the actual implementation of echoing the sidebar in the right location
+	 * 
+	 * @since    1.0.0
+	 */
 	function display_widget($params) {
 		$sidebarId = $params[0]['id'];
 		$cartlassiOptions = get_option('cartlassi_options');
@@ -201,6 +223,17 @@ class Cartlassi_Public {
 		return $params;
 	}
 
+	/**
+	 * filter: woocommerce_blocks_product_grid_item_html
+	 *
+	 * During woo generation of the hand picked block we use as a widget to display products,
+	 * we need to alter the href of each a tag and also add `data-cartlassi` attribute to the tag.
+	 * This way, when user click on a product from the widget, or adds it to the cart using ajax,
+	 * they can mark that the attribution should go to the specific cart item which resulted in user
+	 * engagement.
+	 * 
+	 * @since    1.0.0
+	 */
 	function add_tag_to_block_product_link ($html, $data, $product) {
 
 		// TBD make sure this happens ONLY in cartlassi widget
@@ -215,6 +248,14 @@ class Cartlassi_Public {
 		return $html;
 	}
 
+	/**
+	 * action: woocommerce_before_single_product
+	 *
+	 * Before we paint a product landing page, we want to check if the cartlassi query var
+	 * is present. If it is, it means that we need to regsiter a click.
+	 * 
+	 * @since    1.0.0
+	 */
 	function log_click_to_product () {
 		global $product;
 
@@ -228,16 +269,15 @@ class Cartlassi_Public {
 			);
 			$args = array(
 				'body'        => $body,
-				// 'timeout'     => '5',
-				// 'redirection' => '5',
-				// 'httpversion' => '1.0',
-				// 'blocking'    => true,
 				'headers'     => array(
 					'Authorization' => "Bearer {$apiKey}"
 				),
-				// 'cookies'     => array(),
 			);
 			$response = wp_remote_post( "http://host.docker.internal:3000/clicks", $args );
+			if ( is_wp_error( $response ) ) {
+				$error_message = $response->get_error_message();
+				error_log("error in log_click_to_product: ${error_message}");
+			}
 		}
 	}
 
@@ -256,11 +296,14 @@ class Cartlassi_Public {
 		error_log('log_click_to_cart');
 	}
 
+	/**
+	 * action: woocommerce_ajax_added_to_cart
+	 *
+	 * If there was a click on add to cart ajax button inside a widget, we need to mark it as click
+	 * 
+	 * @since    1.0.0
+	 */
 	function log_ajax_add_to_cart (	$productId ) {
-		// error_log('log_ajax_add_to_cart');
-		// error_log(wp_get_referer());
-		// error_log(wp_get_original_referer());
-		// error_log(var_export($_POST, true));
 		$cartlassi = $_POST['cartlassi'];
 		if ( $cartlassi ) {
 			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
@@ -271,24 +314,38 @@ class Cartlassi_Public {
 			);
 			$args = array(
 				'body'        => $body,
-				// 'timeout'     => '5',
-				// 'redirection' => '5',
-				// 'httpversion' => '1.0',
-				// 'blocking'    => true,
 				'headers'     => array(
 					'Authorization' => "Bearer {$apiKey}"
 				),
-				// 'cookies'     => array(),
 			);
 			$response = wp_remote_post( "http://host.docker.internal:3000/clicks", $args );
+			if ( is_wp_error( $response ) ) {
+				$error_message = $response->get_error_message();
+				error_log("error in log_ajax_add_to_cart: ${error_message}");
+			}
 		}
 	}
 
+	/**
+	 * filter: query_vars
+	 *
+	 * Enable the cartlassi query var(s) to be fetched using get_query_var()
+	 * 
+	 * @since    1.0.0
+	 */
 	function expose_cartlassi_query_var ($qvars) {
 		$qvars[]= 'cartlassi';
 		return $qvars;
 	}
 
+	/**
+	 * action: woocommerce_payment_complete
+	 *
+	 * When a sale occured, we need to see if a cartlassi click can be attributed to it
+	 * if so, we need to create a sale, so a commission can be paid 
+	 * 
+	 * @since    1.0.0
+	 */
 	function payment_complete ( $order_id ) {
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$order = wc_get_order( $order_id );
@@ -303,21 +360,15 @@ class Cartlassi_Public {
 			$body = array(
 				'shopProductId' => strval($product_id),
 				'shopCartId' 	=> strval($cart_item_key),
-				'sku'     		=> $product->get_sku(), //
-				'description'	=> $product->get_name(), // 
+				'shopOrderId'	=> strval($order_id),
 				'amount'		=> $item->get_total(),
 				'currency'		=> 'ILS',
 			);
 			$args = array(
 				'body'        => $body,
-				// 'timeout'     => '5',
-				// 'redirection' => '5',
-				// 'httpversion' => '1.0',
-				// 'blocking'    => true,
 				'headers'     => array(
 					'Authorization' => "token {$apiKey}"
 				),
-				// 'cookies'     => array(),
 			);
 			$cartId = md5($_SERVER['REMOTE_ADDR']);
 			$response = wp_remote_post( "http://host.docker.internal:3000/carts/${cartId}/checkout", $args );
@@ -326,36 +377,37 @@ class Cartlassi_Public {
 				error_log("WWWWWWWWWWW ${error_message}");
 			}			
 
-			var_dump($product_id);
-			var_dump($cart_item_key);
-			error_log($product_id);
-			error_log($cart_item_key);
-
-			// TBD probably need shop_cart_id also to make this unique.
-			// let's think...
-
-
-		
-			// // order item data as an array
-			// $item_data = $item->get_data();
-		
-			// echo $item_data['name'];
-			// echo $item_data['product_id'];
-			// echo $item_data['variation_id'];
-			// echo $item_data['quantity'];
-			// echo $item_data['tax_class'];
-			// echo $item_data['subtotal'];
-			// echo $item_data['subtotal_tax'];
-			// echo $item_data['total'];
-			// echo $item_data['total_tax'];
-		
 		}
 	}
 
-	function order_refunded ( $orderId ) {
-		$order = wc_get_order( $order_id );
+	function order_refunded ( $order_id ) {
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$args = array(
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
+		);
+		$response = wp_remote_post( "http://host.docker.internal:3000/carts/${order_id}/refund", $args );
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			error_log("WWWWWWWWWWW ${error_message}");
+		}	
+		// $order = wc_get_order( $order_id );
+		// error_log(var_export($order, true));
+		// var_dump($order);
 	}
 
+	/**
+	 * action: woocommerce_checkout_create_order_line_item
+	 *
+	 * When a user proceeds to checkout, at some point the cart turns into an order.
+	 * since we work with the cart_item_key as unique identifer, we want to propagate
+	 * it down the line to the order, so every line item will have it's corresponding
+	 * cartlassi id. so for each order item, we save the cart_item_key that was attached
+	 * to it once it was still in the cart.
+	 * 
+	 * @since    1.0.0
+	 */
 	function save_cart_item_key_as_custom_order_item_metadata( $item, $cart_item_key, $values, $order ) {
 		// Save the cart item key as hidden order item meta data
 		$item->update_meta_data( '_cartlassi_cart_item_key', $cart_item_key );
