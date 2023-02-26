@@ -3,7 +3,7 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       http://example.com
+ * @link       http://cartlassi.com
  * @since      1.0.0
  *
  * @package    Cartlassi
@@ -224,7 +224,7 @@ class Cartlassi_Public {
 
 			$body = array(
 				'fromCartItemId' => $cartlassi,
-				'toProductId' => strval($product->id),
+				'toShopProductId' => strval($product->id),
 			);
 			$args = array(
 				'body'        => $body,
@@ -267,7 +267,7 @@ class Cartlassi_Public {
 
 			$body = array(
 				'fromCartItemId' => $cartlassi,
-				'toProductId' => strval($productId),
+				'toShopProductId' => strval($productId),
 			);
 			$args = array(
 				'body'        => $body,
@@ -290,6 +290,7 @@ class Cartlassi_Public {
 	}
 
 	function payment_complete ( $order_id ) {
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$order = wc_get_order( $order_id );
 		$order_items = $order->get_items();
 
@@ -297,6 +298,33 @@ class Cartlassi_Public {
 		
 			$product_id = $item->get_product_id(); // the Product id
 			$cart_item_key = $item->get_meta( '_cartlassi_cart_item_key' );
+			$product = wc_get_product( $product_id );
+
+			$body = array(
+				'shopProductId' => strval($product_id),
+				'shopCartId' 	=> strval($cart_item_key),
+				'sku'     		=> $product->get_sku(), //
+				'description'	=> $product->get_name(), // 
+				'amount'		=> $item->get_total(),
+				'currency'		=> 'ILS',
+			);
+			$args = array(
+				'body'        => $body,
+				// 'timeout'     => '5',
+				// 'redirection' => '5',
+				// 'httpversion' => '1.0',
+				// 'blocking'    => true,
+				'headers'     => array(
+					'Authorization' => "token {$apiKey}"
+				),
+				// 'cookies'     => array(),
+			);
+			$cartId = md5($_SERVER['REMOTE_ADDR']);
+			$response = wp_remote_post( "http://host.docker.internal:3000/carts/${cartId}/checkout", $args );
+			if ( is_wp_error( $response ) ) {
+				$error_message = $response->get_error_message();
+				error_log("WWWWWWWWWWW ${error_message}");
+			}			
 
 			var_dump($product_id);
 			var_dump($cart_item_key);
