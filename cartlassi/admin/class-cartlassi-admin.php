@@ -96,11 +96,12 @@ class Cartlassi_Admin {
 		 * class.
 		 */
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$nonce = wp_create_nonce( 'cartlassi' );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cartlassi-admin.js', array( 'jquery' ), $this->version, false );
 
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
-		wp_localize_script( 'ajax-script', 'ajax_object',
-				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $apiKey ) 
+		wp_localize_script( $this->plugin_name, 'ajax_object',
+				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $apiKey , 'nonce' => $nonce) 
 		);
 		
 
@@ -312,17 +313,13 @@ class Cartlassi_Admin {
 	}
 
 	function regenerate_api_key () {
+		check_ajax_referer('cartlassi', 'nonce');
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
 		$args = array(
-			// 'timeout'     => '5',
-			// 'redirection' => '5',
-			// 'httpversion' => '1.0',
-			// 'blocking'    => true,
 			'headers'     => array(
 				'Authorization' => "token {$apiKey}"
 			),
-			// 'cookies'     => array(),
 		);
 		$response = wp_remote_post( "http://host.docker.internal:3000/shops/regenerate-api-key", $args );
 

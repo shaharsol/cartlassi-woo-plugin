@@ -32,7 +32,8 @@
 	function regenerateAPIKey () {
 
 		const data = {
-			'action': 'cartlassi_regenerate_api_key',
+			action: 'cartlassi_regenerate_api_key',
+			nonce: ajax_object.nonce,
 		};
 		return jQuery.post(ajaxurl, data, function(response, status) {
 			if (status === "success") {
