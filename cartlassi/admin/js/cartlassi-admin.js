@@ -29,4 +29,38 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	function regenerateAPIKey () {
+
+		const data = {
+			'action': 'cartlassi_regenerate_api_key',
+		};
+		return jQuery.post(ajaxurl, data, function(response, status) {
+			if (status === "success") {
+				const { apiKey } = JSON.parse(JSON.stringify(response));
+				jQuery('#cartlassi_field_api_key').val(apiKey);	
+			} else {
+				alert('error regenerating API key', data);
+				
+			}
+			return false;
+		}, 'json');
+	};
+	jQuery('#regenerate-api-key-button').click(function(event) {
+		alert('aki');
+		regenerateAPIKey();
+		Event.stop(event); // suppress default click behavior, cancel the event
+	});
+	const form = jQuery('<form></form>');
+	form.attr('id', 'pay-form');
+	form.attr('method', 'POST');
+	form.attr('action', 'http://localhost:3000/shops/payment-method')
+	form.append('<input type="hidden" name="apiKey" value="' + ajax_object.api_key + '">');
+	jQuery('body').append(form);
+	jQuery('#pay-button').click(function(event) {
+		event.preventDefault();
+		// alert('aloha');
+		jQuery('#pay-form').submit();
+		// alert('shaloa');
+	});
+
 })( jQuery );

@@ -95,8 +95,14 @@ class Cartlassi_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
+		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cartlassi-admin.js', array( 'jquery' ), $this->version, false );
+
+		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
+		wp_localize_script( 'ajax-script', 'ajax_object',
+				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $apiKey ) 
+		);
+		
 
 	}
 
@@ -230,9 +236,9 @@ class Cartlassi_Admin {
 		} else {
 			$body = wp_remote_retrieve_body( $response );
 			$data = json_decode( $body );
-			if ($data->brand && $data->last4) {
-				echo "{$data->brand} {$data->last4}";
-			} else {
+			// if ($data->brand && $data->last4) {
+			// 	echo "{$data->brand} {$data->last4}";
+			// } else {
 				?>
 		
 				<button type="submit"
@@ -240,7 +246,7 @@ class Cartlassi_Admin {
 					class=""
 				><?php esc_html_e( 'Payment Method', 'cartlassi' ); ?></button>
 				<?php
-			}
+			// }
 		}		
 		
 	}
@@ -263,8 +269,6 @@ class Cartlassi_Admin {
 		}
 	
 		$stripeSessionId = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
-		var_dump($stripeSessionId );
-		error_log($stripeSessionId );
 		if ($stripeSessionId) {
 			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 
@@ -337,50 +341,4 @@ class Cartlassi_Admin {
 		}
 		wp_die();
 	}
-
-	function cartlassi_admin_javascript () { 
-		?>
-		
-			<script type="text/javascript" >
-				function regenerateAPIKey () {
-		
-					const data = {
-						'action': 'cartlassi_regenerate_api_key',
-					};
-					return jQuery.post(ajaxurl, data, function(response, status) {
-						if (status === "success") {
-							const { apiKey } = JSON.parse(JSON.stringify(response));
-							jQuery('#cartlassi_field_api_key').val(apiKey);	
-						} else {
-							alert('error regenerating API key', data);
-							
-						}
-						return false;
-					}, 'json');
-				};
-
-				jQuery(document).ready(function() {
-					jQuery('#regenerate-api-key-button').click(function(event) {
-						alert('aki');
-						regenerateAPIKey();
-						Event.stop(event); // suppress default click behavior, cancel the event
-					});
-					$form = jQuery('<form></form>');
-					$form.attr('id', 'pay-form');
-					$form.attr('method', 'POST');
-					$form.attr('action', 'http://localhost:3000/shops/payment-method')
-					$form.append('<input type="hidden" name="apiKey" value="<?=get_option('cartlassi_options')['cartlassi_field_api_key']?>">');
-					jQuery('body').append($form);
-					jQuery('#pay-button').click(function(event) {
-						event.preventDefault();
-						// alert('aloha');
-						jQuery('#pay-form').submit();
-						// alert('shaloa');
-					});
-				})
-			</script> 
-
-		<?php 
-	}
-
 }
