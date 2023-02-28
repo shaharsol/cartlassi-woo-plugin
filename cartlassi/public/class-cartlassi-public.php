@@ -410,6 +410,7 @@ class Cartlassi_Public {
 						// var_dump($order);
 					}
 				}
+				break;
 			}
 		}
 
