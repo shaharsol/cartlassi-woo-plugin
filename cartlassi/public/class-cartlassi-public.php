@@ -380,21 +380,40 @@ class Cartlassi_Public {
 		}
 	}
 
-	function order_refunded ( $order_id ) {
+	function order_refunded ( $order_id, $refund_id ) {
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$args = array(
 			'headers'     => array(
 				'Authorization' => "token {$apiKey}"
 			),
 		);
-		$response = wp_remote_post( "http://host.docker.internal:3000/carts/${order_id}/refund", $args );
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW ${error_message}");
-		}	
-		// $order = wc_get_order( $order_id );
-		// error_log(var_export($order, true));
-		// var_dump($order);
+		
+		$order = wc_get_order( $order_id );
+		$refunds = $order->get_refunds();
+		foreach ($refunds as $refund) {
+			if($refund->id == $refund_id) {
+				foreach( $refund->get_items() as $refunded_item_id => $refunded_item ) {
+					$originalItemId = $refunded_item->get_meta('_refunded_item_id');
+					$item = $order->get_item($originalItemId);
+					$cart_item_key = $item->get_meta( '_cartlassi_cart_item_key' );
+					if ($cart_item_key) {
+						$args['body'] = array(
+							"shopCartId" => $cart_item_key
+						);
+						$response = wp_remote_post( "http://host.docker.internal:3000/carts/${order_id}/refund", $args );
+						if ( is_wp_error( $response ) ) {
+							$error_message = $response->get_error_message();
+							error_log("WWWWWWWWWWW ${error_message}");
+						}	
+						// $order = wc_get_order( $order_id );
+						// error_log(var_export($order, true));
+						// var_dump($order);
+					}
+				}
+			}
+		}
+
+		
 	}
 
 	/**
