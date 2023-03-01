@@ -10,76 +10,83 @@ class Cartlassi_Widget extends WP_Widget {
 	}
 
 	public function widget( $args, $instance ) {
-		if ( is_admin() ) { 
-			return;
-		}
+		// if ( is_admin() ) { 
+		// 	return;
+		// }
 		
-		extract( $args );
-		// $title = apply_filters( 'widget_title', $instance['title'] );
-		$title = 'We think you may like...';
-		
-		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		// when the widget is rendered, it adds a placeholder div tag into which
+		// a 2nd ajax call will poor content into 
 
-		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
-		);
-		$cartId = md5($_SERVER['REMOTE_ADDR']);
-		$response = wp_remote_get( "http://host.docker.internal:3000/carts/${cartId}/shop", $args );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			echo "Something went wrong: $error_message";
-			error_log($error_message);
-			return;
-		}
-
-		$body = wp_remote_retrieve_body( $response );
-var_dump($cartId);		
-		$data = json_decode( $body );
-		$products = array();
-		$cartItemToProductMap = array();
-		foreach($data as $product) {
-			$the_query = new WP_Query( array( 's' => $product->description ) );
-			if ( $the_query->have_posts() ) {
-				$the_query->the_post();
-				$postID = get_the_ID();
-				array_push($products, $postID);
-				$cartItemToProductMap += [$product->id => $postID];
+		if (wp_doing_ajax()) {
+			extract( $args );
+			// $title = apply_filters( 'widget_title', $instance['title'] );
+			$title = 'We think you may like...';
+			
+			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+	
+			$args = array(
+				'headers'     => array(
+					'Authorization' => "token {$apiKey}"
+				),
+			);
+			$cartId = md5($_SERVER['REMOTE_ADDR']);
+			$response = wp_remote_get( "http://host.docker.internal:3000/carts/${cartId}/shop", $args );
+	
+			if ( is_wp_error( $response ) ) {
+				$error_message = $response->get_error_message();
+				echo "Something went wrong: $error_message";
+				error_log($error_message);
+				return;
 			}
-			/* Restore original Post Data */
-			wp_reset_postdata();
-
-			// limit the items in widget (need to find the default # of items per line from woo config)
-			if ( count($products) == 3) {
-				break;
+	
+			$body = wp_remote_retrieve_body( $response );
+			$data = json_decode( $body );
+			$products = array();
+			$cartItemToProductMap = array();
+			foreach($data as $product) {
+				$the_query = new WP_Query( array( 's' => $product->description ) );
+				if ( $the_query->have_posts() ) {
+					$the_query->the_post();
+					$postID = get_the_ID();
+					array_push($products, $postID);
+					$cartItemToProductMap += [$product->id => $postID];
+				}
+				/* Restore original Post Data */
+				wp_reset_postdata();
+	
+				// limit the items in widget (need to find the default # of items per line from woo config)
+				if ( count($products) == 3) {
+					break;
+				}
 			}
+	
+			if (count($products) == 0) {
+				return;
+			}
+			// $options = get_option('cartlassi_options');
+			// $options['current_map'] = $cartItemToProductMap;
+			// update_option( 'cartlassi_options', $options );
+			WC()->session->set('cartlassi_current_map', $cartItemToProductMap);
+			$block_name = 'woocommerce/handpicked-products';
+			$converted_block = new WP_Block_Parser_Block( $block_name, array(
+				'products' => $products,
+			), array(), '', array() );
+	
+			$rendered_block = render_block( (array) $converted_block );
+			
+			echo $rendered_block;
+			wp_die();
+		} else {
+			echo $before_widget;
+			echo '<div style="border:1px solid;"><span>We think you may like</span>';
+			if ( ! empty( $title ) ) {
+				echo $before_title . $title . $after_title;
+			}
+			echo '<div id="cartlassi-ajax-widget"></div>';
+			echo '</div>';
+			echo $after_widget;
 		}
 
-		if (count($products) == 0) {
-			return;
-		}
-		// $options = get_option('cartlassi_options');
-		// $options['current_map'] = $cartItemToProductMap;
-		// update_option( 'cartlassi_options', $options );
-		WC()->session->set('cartlassi_current_map', $cartItemToProductMap);
-		var_dump(WC()->session->get('cartlassi_current_map'));
-		$block_name = 'woocommerce/handpicked-products';
-		$converted_block = new WP_Block_Parser_Block( $block_name, array(
-			'products' => $products,
-		), array(), '', array() );
-
-		$rendered_block = render_block( (array) $converted_block );
-
-		echo $before_widget;
-		echo '<div style="border:1px solid;"><span>We think you may like</span>';
-		if ( ! empty( $title ) ) {
-			echo $before_title . $title . $after_title;
-		}
-		echo $rendered_block;
-		echo '</div>';
-		echo $after_widget;
 
 		
 	}
