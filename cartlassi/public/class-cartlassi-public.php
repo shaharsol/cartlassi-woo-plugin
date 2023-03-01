@@ -22,6 +22,10 @@
  */
 class Cartlassi_Public {
 
+	const SIDEBAR_ID = 'sidebar-cartlassi';
+
+	const ORDER_ITEM_CART_ITEM_KEY = '_cartlassi_cart_item_key';
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -112,7 +116,7 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
-		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$apiKey = $this->getApiKey();
 		$product = wc_get_product( $product_id );
 		$body = array(
 			'shopProductId' => strval($product_id),
@@ -142,7 +146,7 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	public function remove_from_cart($cart_item_key, $that) {
-		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$apiKey = $this->getApiKey();
 		// TBD get rid of the jsin_decode(jsin_encode)... make it work in another way
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
 
@@ -169,7 +173,7 @@ class Cartlassi_Public {
 	function cartlassi_widgets_init() {
 		$cartlassi_sidebar = register_sidebar( array(
 			'name'          => __( 'Cartlassi Sidebar', 'textdomain' ),
-			'id'            => 'sidebar-cartlassi',
+			'id'            => self::SIDEBAR_ID,
 			'description'   => __( 'A sidebar for cartlassi plugin.', 'textdomain' ),
 			'before_widget' => '<li id="%1$s" class="widget %2$s">',
 			'after_widget'  => '</li>',
@@ -222,13 +226,13 @@ class Cartlassi_Public {
 		$sidebarId = $params[0]['id'];
 		$cartlassiOptions = get_option('cartlassi_options');
 		if ($sidebarId == $cartlassiOptions['cartlassi_field_before_sidebar']) {
-			echo dynamic_sidebar('sidebar-cartlassi');
+			echo dynamic_sidebar(self::SIDEBAR_ID);
 		}
 		return $params;
 	}
 
 	function load_widget() {
-		echo dynamic_sidebar('sidebar-cartlassi');
+		echo dynamic_sidebar(self::SIDEBAR_ID);
 	}
 
 	/**
@@ -269,7 +273,7 @@ class Cartlassi_Public {
 
 		$cartlassi = get_query_var('cartlassi');
 		if ( $cartlassi ) {
-			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+			$apiKey = $this->getApiKey();
 
 			$body = array(
 				'fromCartItemId' => $cartlassi,
@@ -314,7 +318,7 @@ class Cartlassi_Public {
 	function log_ajax_add_to_cart (	$productId ) {
 		$cartlassi = $_POST['cartlassi'];
 		if ( $cartlassi ) {
-			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+			$apiKey = $this->getApiKey();
 
 			$body = array(
 				'fromCartItemId' => $cartlassi,
@@ -355,14 +359,14 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	function payment_complete ( $order_id ) {
-		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$apiKey = $this->getApiKey();
 		$order = wc_get_order( $order_id );
 		$order_items = $order->get_items();
 
 		foreach( $order_items as $item_id => $item ){
 		
 			$product_id = $item->get_product_id(); // the Product id
-			$cart_item_key = $item->get_meta( '_cartlassi_cart_item_key' );
+			$cart_item_key = $item->get_meta( self::ORDER_ITEM_CART_ITEM_KEY );
 			$product = wc_get_product( $product_id );
 
 			$body = array(
@@ -389,7 +393,7 @@ class Cartlassi_Public {
 	}
 
 	function order_refunded ( $order_id, $refund_id ) {
-		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$apiKey = $this->getApiKey();
 		$args = array(
 			'headers'     => array(
 				'Authorization' => "token {$apiKey}"
@@ -403,7 +407,7 @@ class Cartlassi_Public {
 				foreach( $refund->get_items() as $refunded_item_id => $refunded_item ) {
 					$originalItemId = $refunded_item->get_meta('_refunded_item_id');
 					$item = $order->get_item($originalItemId);
-					$cart_item_key = $item->get_meta( '_cartlassi_cart_item_key' );
+					$cart_item_key = $item->get_meta( self::ORDER_ITEM_CART_ITEM_KEY );
 					if ($cart_item_key) {
 						$args['body'] = array(
 							"shopCartId" => $cart_item_key
@@ -438,7 +442,11 @@ class Cartlassi_Public {
 	 */
 	function save_cart_item_key_as_custom_order_item_metadata( $item, $cart_item_key, $values, $order ) {
 		// Save the cart item key as hidden order item meta data
-		$item->update_meta_data( '_cartlassi_cart_item_key', $cart_item_key );
+		$item->update_meta_data( self::ORDER_ITEM_CART_ITEM_KEY, $cart_item_key );
+	}
+
+	protected function getApiKey() {
+		return get_option('cartlassi_options')['cartlassi_field_api_key'];
 	}
 	
 
