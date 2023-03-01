@@ -18,6 +18,8 @@ class Cartlassi_Widget extends WP_Widget {
 		// a 2nd ajax call will poor content into 
 
 		if (wp_doing_ajax()) {
+			check_ajax_referer('cartlassi-public', 'nonce');
+
 			extract( $args );
 			// $title = apply_filters( 'widget_title', $instance['title'] );
 			$title = 'We think you may like...';
@@ -55,7 +57,7 @@ class Cartlassi_Widget extends WP_Widget {
 				wp_reset_postdata();
 	
 				// limit the items in widget (need to find the default # of items per line from woo config)
-				if ( count($products) == 3) {
+				if ( count($products) == wc_get_theme_support( 'product_blocks::default_columns', 3 )) {
 					break;
 				}
 			}
@@ -63,9 +65,6 @@ class Cartlassi_Widget extends WP_Widget {
 			if (count($products) == 0) {
 				return;
 			}
-			// $options = get_option('cartlassi_options');
-			// $options['current_map'] = $cartItemToProductMap;
-			// update_option( 'cartlassi_options', $options );
 			WC()->session->set('cartlassi_current_map', $cartItemToProductMap);
 			$block_name = 'woocommerce/handpicked-products';
 			$converted_block = new WP_Block_Parser_Block( $block_name, array(

@@ -30,19 +30,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// If woocommerce not active, abort
-// Test to see if WooCommerce is active (including network activated).
-// $plugin_path = trailingslashit( WP_PLUGIN_DIR ) . 'woocommerce/woocommerce.php';
-
-// require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-// var_dump($plugin_path);
-// var_dump(wp_get_active_network_plugins());
-if ( !class_exists( 'woocommerce' ) ) {
-// if ( !in_array( $plugin_path, wp_get_active_and_valid_plugins() ) ) {
-    // 	return;
-}
-
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
@@ -92,4 +79,8 @@ function run_cartlassi() {
 	$plugin->run();
 
 }
-run_cartlassi();
+
+// Run the plugin only if woo is active
+if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+	run_cartlassi();
+}

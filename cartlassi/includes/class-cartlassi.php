@@ -177,16 +177,16 @@ class Cartlassi {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 6, 10 );
-		$this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_public, 'remove_from_cart', 2, 10 );
+		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 6 );
+		$this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_public, 'remove_from_cart', 10, 2 );
 		$this->loader->add_action( 'widgets_init', $plugin_public, 'cartlassi_widgets_init' );
 		$this->loader->add_action( 'dynamic_sidebar_params', $plugin_public, 'display_widget' );
 		$this->loader->add_action( 'woocommerce_before_single_product', $plugin_public, 'log_click_to_product' );
 		$this->loader->add_action( 'woocommerce_init', $plugin_public, 'initiate_wc_sessions' );
-		$this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' , 1, 10);
+		$this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' , 10, 1);
 		$this->loader->add_action( 'woocommerce_ajax_added_to_cart', $plugin_public, 'log_ajax_add_to_cart', 1, 10);
 		$this->loader->add_action( 'woocommerce_payment_complete', $plugin_public, 'payment_complete' );
-		$this->loader->add_action( 'woocommerce_order_refunded', $plugin_public, 'order_refunded', 2, 10 );
+		$this->loader->add_action( 'woocommerce_order_refunded', $plugin_public, 'order_refunded', 10, 2 );
 		$this->loader->add_action( 'woocommerce_checkout_create_order_line_item', $plugin_public, 'save_cart_item_key_as_custom_order_item_metadata', 10, 4 );
 		$this->loader->add_action( 'wp_ajax_load_widget', $plugin_public, 'load_widget' );
 		$this->loader->add_action( 'wp_ajax_nopriv_load_widget', $plugin_public, 'load_widget' );

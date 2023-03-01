@@ -33,15 +33,9 @@ class Cartlassi_Deactivator {
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$args = array(
 			'method'	  => 'DELETE',
-			// 'body'        => $body,
-			// 'timeout'     => '5',
-			// 'redirection' => '5',
-			// 'httpversion' => '1.0',
-			// 'blocking'    => true,
 			'headers'     => array(
 				'Authorization' => "token {$apiKey}"
 			),
-			// 'cookies'     => array(),
 		);
 		$response = wp_remote_request( "http://host.docker.internal:3000/shops/register", $args );
 

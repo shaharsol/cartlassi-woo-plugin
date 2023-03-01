@@ -39,12 +39,6 @@ class Cartlassi_Activator {
 		);
 		$args = array(
 			'body'        => $body,
-			// 'timeout'     => '5',
-			// 'redirection' => '5',
-			// 'httpversion' => '1.0',
-			// 'blocking'    => true,
-			// 'headers'     => array(),
-			// 'cookies'     => array(),
 		);
 		$response = wp_remote_post( "http://host.docker.internal:3000/shops/register", $args );
 
