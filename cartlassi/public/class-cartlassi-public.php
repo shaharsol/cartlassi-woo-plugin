@@ -95,9 +95,13 @@ class Cartlassi_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
+		$nonce = wp_create_nonce( 'cartlassi-public' );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cartlassi-public.js', array( 'jquery' ), $this->version, false );
 
+		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
+		wp_localize_script( $this->plugin_name, 'ajax_object',
+				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => $nonce) 
+		);
 	}
 
 	/**
@@ -221,6 +225,10 @@ class Cartlassi_Public {
 			echo dynamic_sidebar('sidebar-cartlassi');
 		}
 		return $params;
+	}
+
+	function load_widget() {
+		echo dynamic_sidebar('sidebar-cartlassi');
 	}
 
 	/**

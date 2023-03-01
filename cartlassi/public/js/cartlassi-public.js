@@ -29,4 +29,19 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	$.ajax({
+		url: ajax_object.ajax_url,
+		data: {
+			action: 'load_widget',
+			nonce: ajax_object.nonce,
+		},
+		success: (data, status) => {
+			$('#cartlassi-ajax-widget').html(data);
+			jQuery( document.body ).trigger( 'post-load' );
+		},
+		error: (err) => {
+			alert(JSON.stringify(err));
+		}
+	})
+
 })( jQuery );
