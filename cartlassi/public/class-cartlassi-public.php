@@ -226,7 +226,7 @@ class Cartlassi_Public {
 	 */
 	function display_widget($params) {
 		$sidebarId = $params[0]['id'];
-		$cartlassiOptions = get_option('cartlassi_options');
+		$cartlassiOptions = get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME);
 		if ($sidebarId == $cartlassiOptions['cartlassi_field_before_sidebar']) {
 			echo dynamic_sidebar(self::SIDEBAR_ID);
 		}
@@ -448,7 +448,7 @@ class Cartlassi_Public {
 	}
 
 	protected function getApiKey() {
-		return get_option('cartlassi_options')['cartlassi_field_api_key'];
+		return get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME)[Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME];
 	}
 	
 

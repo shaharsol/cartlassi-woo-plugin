@@ -97,7 +97,7 @@ class Cartlassi_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$apiKey = $this->getApiKey();
 		$nonce = wp_create_nonce( 'cartlassi' );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cartlassi-admin.js', array( 'jquery' ), $this->version, false );
 
@@ -110,7 +110,7 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_settings_init() {
-		register_setting( 'cartlassi', 'cartlassi_options' );
+		register_setting( 'cartlassi', Cartlassi_Constants::CARTLASSI_OPTIONS_NAME );
 	
 		// Register a new section in the "cartlassi" page.
 		add_settings_section(
@@ -135,14 +135,14 @@ class Cartlassi_Admin {
 		);
 
 		add_settings_field(
-			'cartlassi_field_api_key', // As of WP 4.6 this value is used only internally.
+			Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME, // As of WP 4.6 this value is used only internally.
 									// Use $args' label_for to populate the id inside the callback.
 			__( 'Your Cartlassi API Key', 'cartlassi' ),
 			array($this, 'cartlassi_field_api_key_cb'),
 			'cartlassi',
 			'cartlassi_section_default',
 			array(
-				'label_for'         => 'cartlassi_field_api_key',
+				'label_for'         => Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME,
 				'class'             => 'cartlassi_row',
 				'cartlassi_custom_data' => 'custom',
 			)
@@ -171,7 +171,7 @@ class Cartlassi_Admin {
 
 	function cartlassi_field_before_sidebar_cb( $args ) {
 		// Get the value of the setting we've registered with register_setting()
-		$options = get_option( 'cartlassi_options' );
+		$options = get_option( Cartlassi_Constants::CARTLASSI_OPTIONS_NAME );
 		?>
 		<select
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
@@ -197,7 +197,7 @@ class Cartlassi_Admin {
 
 	function cartlassi_field_api_key_cb( $args ) {
 		// Get the value of the setting we've registered with register_setting()
-		$options = get_option( 'cartlassi_options' );
+		$options = get_option( Cartlassi_Constants::CARTLASSI_OPTIONS_NAME );
 		?>
 		<input type="text"
 				readonly
@@ -217,7 +217,7 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_field_payment_method_cb( $args ) {
-		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$apiKey = $this->getApiKey();
 
 		$args = array(
 			// 'timeout'     => '5',
@@ -273,7 +273,7 @@ class Cartlassi_Admin {
 	
 		$stripeSessionId = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
 		if ($stripeSessionId) {
-			$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+			$apiKey = $this->getApiKey();
 
 			$args = array(
 				'body'			=> array(
@@ -316,7 +316,7 @@ class Cartlassi_Admin {
 
 	function regenerate_api_key () {
 		check_ajax_referer('cartlassi', 'nonce');
-		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
+		$apiKey = $this->getApiKey();
 
 		$args = array(
 			'headers'     => array(
@@ -332,12 +332,16 @@ class Cartlassi_Admin {
 		} else {
 			$body = wp_remote_retrieve_body( $response );
 			$data = json_decode( $body );
-			$options = get_option('cartlassi_options');
-			$options['cartlassi_field_api_key'] = $data->apiKey;
-			update_option('cartlassi_options', $options);
+			$options = get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME);
+			$options[Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME] = $data->apiKey;
+			update_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME, $options);
 			// error_log("WWWWWWWWWWW $body");
 			echo $body;
 		}
 		wp_die();
+	}
+
+	protected function getApiKey() {
+		return get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME)[Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME];
 	}
 }

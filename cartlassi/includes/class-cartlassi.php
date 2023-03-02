@@ -110,8 +110,12 @@ class Cartlassi {
 	private function load_dependencies() {
 
 		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
+		 * The class responsible for config.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cartlassi-constants.php';
+
+		/**
+		 * The class responsible for config.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cartlassi-config.php';
 		
