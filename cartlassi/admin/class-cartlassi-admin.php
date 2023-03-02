@@ -114,7 +114,7 @@ class Cartlassi_Admin {
 	
 		// Register a new section in the "cartlassi" page.
 		add_settings_section(
-			'cartlassi_section_default',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
 			__( 'Cartlassi settings', 'cartlassi' ), array($this, 'cartlassi_section_default_callback'),
 			'cartlassi'
 		);
@@ -126,10 +126,10 @@ class Cartlassi_Admin {
 				__( 'Before which sidebar to display the cartlassi widget?', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
-			'cartlassi_section_default',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME,
-				'class'             => 'cartlassi_row',
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
 				'cartlassi_custom_data' => 'custom',
 			)
 		);
@@ -140,24 +140,24 @@ class Cartlassi_Admin {
 			__( 'Your Cartlassi API Key', 'cartlassi' ),
 			array($this, 'cartlassi_field_api_key_cb'),
 			'cartlassi',
-			'cartlassi_section_default',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::API_KEY_FIELD_NAME,
-				'class'             => 'cartlassi_row',
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
 				'cartlassi_custom_data' => 'custom',
 			)
 		);
 
 		add_settings_field(
-			'cartlassi_field_payment_method', // As of WP 4.6 this value is used only internally.
+			Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME, // As of WP 4.6 this value is used only internally.
 									// Use $args' label_for to populate the id inside the callback.
 			__( 'Payment Method', 'cartlassi' ),
 			array($this, 'cartlassi_field_payment_method_cb'),
 			'cartlassi',
-			'cartlassi_section_default',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
 			array(
-				'label_for'         => 'cartlassi_field_payment_method',
-				'class'             => 'cartlassi_row',
+				'label_for'         => Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
 				'cartlassi_custom_data' => 'custom',
 			)
 		);
