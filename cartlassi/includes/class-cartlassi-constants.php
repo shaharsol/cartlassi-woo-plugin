@@ -40,6 +40,9 @@ class Cartlassi_Constants {
 	const BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME = 'cartlassi_field_before_sidebar_product_tag';
 	const BEFORE_SIDEBAR_PRODUCT_FIELD_NAME 	= 'cartlassi_field_before_sidebar_product';
 	const BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME = 'cartlassi_field_before_sidebar_other_pages';
+	const OTHER_PAGES_OPTION_SHOW_EXCEPT		= 'show_except';
+	const OTHER_PAGES_OPTION_DONT_SHOW_BUT		= 'dont_show_but';
+	
 	
 
 }

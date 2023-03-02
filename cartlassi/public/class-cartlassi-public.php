@@ -220,6 +220,20 @@ class Cartlassi_Public {
 	 * 
 	 * @since    1.0.0
 	 */
+	function display_widget_helper ($boolFunc, $optionName, $sidebarId, $cartlassiOptions) {
+		if ( $boolFunc() ) {
+			if ( !isset($cartlassiOptions[$optionName]) || !$cartlassiOptions[$optionName] ) {
+				return true;
+			}
+			if ($sidebarId == $cartlassiOptions[$optionName]) {
+				echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+			}
+			return false;
+		}
+		return true;
+		
+	}
+
 	function display_widget($params) {
 
 		// First determine if to show the widget at all.
@@ -227,12 +241,47 @@ class Cartlassi_Public {
 			return $params;
 		}
 
-
 		$sidebarId = $params[0]['id'];
 		$cartlassiOptions = get_option(Cartlassi_Constants::OPTIONS_NAME);
-		if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME]) {
-			echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+
+		$invocations = array (
+			array (
+				'bool_func' => 'is_shop',
+				'option_name' => $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME]
+			),
+			array (
+				'bool_func' => 'is_product_category',
+				'option_name' => $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME]
+			),
+			array (
+				'bool_func' =>'is_product_tag',
+				'option_name' => $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME]
+			),
+			array (
+				'bool_func' => 'is_product',
+				'option_name' => $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME]
+			),
+		);
+
+		foreach($invocations as $invocation) {
+			$continue = $this->display_widget_helper($invocation['bool_func'], $invocation['option_name'], $sidebarId, $cartlassiOptions);
+			if ( !$continue ) {
+				break;
+			}
 		}
+
+		// if ( is_shop() ) {
+		// 	if ( !isset($cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME]) || !$cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME] ) {
+		// 		return $params;
+		// 	}
+		// 	if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME]) {
+		// 		echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+		// 	}
+		// 	return $params;
+		// }
+		// if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME]) {
+		// 	echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+		// }
 		return $params;
 	}
 

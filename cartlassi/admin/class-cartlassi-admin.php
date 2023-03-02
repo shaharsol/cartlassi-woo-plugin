@@ -256,12 +256,12 @@ class Cartlassi_Admin {
 				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
 				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
 				<?php checked( $options[ $args['label_for'] ], 'showexcept' , true ) ?>
-				value="showexcept"> <?php echo __('Show on all other pages except'); ?>
+				value="<?php echo esc_attr(Cartlassi_Constants::OTHER_PAGES_OPTION_SHOW_EXCEPT)?>"> <?php echo __('Show on all other pages except'); ?>
 		<input type="radio" id="<?php echo esc_attr( $args['label_for'] ); ?>"
 				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
 				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
 				<?php checked( $options[ $args['label_for'] ], 'dontshowbut' , true ) ?>
-				value="dontshowbut"> <?php echo __('Don\'t show on any other page but'); ?>
+				value="<?php echo esc_attr(Cartlassi_Constants::OTHER_PAGES_OPTION_DONT_SHOW_BUT)?>"> <?php echo __('Don\'t show on any other page but'); ?>
 		<p class="description">
 			<?php echo __('Enter page names separated by commas. example: about-us, jobs'); ?>
 			<input type="text"
