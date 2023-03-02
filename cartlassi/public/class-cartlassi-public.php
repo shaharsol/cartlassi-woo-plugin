@@ -223,7 +223,7 @@ class Cartlassi_Public {
 	function display_widget($params) {
 		$sidebarId = $params[0]['id'];
 		$cartlassiOptions = get_option(Cartlassi_Constants::OPTIONS_NAME);
-		if ($sidebarId == $cartlassiOptions['cartlassi_field_before_sidebar']) {
+		if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME]) {
 			echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 		}
 		return $params;
@@ -249,7 +249,7 @@ class Cartlassi_Public {
 		// TBD make sure this happens ONLY in cartlassi widget
 		// otherwise we take over links from every widget in the site...
 
-		$cartlassiCartItemId = array_search( $product->id, WC()->session->get( 'cartlassi_current_map' ) ); 
+		$cartlassiCartItemId = array_search( $product->id, WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
 		if ($cartlassiCartItemId) {
 			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
 			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-cartlassi="'.$cartlassiCartItemId.'"', $html);

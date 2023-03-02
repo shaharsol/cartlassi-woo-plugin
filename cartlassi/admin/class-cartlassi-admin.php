@@ -121,14 +121,14 @@ class Cartlassi_Admin {
 	
 		// Register a new field in the "cartlassi_section_developers" section, inside the "cartlassi" page.
 		add_settings_field(
-			'cartlassi_field_before_sidebar', // As of WP 4.6 this value is used only internally.
+			Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME, // As of WP 4.6 this value is used only internally.
 									// Use $args' label_for to populate the id inside the callback.
 				__( 'Before which sidebar to display the cartlassi widget?', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
 			'cartlassi_section_default',
 			array(
-				'label_for'         => 'cartlassi_field_before_sidebar',
+				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME,
 				'class'             => 'cartlassi_row',
 				'cartlassi_custom_data' => 'custom',
 			)
@@ -176,10 +176,10 @@ class Cartlassi_Admin {
 		<select
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
 				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
-				name="cartlassi_options[<?php echo esc_attr( $args['label_for'] ); ?>]">
+				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]">
 				<?php 
 					foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) { 
-						if (is_active_sidebar($sidebar['id']) && $sidebar['id'] !== 'sidebar-cartlassi') {
+						if (is_active_sidebar($sidebar['id']) && $sidebar['id'] !== Cartlassi_Constants::SIDEBAR_ID) {
 				?>
 							<option value="<?php echo ( $sidebar['id'] ); ?>" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], $sidebar['id'] , false ) ) : ( '' ); ?>>
 									<?php echo ( $sidebar['name'] ); ?>

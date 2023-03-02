@@ -68,7 +68,7 @@ class Cartlassi_Widget extends WP_Widget {
 			if (count($products) == 0) {
 				return;
 			}
-			WC()->session->set('cartlassi_current_map', $cartItemToProductMap);
+			WC()->session->set(Cartlassi_Constants::CURRENT_MAP_NAME, $cartItemToProductMap);
 			$block_name = 'woocommerce/handpicked-products';
 			$converted_block = new WP_Block_Parser_Block( $block_name, array(
 				'products' => $products,
