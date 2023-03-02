@@ -43,6 +43,7 @@ class Cartlassi_Public {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
+	private $config;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -51,10 +52,11 @@ class Cartlassi_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $config ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->config = $config;
 
 	}
 
@@ -131,7 +133,7 @@ class Cartlassi_Public {
 			),
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
-		$response = wp_remote_post( "http://host.docker.internal:3000/carts/${cartId}", $args );
+		$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			error_log("error in add_to_cart: ${error_message}");
@@ -163,7 +165,7 @@ class Cartlassi_Public {
 			),
 		);
 		$cartId = md5($_SERVER['REMOTE_ADDR']);
-		$response = wp_remote_request( "http://host.docker.internal:3000/carts/${cartId}", $args );
+		$response = wp_remote_request( "{$this->config->get('api_url')}/carts/${cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			error_log("error in remove_from_cart: ${error_message}");
@@ -285,7 +287,7 @@ class Cartlassi_Public {
 					'Authorization' => "Bearer {$apiKey}"
 				),
 			);
-			$response = wp_remote_post( "http://host.docker.internal:3000/clicks", $args );
+			$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
 				error_log("error in log_click_to_product: ${error_message}");
@@ -330,7 +332,7 @@ class Cartlassi_Public {
 					'Authorization' => "Bearer {$apiKey}"
 				),
 			);
-			$response = wp_remote_post( "http://host.docker.internal:3000/clicks", $args );
+			$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
 				error_log("error in log_ajax_add_to_cart: ${error_message}");
@@ -383,7 +385,7 @@ class Cartlassi_Public {
 				),
 			);
 			$cartId = md5($_SERVER['REMOTE_ADDR']);
-			$response = wp_remote_post( "http://host.docker.internal:3000/carts/${cartId}/checkout", $args );
+			$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${cartId}/checkout", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
 				error_log("WWWWWWWWWWW ${error_message}");
@@ -412,7 +414,7 @@ class Cartlassi_Public {
 						$args['body'] = array(
 							"shopCartId" => $cart_item_key
 						);
-						$response = wp_remote_post( "http://host.docker.internal:3000/carts/${order_id}/refund", $args );
+						$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${order_id}/refund", $args );
 						if ( is_wp_error( $response ) ) {
 							$error_message = $response->get_error_message();
 							error_log("WWWWWWWWWWW ${error_message}");

@@ -30,6 +30,7 @@ class Cartlassi_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
+		$config = new Cartlassi_Config();
 		$apiKey = get_option('cartlassi_options')['cartlassi_field_api_key'];
 		$args = array(
 			'method'	  => 'DELETE',
@@ -37,13 +38,13 @@ class Cartlassi_Deactivator {
 				'Authorization' => "token {$apiKey}"
 			),
 		);
-		$response = wp_remote_request( "http://host.docker.internal:3000/shops/register", $args );
+		$response = wp_remote_request( "{$config->get('api_url')}/shops/register", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			echo "Something went wrong: $error_message";
 		} else {
-			delete_option ('cartlassi_api_key');
+			// delete_option ('cartlassi_api_key');
 		}
 
 	}

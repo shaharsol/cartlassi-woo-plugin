@@ -39,6 +39,7 @@ class Cartlassi_Admin {
 	 * @var      string    $version    The current version of this cartlassi.
 	 */
 	private $version;
+	private $config;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -47,10 +48,11 @@ class Cartlassi_Admin {
 	 * @param      string    $plugin_name       The name of this cartlassi.
 	 * @param      string    $version    The version of this cartlassi.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $config ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->config = $config;
 
 	}
 
@@ -228,7 +230,7 @@ class Cartlassi_Admin {
 			// 'cookies'     => array(),
 		);
 		
-		$response = wp_remote_get( "http://host.docker.internal:3000/shops/payment-method", $args );
+		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payment-method", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -281,7 +283,7 @@ class Cartlassi_Admin {
 					'Authorization' => "token {$apiKey}"
 				),
 			);
-			$response = wp_remote_post( "http://host.docker.internal:3000/shops/complete-stripe", $args );
+			$response = wp_remote_post( "{$this->config->get('api_url')}/shops/complete-stripe", $args );
 		}
 		// add error/update messages
 	
@@ -321,7 +323,7 @@ class Cartlassi_Admin {
 				'Authorization' => "token {$apiKey}"
 			),
 		);
-		$response = wp_remote_post( "http://host.docker.internal:3000/shops/regenerate-api-key", $args );
+		$response = wp_remote_post( "{$this->config->get('api_url')}/shops/regenerate-api-key", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
