@@ -202,7 +202,7 @@ class Cartlassi_Admin {
 		<input type="text"
 				readonly
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
-				name="cartlassi_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
 				value="<?php echo isset( $options[ $args['label_for'] ] ) ? $options[ $args['label_for'] ] : '' ; ?>"
 				class="regular-text"
 				>
@@ -220,14 +220,9 @@ class Cartlassi_Admin {
 		$apiKey = $this->getApiKey();
 
 		$args = array(
-			// 'timeout'     => '5',
-			// 'redirection' => '5',
-			// 'httpversion' => '1.0',
-			// 'blocking'    => true,
 			'headers'     => array(
 				'Authorization' => "token {$apiKey}"
 			),
-			// 'cookies'     => array(),
 		);
 		
 		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payment-method", $args );
