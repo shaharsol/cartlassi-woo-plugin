@@ -26,7 +26,10 @@
  */
 class Cartlassi_Constants {
 
-	const CARTLASSI_OPTIONS_NAME = 'cartlassi_options';
-	const CARTLASSI_API_KEY_FIELD_NAME = 'cartlassi_field_api_key';
+	const OPTIONS_NAME = 'cartlassi_options';
+	const API_KEY_FIELD_NAME = 'cartlassi_field_api_key';
+	const SIDEBAR_ID = 'sidebar-cartlassi';
+	const ORDER_ITEM_CART_ITEM_KEY = '_cartlassi_cart_item_key';
+
 
 }

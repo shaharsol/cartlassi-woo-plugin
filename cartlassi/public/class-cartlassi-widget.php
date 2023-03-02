@@ -27,7 +27,7 @@ class Cartlassi_Widget extends WP_Widget {
 			// $title = apply_filters( 'widget_title', $instance['title'] );
 			$title = 'We think you may like...';
 			
-			$apiKey = get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME)[Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME];
+			$apiKey = get_option(Cartlassi_Constants::OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	
 			$args = array(
 				'headers'     => array(

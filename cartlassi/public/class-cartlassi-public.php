@@ -22,10 +22,6 @@
  */
 class Cartlassi_Public {
 
-	const SIDEBAR_ID = 'sidebar-cartlassi';
-
-	const ORDER_ITEM_CART_ITEM_KEY = '_cartlassi_cart_item_key';
-
 	/**
 	 * The ID of this plugin.
 	 *
@@ -175,7 +171,7 @@ class Cartlassi_Public {
 	function cartlassi_widgets_init() {
 		$cartlassi_sidebar = register_sidebar( array(
 			'name'          => __( 'Cartlassi Sidebar', 'textdomain' ),
-			'id'            => self::SIDEBAR_ID,
+			'id'            => Cartlassi_Constants::SIDEBAR_ID,
 			'description'   => __( 'A sidebar for cartlassi plugin.', 'textdomain' ),
 			'before_widget' => '<li id="%1$s" class="widget %2$s">',
 			'after_widget'  => '</li>',
@@ -226,15 +222,15 @@ class Cartlassi_Public {
 	 */
 	function display_widget($params) {
 		$sidebarId = $params[0]['id'];
-		$cartlassiOptions = get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME);
+		$cartlassiOptions = get_option(Cartlassi_Constants::OPTIONS_NAME);
 		if ($sidebarId == $cartlassiOptions['cartlassi_field_before_sidebar']) {
-			echo dynamic_sidebar(self::SIDEBAR_ID);
+			echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 		}
 		return $params;
 	}
 
 	function load_widget() {
-		echo dynamic_sidebar(self::SIDEBAR_ID);
+		echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 	}
 
 	/**
@@ -368,7 +364,7 @@ class Cartlassi_Public {
 		foreach( $order_items as $item_id => $item ){
 		
 			$product_id = $item->get_product_id(); // the Product id
-			$cart_item_key = $item->get_meta( self::ORDER_ITEM_CART_ITEM_KEY );
+			$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
 			$product = wc_get_product( $product_id );
 
 			$body = array(
@@ -409,7 +405,7 @@ class Cartlassi_Public {
 				foreach( $refund->get_items() as $refunded_item_id => $refunded_item ) {
 					$originalItemId = $refunded_item->get_meta('_refunded_item_id');
 					$item = $order->get_item($originalItemId);
-					$cart_item_key = $item->get_meta( self::ORDER_ITEM_CART_ITEM_KEY );
+					$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
 					if ($cart_item_key) {
 						$args['body'] = array(
 							"shopCartId" => $cart_item_key
@@ -444,11 +440,11 @@ class Cartlassi_Public {
 	 */
 	function save_cart_item_key_as_custom_order_item_metadata( $item, $cart_item_key, $values, $order ) {
 		// Save the cart item key as hidden order item meta data
-		$item->update_meta_data( self::ORDER_ITEM_CART_ITEM_KEY, $cart_item_key );
+		$item->update_meta_data( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY, $cart_item_key );
 	}
 
 	protected function getApiKey() {
-		return get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME)[Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME];
+		return get_option(Cartlassi_Constants::OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	}
 	
 

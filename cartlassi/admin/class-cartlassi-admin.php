@@ -110,7 +110,7 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_settings_init() {
-		register_setting( 'cartlassi', Cartlassi_Constants::CARTLASSI_OPTIONS_NAME );
+		register_setting( 'cartlassi', Cartlassi_Constants::OPTIONS_NAME );
 	
 		// Register a new section in the "cartlassi" page.
 		add_settings_section(
@@ -135,14 +135,14 @@ class Cartlassi_Admin {
 		);
 
 		add_settings_field(
-			Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME, // As of WP 4.6 this value is used only internally.
+			Cartlassi_Constants::API_KEY_FIELD_NAME, // As of WP 4.6 this value is used only internally.
 									// Use $args' label_for to populate the id inside the callback.
 			__( 'Your Cartlassi API Key', 'cartlassi' ),
 			array($this, 'cartlassi_field_api_key_cb'),
 			'cartlassi',
 			'cartlassi_section_default',
 			array(
-				'label_for'         => Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME,
+				'label_for'         => Cartlassi_Constants::API_KEY_FIELD_NAME,
 				'class'             => 'cartlassi_row',
 				'cartlassi_custom_data' => 'custom',
 			)
@@ -171,7 +171,7 @@ class Cartlassi_Admin {
 
 	function cartlassi_field_before_sidebar_cb( $args ) {
 		// Get the value of the setting we've registered with register_setting()
-		$options = get_option( Cartlassi_Constants::CARTLASSI_OPTIONS_NAME );
+		$options = get_option( Cartlassi_Constants::OPTIONS_NAME );
 		?>
 		<select
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
@@ -197,7 +197,7 @@ class Cartlassi_Admin {
 
 	function cartlassi_field_api_key_cb( $args ) {
 		// Get the value of the setting we've registered with register_setting()
-		$options = get_option( Cartlassi_Constants::CARTLASSI_OPTIONS_NAME );
+		$options = get_option( Cartlassi_Constants::OPTIONS_NAME );
 		?>
 		<input type="text"
 				readonly
@@ -332,9 +332,9 @@ class Cartlassi_Admin {
 		} else {
 			$body = wp_remote_retrieve_body( $response );
 			$data = json_decode( $body );
-			$options = get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME);
-			$options[Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME] = $data->apiKey;
-			update_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME, $options);
+			$options = get_option(Cartlassi_Constants::OPTIONS_NAME);
+			$options[Cartlassi_Constants::API_KEY_FIELD_NAME] = $data->apiKey;
+			update_option(Cartlassi_Constants::OPTIONS_NAME, $options);
 			// error_log("WWWWWWWWWWW $body");
 			echo $body;
 		}
@@ -342,6 +342,6 @@ class Cartlassi_Admin {
 	}
 
 	protected function getApiKey() {
-		return get_option(Cartlassi_Constants::CARTLASSI_OPTIONS_NAME)[Cartlassi_Constants::CARTLASSI_API_KEY_FIELD_NAME];
+		return get_option(Cartlassi_Constants::OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	}
 }
