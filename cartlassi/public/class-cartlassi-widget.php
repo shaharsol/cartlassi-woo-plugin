@@ -72,6 +72,7 @@ class Cartlassi_Widget extends WP_Widget {
 			$block_name = 'woocommerce/handpicked-products';
 			$converted_block = new WP_Block_Parser_Block( $block_name, array(
 				'products' => $products,
+				'title'		=> 'We think you may like...'
 			), array(), '', array() );
 	
 			$rendered_block = render_block( (array) $converted_block );

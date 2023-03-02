@@ -121,22 +121,72 @@ class Cartlassi_Admin {
 	
 		// Register a new field in the "cartlassi_section_developers" section, inside the "cartlassi" page.
 		add_settings_field(
-			Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME, // As of WP 4.6 this value is used only internally.
-									// Use $args' label_for to populate the id inside the callback.
-				__( 'Before which sidebar to display the cartlassi widget?', 'cartlassi' ),
+			Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME, 
+			__( 'Shop page', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
 			Cartlassi_Constants::DEFAULT_SECTION_NAME,
 			array(
-				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME,
+				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => 'custom',
+				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', 'cartlassi' ),
 			)
 		);
 
 		add_settings_field(
-			Cartlassi_Constants::API_KEY_FIELD_NAME, // As of WP 4.6 this value is used only internally.
-									// Use $args' label_for to populate the id inside the callback.
+			Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME, 
+			__( 'Category page', 'cartlassi' ),
+			array($this, 'cartlassi_field_before_sidebar_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', 'cartlassi' ),
+			)
+		);
+
+		add_settings_field(
+			Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME, 
+			__( 'Product tag page', 'cartlassi' ),
+			array($this, 'cartlassi_field_before_sidebar_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', 'cartlassi' ),
+			)
+		);
+
+		add_settings_field(
+			Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME, 
+			__( 'Product page', 'cartlassi' ),
+			array($this, 'cartlassi_field_before_sidebar_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
+			)
+		);
+
+		add_settings_field(
+			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME, 
+			__( 'Other pages', 'cartlassi' ),
+			array($this, 'cartlassi_field_before_sidebar_other_pages_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
+			)
+		);
+
+		add_settings_field(
+			Cartlassi_Constants::API_KEY_FIELD_NAME, 
 			__( 'Your Cartlassi API Key', 'cartlassi' ),
 			array($this, 'cartlassi_field_api_key_cb'),
 			'cartlassi',
@@ -149,8 +199,7 @@ class Cartlassi_Admin {
 		);
 
 		add_settings_field(
-			Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME, // As of WP 4.6 this value is used only internally.
-									// Use $args' label_for to populate the id inside the callback.
+			Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME, 
 			__( 'Payment Method', 'cartlassi' ),
 			array($this, 'cartlassi_field_payment_method_cb'),
 			'cartlassi',
@@ -165,7 +214,7 @@ class Cartlassi_Admin {
 
 	function cartlassi_section_default_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'The place to configure Cartlassi.', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'In order not to mess with your template files, we\'ll hook into an existing and *active* sidebar and display the Cartlassi widget just before it. Please select which sidebar it should be for each of the page types.', 'cartlassi' ); ?></p>
 		<?php
 	}
 
@@ -188,12 +237,43 @@ class Cartlassi_Admin {
 						}
 					} 
 				?>
+				<option value="" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], '' , false ) ) : ( '' ); ?>>
+					<?php echo __( 'Don\'t show at all', 'cartlassi' ); ?>
+				</option>
+
 		</select>
 		<p class="description">
-			<?php esc_attr_e( 'In order not to mess with your template files, we\'ll hook into an existing and *active* sidebar and display the Cartlassi widget just before it. Please select which sidebar it should be.', 'cartlassi' ); ?>
+			<?php echo $args['cartlassi_custom_data']; ?>
 		</p>
 		<?php
 	}
+
+	function cartlassi_field_before_sidebar_other_pages_cb( $args ) {
+		// Get the value of the setting we've registered with register_setting()
+		$options = get_option( Cartlassi_Constants::OPTIONS_NAME );
+		?>
+		<input type="radio" id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
+				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				<?php checked( $options[ $args['label_for'] ], 'showexcept' , true ) ?>
+				value="showexcept"> <?php echo __('Show on all other pages except'); ?>
+		<input type="radio" id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
+				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				<?php checked( $options[ $args['label_for'] ], 'dontshowbut' , true ) ?>
+				value="dontshowbut"> <?php echo __('Don\'t show on any other page but'); ?>
+		<p class="description">
+			<?php echo __('Enter page names separated by commas. example: about-us, jobs'); ?>
+			<input type="text"
+				id="<?php echo esc_attr( $args['label_for'].'_pages' ); ?>"
+				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'].'_pages' ); ?>]"
+				value="<?php echo isset( $options[ $args['label_for'].'_pages' ] ) ? $options[ $args['label_for'].'_pages' ] : '' ; ?>"
+				class="regular-text"
+				>
+		</p>
+		<?php
+	}
+
 
 	function cartlassi_field_api_key_cb( $args ) {
 		// Get the value of the setting we've registered with register_setting()

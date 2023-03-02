@@ -210,7 +210,7 @@ class Cartlassi_Public {
 	}	
 
 	/**
-	 * action: dynamic_sidebar_params
+	 * filter: dynamic_sidebar_params
 	 *
 	 * Since we can't modify the theme, the only way to place the cartlassi widget
 	 * is relative to another widget. 
@@ -221,6 +221,13 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	function display_widget($params) {
+
+		// First determine if to show the widget at all.
+		if ( is_cart() || is_checkout() || is_account_page() || is_wc_endpoint_url() ) {
+			return $params;
+		}
+
+
 		$sidebarId = $params[0]['id'];
 		$cartlassiOptions = get_option(Cartlassi_Constants::OPTIONS_NAME);
 		if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME]) {
