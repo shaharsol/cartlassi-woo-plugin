@@ -1,12 +1,15 @@
 <?php
 
 class Cartlassi_Widget extends WP_Widget {
+	private $config;
+
 	public function __construct() {
 		parent::__construct(
 			'cartlassi_widget', // Base ID
 			'Cartlassi_Widget', // Name
 			array( 'description' => __( 'Cartlassi Widget', 'text_domain' ) ) // Args
 		);
+		$this->config = new Cartlassi_Config();
 	}
 
 	public function widget( $args, $instance ) {
@@ -32,7 +35,7 @@ class Cartlassi_Widget extends WP_Widget {
 				),
 			);
 			$cartId = md5($_SERVER['REMOTE_ADDR']);
-			$response = wp_remote_get( "http://host.docker.internal:3000/carts/${cartId}/shop", $args );
+			$response = wp_remote_get( "{$this->config->get('api_url')}/carts/${cartId}/shop", $args );
 	
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
