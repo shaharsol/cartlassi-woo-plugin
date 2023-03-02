@@ -26,15 +26,15 @@
  */
 class Cartlassi_Constants {
 
-	const OPTIONS_NAME = 'cartlassi_options';
-	const API_KEY_FIELD_NAME = 'cartlassi_field_api_key';
-	const PAYMENT_METHOD_FIELD_NAME = 'cartlassi_field_payment_method';
-	const BEFORE_SIDEBAR_FIELD_NAME = 'cartlassi_field_before_sidebar';
-	const SIDEBAR_ID = 'sidebar-cartlassi';
-	const ORDER_ITEM_CART_ITEM_KEY = '_cartlassi_cart_item_key';
-	const CURRENT_MAP_NAME = 'cartlassi_current_map';
-	const DEFAULT_SECTION_NAME = 'cartlassi_section_default';
-	const OPTIONS_ROW_CLASS_NAME = 'cartlassi_row';
+	const OPTIONS_NAME 				= 'cartlassi_options';
+	const API_KEY_FIELD_NAME 		= 'cartlassi_field_api_key';
+	const PAYMENT_METHOD_FIELD_NAME	= 'cartlassi_field_payment_method';
+	const BEFORE_SIDEBAR_FIELD_NAME	= 'cartlassi_field_before_sidebar';
+	const SIDEBAR_ID 				= 'sidebar-cartlassi';
+	const ORDER_ITEM_CART_ITEM_KEY 	= '_cartlassi_cart_item_key';
+	const CURRENT_MAP_NAME			= 'cartlassi_current_map';
+	const DEFAULT_SECTION_NAME 		= 'cartlassi_section_default';
+	const OPTIONS_ROW_CLASS_NAME 	= 'cartlassi_row';
 	
 
 }
