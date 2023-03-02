@@ -260,6 +260,17 @@ class Cartlassi_Admin {
 		);
 	}
 
+	function cartlassi_wc_options_page() {
+		wc_admin_connect_page(
+			array(
+				'id'        => 'cartlassi-woocommerce-settings',
+				'screen_id' => 'woocommerce_page_wc-settings-general',
+				'title'     => array('Settings', 'General'),
+				'path'      => add_query_arg( 'page', 'wc-settings', 'admin.php' ),
+			)
+		);
+	}
+
 	function cartlassi_options_page_html() {
 		// check user capabilities
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -338,5 +349,18 @@ class Cartlassi_Admin {
 
 	protected function getApiKey() {
 		return get_option(Cartlassi_Constants::OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+	}
+
+	public function add_action_links($links, $file){
+		error_log($file);
+		if ($file == 'cartlassi/cartlassi.php') {
+			$mylinks = array(
+			 '<a href="' . admin_url( 'admin.php?page=cartlassi' ) . '">Settings</a>',
+			);
+			error_log(var_export($mylinks,true));
+			return array_merge( $mylinks , $links );
+		}else{
+			return $links;
+		}
 	}
 }
