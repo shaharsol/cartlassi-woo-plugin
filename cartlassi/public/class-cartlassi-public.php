@@ -247,19 +247,19 @@ class Cartlassi_Public {
 		$invocations = array (
 			array (
 				'bool_func' => 'is_shop',
-				'option_name' => $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME]
+				'option_name' => Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME
 			),
 			array (
 				'bool_func' => 'is_product_category',
-				'option_name' => $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME]
+				'option_name' => Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME
 			),
 			array (
 				'bool_func' =>'is_product_tag',
-				'option_name' => $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME]
+				'option_name' => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME
 			),
 			array (
 				'bool_func' => 'is_product',
-				'option_name' => $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME]
+				'option_name' => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME
 			),
 		);
 
@@ -270,18 +270,6 @@ class Cartlassi_Public {
 			}
 		}
 
-		// if ( is_shop() ) {
-		// 	if ( !isset($cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME]) || !$cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME] ) {
-		// 		return $params;
-		// 	}
-		// 	if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME]) {
-		// 		echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
-		// 	}
-		// 	return $params;
-		// }
-		// if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_FIELD_NAME]) {
-		// 	echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
-		// }
 		return $params;
 	}
 
