@@ -42,6 +42,6 @@
 		error: (err) => {
 			alert(JSON.stringify(err));
 		}
-	})
+	});
 
 })( jQuery );

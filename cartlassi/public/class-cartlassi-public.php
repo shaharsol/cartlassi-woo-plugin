@@ -294,6 +294,7 @@ class Cartlassi_Public {
 
 	function load_widget() {
 		echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+		wp_die();
 	}
 
 	/**
@@ -315,7 +316,7 @@ class Cartlassi_Public {
 		$cartlassiCartItemId = array_search( $product->id, WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
 		if ($cartlassiCartItemId) {
 			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
-			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-cartlassi="'.$cartlassiCartItemId.'"', $html);
+			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->id.'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
 			return $withCartlassiHrefs;
 		}
 		return $html;
@@ -352,6 +353,32 @@ class Cartlassi_Public {
 				error_log("error in log_click_to_product: ${error_message}");
 			}
 		}
+	}
+
+	function log_click () {
+
+		$cartlassi = $_POST('cartlassi');
+		$product_id = $_POST('product_id');
+		if ( $cartlassi ) {
+			$apiKey = $this->getApiKey();
+
+			$body = array(
+				'fromCartItemId' => $cartlassi,
+				'toShopProductId' => strval($product_id),
+			);
+			$args = array(
+				'body'        => $body,
+				'headers'     => array(
+					'Authorization' => "Bearer {$apiKey}"
+				),
+			);
+			$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
+			if ( is_wp_error( $response ) ) {
+				$error_message = $response->get_error_message();
+				error_log("error in log_click: ${error_message}");
+			}
+		}
+		wp_die();
 	}
 
 	function initiate_wc_sessions () {
@@ -397,6 +424,8 @@ class Cartlassi_Public {
 				error_log("error in log_ajax_add_to_cart: ${error_message}");
 			}
 		}
+		// no wp_die() here. we hook to an ajax action which will fire it itself. if we we wp_die
+		// here than we're breaking the add to cart experience.
 	}
 
 	/**

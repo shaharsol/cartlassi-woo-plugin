@@ -66,7 +66,7 @@ class Cartlassi_Widget extends WP_Widget {
 			}
 	
 			if (count($products) == 0) {
-				return;
+				return; // TBD replace to wp_die() here?
 			}
 			WC()->session->set(Cartlassi_Constants::CURRENT_MAP_NAME, $cartItemToProductMap);
 			$block_name = 'woocommerce/handpicked-products';
@@ -78,6 +78,20 @@ class Cartlassi_Widget extends WP_Widget {
 			$rendered_block = render_block( (array) $converted_block );
 			
 			echo $rendered_block;
+			?>
+			<script>
+				jQuery('#cartlassi-ajax-widget a').click((event) => {
+					await jQuery.post(ajax_object.ajax_url, {
+						action: 'log_click',
+						nonce: ajax_object.nonce,
+						product_id: $(this).data('product-id'),
+						cartlassi_id: $(this).data('cartlassi'), 
+					}, function(response, status) {
+						
+					}, 'json').promise();
+				})
+			</script>
+			<?php
 			wp_die();
 		} else {
 			echo $before_widget;
