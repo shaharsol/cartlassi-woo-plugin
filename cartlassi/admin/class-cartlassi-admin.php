@@ -175,12 +175,38 @@ class Cartlassi_Admin {
 		add_settings_field(
 			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME, 
 			__( 'Other pages', 'cartlassi' ),
-			array($this, 'cartlassi_field_before_sidebar_other_pages_cb'),
+			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
 			Cartlassi_Constants::DEFAULT_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
+			)
+		);
+
+		add_settings_field(
+			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME, 
+			__( '', 'cartlassi' ),
+			array($this, 'cartlassi_field_before_sidebar_other_pages_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME,
+				'class'             => 'cartlassi-stick-to-upper-field1',
+				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
+			)
+		);
+
+		add_settings_field(
+			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME, 
+			__( '', 'cartlassi' ),
+			array($this, 'cartlassi_field_before_sidebar_other_pages_pages_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME,
+				'class'             => 'cartlassi-stick-to-upper-field2',
 				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
 			)
 		);
@@ -246,6 +272,7 @@ class Cartlassi_Admin {
 			<?php echo $args['cartlassi_custom_data']; ?>
 		</p>
 		<?php
+		
 	}
 
 	function cartlassi_field_before_sidebar_other_pages_cb( $args ) {
@@ -255,22 +282,32 @@ class Cartlassi_Admin {
 		<input type="radio" id="<?php echo esc_attr( $args['label_for'] ); ?>"
 				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
 				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
-				<?php checked( $options[ $args['label_for'] ], 'showexcept' , true ) ?>
+				<?php checked( $options[ $args['label_for'] ], Cartlassi_Constants::OTHER_PAGES_OPTION_SHOW_EXCEPT , true ) ?>
 				value="<?php echo esc_attr(Cartlassi_Constants::OTHER_PAGES_OPTION_SHOW_EXCEPT)?>"> <?php echo __('Show on all other pages except'); ?>
 		<input type="radio" id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				class="cartlassi-push-right"
 				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
 				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
-				<?php checked( $options[ $args['label_for'] ], 'dontshowbut' , true ) ?>
+				<?php checked( $options[ $args['label_for'] ], Cartlassi_Constants::OTHER_PAGES_OPTION_DONT_SHOW_BUT , true ) ?>
 				value="<?php echo esc_attr(Cartlassi_Constants::OTHER_PAGES_OPTION_DONT_SHOW_BUT)?>"> <?php echo __('Don\'t show on any other page but'); ?>
+		
+		<?php
+	}
+
+	function cartlassi_field_before_sidebar_other_pages_pages_cb( $args ) {
+		$options = get_option( Cartlassi_Constants::OPTIONS_NAME );
+		?>
+		
+		<input type="text"
+			id="<?php echo esc_attr( $args['label_for'] ); ?>"
+			name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
+			value="<?php echo isset( $options[ $args['label_for'] ] ) ? $options[ $args['label_for'] ] : '' ; ?>"
+			class="regular-text"
+			>
 		<p class="description">
 			<?php echo __('Enter page names separated by commas. example: about-us, jobs'); ?>
-			<input type="text"
-				id="<?php echo esc_attr( $args['label_for'].'_pages' ); ?>"
-				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'].'_pages' ); ?>]"
-				value="<?php echo isset( $options[ $args['label_for'].'_pages' ] ) ? $options[ $args['label_for'].'_pages' ] : '' ; ?>"
-				class="regular-text"
-				>
 		</p>
+		
 		<?php
 	}
 

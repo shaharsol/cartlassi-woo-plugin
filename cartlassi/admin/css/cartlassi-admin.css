@@ -2,3 +2,17 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+ .cartlassi-stick-to-upper-field1 {
+    position: relative;
+    top: -15px;
+ }
+
+ .cartlassi-stick-to-upper-field2 {
+    position: relative;
+    top: -30px;
+ }
+
+ .cartlassi-push-right {
+    margin-left: 12px !important;
+ }

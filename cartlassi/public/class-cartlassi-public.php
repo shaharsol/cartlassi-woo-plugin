@@ -270,6 +270,25 @@ class Cartlassi_Public {
 			}
 		}
 
+		if ($continue) {
+			if ( is_page() ) {
+				if ( isset($cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME]) ) {
+					$is_listed_page = is_page(explode(',',$cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME]));
+				} else {
+					$is_listed_page = false;
+				}
+
+				if ( 
+					( ( $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME] ==  Cartlassi_Constants::OTHER_PAGES_OPTION_DONT_SHOW_BUT ) && $is_listed_page )
+					|| ( ( $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME] ==  Cartlassi_Constants::OTHER_PAGES_OPTION_SHOW_EXCEPT ) && !$is_listed_page )
+				) {
+					if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME]) {
+						echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+					}
+				}
+			}
+		}
+
 		return $params;
 	}
 

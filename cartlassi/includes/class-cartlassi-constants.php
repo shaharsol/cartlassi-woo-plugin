@@ -35,11 +35,13 @@ class Cartlassi_Constants {
 	const CURRENT_MAP_NAME			= 'cartlassi_current_map';
 	const DEFAULT_SECTION_NAME 		= 'cartlassi_section_default';
 	const OPTIONS_ROW_CLASS_NAME 	= 'cartlassi_row';
-	const BEFORE_SIDEBAR_SHOP_FIELD_NAME 		= 'cartlassi_field_before_sidebar_shop';
-	const BEFORE_SIDEBAR_CATEGORY_FIELD_NAME 	= 'cartlassi_field_before_sidebar_category';
-	const BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME = 'cartlassi_field_before_sidebar_product_tag';
-	const BEFORE_SIDEBAR_PRODUCT_FIELD_NAME 	= 'cartlassi_field_before_sidebar_product';
-	const BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME = 'cartlassi_field_before_sidebar_other_pages';
+	const BEFORE_SIDEBAR_SHOP_FIELD_NAME 				= 'cartlassi_field_before_sidebar_shop';
+	const BEFORE_SIDEBAR_CATEGORY_FIELD_NAME 			= 'cartlassi_field_before_sidebar_category';
+	const BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME 		= 'cartlassi_field_before_sidebar_product_tag';
+	const BEFORE_SIDEBAR_PRODUCT_FIELD_NAME 			= 'cartlassi_field_before_sidebar_product';
+	const BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME		 	= 'cartlassi_field_before_sidebar_other_pages';
+	const BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME 	= 'cartlassi_field_before_sidebar_other_pages_pages';
+	const BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME = 'cartlassi_field_before_sidebar_other_pages_strategy';
 	const OTHER_PAGES_OPTION_SHOW_EXCEPT		= 'show_except';
 	const OTHER_PAGES_OPTION_DONT_SHOW_BUT		= 'dont_show_but';
 	

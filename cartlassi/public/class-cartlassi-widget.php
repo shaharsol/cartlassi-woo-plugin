@@ -87,7 +87,7 @@ class Cartlassi_Widget extends WP_Widget {
 			}
 			echo '<div id="cartlassi-ajax-widget"></div>';
 			echo '</div>';
-			echo $after_widget;
+			// echo $after_widget;
 		}
 
 
