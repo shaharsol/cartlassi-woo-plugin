@@ -80,16 +80,40 @@ class Cartlassi_Widget extends WP_Widget {
 			echo $rendered_block;
 			?>
 			<script>
-				jQuery('#cartlassi-ajax-widget a').click((event) => {
-					await jQuery.post(ajax_object.ajax_url, {
-						action: 'log_click',
-						nonce: ajax_object.nonce,
-						product_id: $(this).data('product-id'),
-						cartlassi_id: $(this).data('cartlassi'), 
-					}, function(response, status) {
-						
-					}, 'json').promise();
-				})
+				// jQuery('#cartlassi-ajax-widget a').click((event) => {
+					// cartlassi_log_click(event);
+					// // console.log(jQuery(this.element).parent());
+					// console.log(event);
+					// console.log(event.target);
+					// console.log(jQuery(event.target).data('cartlassi'));
+					// console.log(jQuery(event.target).data('product-id'));
+					// jQuery.ajax({
+					// 	type: 'post',
+					// 	url: ajax_object.ajax_url,
+					// 	dataType: 'json',
+					// 	data : {
+					// 		action: 'cartlassi_log_click',
+					// 		ajax_nonce: ajax_object.nonce,
+					// 		product_id: jQuery(event.target).data('product-id'),
+					// 		cartlassi_id: jQuery(event.target).data('cartlassi'),
+					// 	},
+					// 	success: () => {
+					// 		alert('success')
+					// 	},
+					// 	error: (e) => {
+					// 		alert(JSON.stringify(e))
+					// 	}
+					// })
+					// // jQuery.post(ajax_object.ajax_url, {
+					// // 	action: 'cartlassi_log_click',
+					// // 	ajax_nonce: ajax_object.nonce,
+					// // 	product_id: jQuery(event.target).data('product-id'),
+					// // 	cartlassi_id: jQuery(event.target).data('cartlassi'), 
+					// // }, function(response, status) {
+					// // 	alert(status);
+					// // 	alert(response);
+					// // }, 'json');
+				// })
 			</script>
 			<?php
 			wp_die();

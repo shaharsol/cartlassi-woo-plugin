@@ -32,11 +32,23 @@
 	$.ajax({
 		url: ajax_object.ajax_url,
 		data: {
-			action: 'load_widget',
+			action: 'cartlassi_load_widget',
 			nonce: ajax_object.nonce,
 		},
 		success: (data, status) => {
 			$('#cartlassi-ajax-widget').html(data);
+			$('#cartlassi-ajax-widget').on('click', 'a', (event) => {
+				jQuery.post(ajax_object.ajax_url, {
+					action: 'cartlassi_log_click',
+					nonce: ajax_object.nonce,
+					product_id: $(event.currentTarget).data('product-id'),
+					cartlassi_id: $(event.currentTarget).data('cartlassi'), 
+				}, function(response, status) {
+					alert(status);
+					alert(response);
+				}, 'json');
+		
+			})
 			jQuery( document.body ).trigger( 'post-load' );
 		},
 		error: (err) => {

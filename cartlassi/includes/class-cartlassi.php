@@ -76,8 +76,8 @@ class Cartlassi {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'PLUGIN_NAME_VERSION' ) ) {
-			$this->version = PLUGIN_NAME_VERSION;
+		if ( defined( 'CARTLASSI_VERSION' ) ) {
+			$this->version = CARTLASSI_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
@@ -220,16 +220,20 @@ class Cartlassi {
 		$this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_public, 'remove_from_cart', 10, 2 );
 		$this->loader->add_action( 'widgets_init', $plugin_public, 'cartlassi_widgets_init' );
 		$this->loader->add_action( 'dynamic_sidebar_params', $plugin_public, 'display_widget' );
-		$this->loader->add_action( 'woocommerce_before_single_product', $plugin_public, 'log_click_to_product' );
+		// deprecated
+		// $this->loader->add_action( 'woocommerce_before_single_product', $plugin_public, 'log_click_to_product' );
 		$this->loader->add_action( 'woocommerce_init', $plugin_public, 'initiate_wc_sessions' );
-		$this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' , 10, 1);
-		$this->loader->add_action( 'woocommerce_ajax_added_to_cart', $plugin_public, 'log_ajax_add_to_cart', 1, 10);
+		// deprecated
+		// $this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' , 10, 1);
+		// deprecated
+		// $this->loader->add_action( 'woocommerce_ajax_added_to_cart', $plugin_public, 'log_ajax_add_to_cart', 1, 10);
 		$this->loader->add_action( 'woocommerce_payment_complete', $plugin_public, 'payment_complete' );
 		$this->loader->add_action( 'woocommerce_order_refunded', $plugin_public, 'order_refunded', 10, 2 );
 		$this->loader->add_action( 'woocommerce_checkout_create_order_line_item', $plugin_public, 'save_cart_item_key_as_custom_order_item_metadata', 10, 4 );
-		$this->loader->add_action( 'wp_ajax_load_widget', $plugin_public, 'load_widget' );
-		$this->loader->add_action( 'wp_ajax_nopriv_load_widget', $plugin_public, 'load_widget' );
-		$this->loader->add_action( 'wp_ajax_log_click', $plugin_public, 'log_click' );
+		$this->loader->add_action( 'wp_ajax_cartlassi_load_widget', $plugin_public, 'load_widget' );
+		$this->loader->add_action( 'wp_ajax_nopriv_cartlassi_load_widget', $plugin_public, 'load_widget' );
+		$this->loader->add_action( 'wp_ajax_cartlassi_log_click', $plugin_public, 'log_click' );
+		$this->loader->add_action( 'wp_ajax_nopriv_cartlassi_log_click', $plugin_public, 'log_click' );
 
 		$this->loader->add_filter( 'woocommerce_blocks_product_grid_item_html', $plugin_public, 'add_tag_to_block_product_link', 10, 3 );
 		$this->loader->add_filter( 'query_vars', $plugin_public, 'expose_cartlassi_query_var' );
