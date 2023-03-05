@@ -44,8 +44,8 @@
 					product_id: $(event.currentTarget).data('product-id'),
 					cartlassi_id: $(event.currentTarget).data('cartlassi'), 
 				}, function(response, status) {
-					alert(status);
-					alert(response);
+					// alert(status);
+					// alert(response);
 				}, 'json');
 		
 			})

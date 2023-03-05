@@ -98,7 +98,7 @@ class Cartlassi_Admin {
 		 * class.
 		 */
 		$apiKey = $this->getApiKey();
-		$nonce = wp_create_nonce( 'cartlassi' );
+		$nonce = wp_create_nonce( Cartlassi_Constants::NONCE_ADMIN_NAME );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cartlassi-admin.js', array( 'jquery' ), $this->version, false );
 
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
@@ -438,7 +438,7 @@ class Cartlassi_Admin {
 	}
 
 	function regenerate_api_key () {
-		check_ajax_referer('cartlassi', 'nonce');
+		check_ajax_referer(Cartlassi_Constants::NONCE_ADMIN_NAME, 'nonce');
 		$apiKey = $this->getApiKey();
 
 		$args = array(

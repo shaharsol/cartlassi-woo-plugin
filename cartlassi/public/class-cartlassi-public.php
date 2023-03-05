@@ -97,7 +97,7 @@ class Cartlassi_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		$nonce = wp_create_nonce( 'cartlassi-public' );
+		$nonce = wp_create_nonce( Cartlassi_Constants::NONCE_PUBLIC_NAME );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cartlassi-public.js', array( 'jquery' ), $this->version, false );
 
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
@@ -316,7 +316,7 @@ class Cartlassi_Public {
 		$cartlassiCartItemId = array_search( $product->get_id(), WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
 		if ($cartlassiCartItemId) {
 			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
-			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->id.'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
+			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
 			return $withCartlassiHrefs;
 		}
 		return $html;

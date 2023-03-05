@@ -33,8 +33,10 @@ class Cartlassi_Constants {
 	const SIDEBAR_ID 				= 'sidebar-cartlassi';
 	const ORDER_ITEM_CART_ITEM_KEY 	= '_cartlassi_cart_item_key';
 	const CURRENT_MAP_NAME			= 'cartlassi_current_map';
+	const NONCE_ADMIN_NAME			= 'cartlassi-admin-nonce';
+	const NONCE_PUBLIC_NAME			= 'cartlassi-public-nonce';
 	const DEFAULT_SECTION_NAME 		= 'cartlassi_section_default';
-	const OPTIONS_ROW_CLASS_NAME 	= 'cartlassi_row';
+	const OPTIONS_ROW_CLASS_NAME 	= 'cartlassi_row';	
 	const BEFORE_SIDEBAR_SHOP_FIELD_NAME 				= 'cartlassi_field_before_sidebar_shop';
 	const BEFORE_SIDEBAR_CATEGORY_FIELD_NAME 			= 'cartlassi_field_before_sidebar_category';
 	const BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME 		= 'cartlassi_field_before_sidebar_product_tag';

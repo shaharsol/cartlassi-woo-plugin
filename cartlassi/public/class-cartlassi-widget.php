@@ -21,9 +21,10 @@ class Cartlassi_Widget extends WP_Widget {
 		// a 2nd ajax call will poor content into 
 
 		if (wp_doing_ajax()) {
-			check_ajax_referer('cartlassi-public', 'nonce');
+			check_ajax_referer(Cartlassi_Constants::NONCE_PUBLIC_NAME, 'nonce');
 
 			extract( $args );
+
 			// $title = apply_filters( 'widget_title', $instance['title'] );
 			$title = 'We think you may like...';
 			
@@ -78,46 +79,9 @@ class Cartlassi_Widget extends WP_Widget {
 			$rendered_block = render_block( (array) $converted_block );
 			
 			echo $rendered_block;
-			?>
-			<script>
-				// jQuery('#cartlassi-ajax-widget a').click((event) => {
-					// cartlassi_log_click(event);
-					// // console.log(jQuery(this.element).parent());
-					// console.log(event);
-					// console.log(event.target);
-					// console.log(jQuery(event.target).data('cartlassi'));
-					// console.log(jQuery(event.target).data('product-id'));
-					// jQuery.ajax({
-					// 	type: 'post',
-					// 	url: ajax_object.ajax_url,
-					// 	dataType: 'json',
-					// 	data : {
-					// 		action: 'cartlassi_log_click',
-					// 		ajax_nonce: ajax_object.nonce,
-					// 		product_id: jQuery(event.target).data('product-id'),
-					// 		cartlassi_id: jQuery(event.target).data('cartlassi'),
-					// 	},
-					// 	success: () => {
-					// 		alert('success')
-					// 	},
-					// 	error: (e) => {
-					// 		alert(JSON.stringify(e))
-					// 	}
-					// })
-					// // jQuery.post(ajax_object.ajax_url, {
-					// // 	action: 'cartlassi_log_click',
-					// // 	ajax_nonce: ajax_object.nonce,
-					// // 	product_id: jQuery(event.target).data('product-id'),
-					// // 	cartlassi_id: jQuery(event.target).data('cartlassi'), 
-					// // }, function(response, status) {
-					// // 	alert(status);
-					// // 	alert(response);
-					// // }, 'json');
-				// })
-			</script>
-			<?php
 			wp_die();
 		} else {
+			extract( $args );
 			echo $before_widget;
 			echo '<div style="border:1px solid;"><span>We think you may like</span>';
 			if ( ! empty( $title ) ) {
