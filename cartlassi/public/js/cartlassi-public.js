@@ -52,7 +52,7 @@
 			jQuery( document.body ).trigger( 'post-load' );
 		},
 		error: (err) => {
-			alert(JSON.stringify(err));
+			// alert(JSON.stringify(err));
 		}
 	});
 
