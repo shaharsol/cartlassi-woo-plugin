@@ -372,9 +372,17 @@ class Cartlassi_Admin {
 			'Cartlassi Options',
 			'manage_options',
 			'cartlassi',
-			// 'cartlassi_options_page_html'	
 			array($this, 'cartlassi_options_page_html')
 		);
+
+		$hook = add_menu_page(
+			'Cartlassi',
+			'Cartlassi Dashboard',
+			'manage_options',
+			'cartlassi-dashboard',
+			array($this, 'cartlassi_dashboard_page_html')
+		);
+		add_action( "load-$hook", [ $this, 'screen_option' ] );
 	}
 
 	function cartlassi_wc_options_page() {
@@ -386,6 +394,32 @@ class Cartlassi_Admin {
 				'path'      => add_query_arg( 'page', 'wc-settings', 'admin.php' ),
 			)
 		);
+	}
+
+	function cartlassi_dashboard_page_html() {
+		$salesList = new Sales_List($this->config, $this->getApiKey());
+		?>
+			<div class="wrap">
+				<h2>WP_List_Table Class Example</h2>
+
+				<div id="poststuff">
+					<div id="post-body" class="metabox-holder columns-2">
+						<div id="post-body-content">
+							<div class="meta-box-sortables ui-sortable">
+								<form method="post">
+									<?php
+										$this->salesList->prepare_items();
+										$this->salesList->display(); 
+									?>
+								</form>
+							</div>
+						</div>
+					</div>
+					<br class="clear">
+					</div>
+				</div>
+			</div>
+		<?php
 	}
 
 	function cartlassi_options_page_html() {
@@ -479,5 +513,26 @@ class Cartlassi_Admin {
 		}else{
 			return $links;
 		}
+	}
+
+	public function set_screen($status, $option, $value) {
+		return $value;
+	}
+
+	/**
+	* Screen options
+	*/
+	public function screen_option() {
+
+		$option = 'per_page';
+		$args = [
+		'label' => 'Sales',
+		'default' => 10,
+		'option' => 'sales_per_page'
+		];
+		
+		add_screen_option( $option, $args );
+		
+		$this->salesList = new Sales_List($this->config, $this->getApiKey());
 	}
 }

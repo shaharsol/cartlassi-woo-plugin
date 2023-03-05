@@ -144,6 +144,12 @@ class Cartlassi {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-cartlassi-widget.php';
 
+		if ( ! class_exists( 'WP_List_Table' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+		}
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-cartlassi-sales-list.php';
+
 		$this->loader = new Cartlassi_Loader();
 
 	}
@@ -200,6 +206,7 @@ class Cartlassi {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'cartlassi_wc_options_page' );
 		$this->loader->add_action( 'wp_ajax_cartlassi_regenerate_api_key', $plugin_admin, 'regenerate_api_key' );
 		$this->loader->add_filter( "plugin_action_links", $plugin_admin, 'add_action_links', 10, 2);
+		$this->loader->add_filter( 'set-screen-option', $plugin_admin , 'set_screen', 10, 3 );
 
 	}
 
