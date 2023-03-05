@@ -87,10 +87,19 @@ class Sales_List extends WP_List_Table {
     * @return mixed
     */
     public function column_default( $item, $column_name ) {
-        // var_dump('column_default');
-        // var_dump($item);
-        // var_dump($column_name);
         return $item[ $column_name ];
+    }
+
+    public function column_createdAt ( $item ) {
+        return date_format(date_create($item['createdAt']), "Y/m/d H:i:s");
+    }
+
+    public function column_commissionDueDate ( $item ) {
+        return date_format(date_create($item['commissionDueDate']), "Y/m/d H:i:s");
+    }
+
+    public function column_amount ( $item ) {
+        return $item['currency'].$item['amount'];
     }
 
     /**
@@ -102,16 +111,14 @@ class Sales_List extends WP_List_Table {
         // var_dump('get_columns');
 
         $columns = array(
-            // 'cb'            => '<input type="checkbox" />',
-            'id'         => __( 'ID', 'cartlassi' ),
-            // 'shopId'         => __( 'Shop ID', 'cartlassi' ),
-            // 'clickId'         => __( 'Click ID', 'cartlassi' ),
-            'amount'        => __( 'Sale Amount', 'cartlassi' ),
-            'currency'       => __( 'Currency', 'cartlassi' ),
-            'status'       => __( 'Status', 'cartlassi' ),
-            'createdAt'        => __( 'created at', 'cartlassi' ),
+            'id'                => __( 'ID', 'cartlassi' ),
+            'shopOrderId'       => __( 'Order', 'cartlassi' ),
+            'shopProductId'     => __( 'Product', 'cartlassi' ),
+            'amount'            => __( 'Sale Amount', 'cartlassi' ),
+            'currency'          => __( 'Currency', 'cartlassi' ),
+            'createdAt'         => __( 'created at', 'cartlassi' ),
             'commissionDueDate' => __( 'Commission at', 'cartlassi' ),
-            // 'updatedAt'    => __( 'updated at', 'cartlassi' ),
+            'status'            => __( 'Status', 'cartlassi' ),
         );
         
         return $columns;
@@ -122,22 +129,14 @@ class Sales_List extends WP_List_Table {
     *
     * @return array
     */
-    // public function get_sortable_columns() {
-    //     // var_dump('get_sortable_columns');
-    //     $sortable_columns = array(
-    //         'id'         => array( 'id', false ),
-    //         'shopId'         => array( 'shopId', false ),
-    //         'clickId'         => __( 'clickId', false ),
-    //         'amount'        => __( 'amount', false ),
-    //         'currency'       => __( 'currency', false ),
-    //         'status'       => __( 'status', false ),
-    //         'commissionDueDate' => __( 'commissionDueDate', false ),
-    //         'createdAt'        => __( 'createdAt', true ),
-    //         'updatedAt'    => __( 'updatedAt',false ),
-    //     );
+    public function get_sortable_columns() {
+        $sortable_columns = array(
+            'commissionDueDate' => __( 'commissionDueDate', false ),
+            'createdAt'        => __( 'createdAt', true ),
+        );
         
-    //     return $sortable_columns;
-    // }
+        return $sortable_columns;
+    }
     
     /**
     * Returns an associative array containing the bulk action
@@ -177,45 +176,6 @@ class Sales_List extends WP_List_Table {
         
         $this->items = self::get_sales( $per_page, $current_page );
         // echo var_export($this->items, true).'<br/>';
-    }
-
-
-    public function process_bulk_action() {
-
-        // //Detect when a bulk action is being triggered...
-        // if ( 'delete' === $this->current_action() ) {
-        
-        // // In our file that handles the request, verify the nonce.
-        // $nonce = esc_attr( $_REQUEST['_wpnonce'] );
-        
-        // if ( ! wp_verify_nonce( $nonce, 'sp_delete_customer' ) ) {
-        // die( 'Go get a life script kiddies' );
-        // }
-        // else {
-        // self::delete_customer( absint( $_GET['customer'] ) );
-        
-        // wp_redirect( esc_url( add_query_arg() ) );
-        // exit;
-        // }
-        
-        // }
-        
-        // // If the delete bulk action is triggered
-        // if ( ( isset( $_POST['action'] ) && $_POST['action'] == 'bulk-delete' )
-        // || ( isset( $_POST['action2'] ) && $_POST['action2'] == 'bulk-delete' )
-        // ) {
-        
-        // $delete_ids = esc_sql( $_POST['bulk-delete'] );
-        
-        // // loop over the array of record IDs and delete them
-        // foreach ( $delete_ids as $id ) {
-        // self::delete_customer( $id );
-        
-        // }
-        
-        // wp_redirect( esc_url( add_query_arg() ) );
-        // exit;
-        // }
     }
 
     protected static function getApiKey() {

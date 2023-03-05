@@ -400,7 +400,6 @@ class Cartlassi_Admin {
 		$salesList = new Sales_List($this->config, $this->getApiKey());
 		?>
 			<div class="wrap">
-				<h2>WP_List_Table Class Example</h2>
 
 				<div id="poststuff">
 					<div id="post-body" class="metabox-holder columns-2">
