@@ -369,17 +369,27 @@ class Cartlassi_Admin {
 	function cartlassi_options_page() {
 		add_menu_page(
 			'Cartlassi',
-			'Cartlassi Options',
+			'Cartlassi',
 			'manage_options',
 			'cartlassi',
 			array($this, 'cartlassi_options_page_html')
 		);
 
-		$hook = add_menu_page(
-			'Cartlassi',
-			'Cartlassi Dashboard',
+		add_submenu_page(
+			'cartlassi',
+			'Settings',
+			'Settings',
 			'manage_options',
-			'cartlassi-dashboard',
+			'cartlassi-settings',
+			array($this, 'cartlassi_options_page_html')
+		);
+
+		$hook = add_submenu_page(
+			'cartlassi',
+			'Sales',
+			'Sales',
+			'manage_options',
+			'cartlassi-sales',
 			array($this, 'cartlassi_dashboard_page_html')
 		);
 		add_action( "load-$hook", [ $this, 'screen_option' ] );

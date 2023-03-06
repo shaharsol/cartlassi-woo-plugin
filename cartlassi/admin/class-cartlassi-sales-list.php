@@ -99,7 +99,18 @@ class Sales_List extends WP_List_Table {
     }
 
     public function column_amount ( $item ) {
-        return $item['currency'].$item['amount'];
+        return wc_price($item['amount'], array (
+            'currency'  => $item['currency']
+        ) );
+    }
+
+    public function column_shopOrderId ( $item ) {
+
+        $order = wc_get_order( $item['shopOrderId'] );
+        $customer_id = $order->get_customer_id();
+        $customer = new WC_Customer( $customer_id );
+ 
+        return '<a href="/wp-admin/post.php?post='.$item['shopOrderId'].'&action=edit">#'.$item['shopOrderId'].' '.$customer->get_first_name().' '.$customer->get_last_name().'</a>';
     }
 
     /**
@@ -115,7 +126,7 @@ class Sales_List extends WP_List_Table {
             'shopOrderId'       => __( 'Order', 'cartlassi' ),
             'shopProductId'     => __( 'Product', 'cartlassi' ),
             'amount'            => __( 'Sale Amount', 'cartlassi' ),
-            'currency'          => __( 'Currency', 'cartlassi' ),
+            // 'currency'          => __( 'Currency', 'cartlassi' ),
             'createdAt'         => __( 'created at', 'cartlassi' ),
             'commissionDueDate' => __( 'Commission at', 'cartlassi' ),
             'status'            => __( 'Status', 'cartlassi' ),
