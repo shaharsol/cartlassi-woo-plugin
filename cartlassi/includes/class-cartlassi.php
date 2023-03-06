@@ -150,6 +150,8 @@ class Cartlassi {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-cartlassi-sales-list.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-cartlassi-commissions-list.php';
+
 		$this->loader = new Cartlassi_Loader();
 
 	}

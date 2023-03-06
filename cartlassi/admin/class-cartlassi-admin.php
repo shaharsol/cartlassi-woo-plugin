@@ -390,9 +390,19 @@ class Cartlassi_Admin {
 			'Sales',
 			'manage_options',
 			'cartlassi-sales',
-			array($this, 'cartlassi_dashboard_page_html')
+			array($this, 'cartlassi_sales_page_html')
 		);
-		add_action( "load-$hook", [ $this, 'screen_option' ] );
+		add_action( "load-$hook", [ $this, 'screen_option_sales' ] );
+
+		$hook = add_submenu_page(
+			'cartlassi',
+			'Commissions',
+			'Commissions',
+			'manage_options',
+			'cartlassi-commissions',
+			array($this, 'cartlassi_commissions_page_html')
+		);
+		add_action( "load-$hook", [ $this, 'screen_option_commissions' ] );
 	}
 
 	function cartlassi_wc_options_page() {
@@ -406,8 +416,7 @@ class Cartlassi_Admin {
 		);
 	}
 
-	function cartlassi_dashboard_page_html() {
-		$salesList = new Sales_List($this->config, $this->getApiKey());
+	function cartlassi_sales_page_html() {
 		?>
 			<div class="wrap">
 
@@ -419,6 +428,30 @@ class Cartlassi_Admin {
 									<?php
 										$this->salesList->prepare_items();
 										$this->salesList->display(); 
+									?>
+								</form>
+							</div>
+						</div>
+					</div>
+					<br class="clear">
+					</div>
+				</div>
+			</div>
+		<?php
+	}
+
+	function cartlassi_commissions_page_html() {
+		?>
+			<div class="wrap">
+
+				<div id="poststuff">
+					<div id="post-body" class="metabox-holder columns-2">
+						<div id="post-body-content">
+							<div class="meta-box-sortables ui-sortable">
+								<form method="post">
+									<?php
+										$this->commissionsList->prepare_items();
+										$this->commissionsList->display(); 
 									?>
 								</form>
 							</div>
@@ -531,7 +564,7 @@ class Cartlassi_Admin {
 	/**
 	* Screen options
 	*/
-	public function screen_option() {
+	public function screen_option_sales() {
 
 		$option = 'per_page';
 		$args = [
@@ -543,5 +576,19 @@ class Cartlassi_Admin {
 		add_screen_option( $option, $args );
 		
 		$this->salesList = new Sales_List($this->config, $this->getApiKey());
+	}
+
+	public function screen_option_commissions() {
+
+		$option = 'per_page';
+		$args = [
+		'label' => 'Commissions',
+		'default' => 10,
+		'option' => 'commissions_per_page'
+		];
+		
+		add_screen_option( $option, $args );
+		
+		$this->commissionsList = new Commissions_List($this->config, $this->getApiKey());
 	}
 }

@@ -1,13 +1,13 @@
 <?php 
 
-class Sales_List extends WP_List_Table {
+class Commissions_List extends WP_List_Table {
 
     /** Class constructor */
     public function __construct() {
 
         parent::__construct( [
-            'singular' => __( 'Sale', 'cartlassi' ), //singular name of the listed records
-            'plural' => __( 'Sales', 'cartlassi' ), //plural name of the listed records
+            'singular' => __( 'Commission', 'cartlassi' ), //singular name of the listed records
+            'plural' => __( 'Commissions', 'cartlassi' ), //plural name of the listed records
             'ajax' => false //should this table support ajax?
         ] );
     }
@@ -20,7 +20,7 @@ class Sales_List extends WP_List_Table {
     *
     * @return mixed
     */    
-    public static function get_sales( $per_page = 10, $page_number = 1 ) {
+    public static function get_commissions( $per_page = 10, $page_number = 1 ) {
         $apiKey = self::getApiKey();
 
 		$args = array(
@@ -29,7 +29,7 @@ class Sales_List extends WP_List_Table {
 			),
 		);
 		
-		$response = wp_remote_get( "http://host.docker.internal:3000/shops/sales-as-seller", $args );
+		$response = wp_remote_get( "http://host.docker.internal:3000/shops/sales-as-promoter", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -60,7 +60,7 @@ class Sales_List extends WP_List_Table {
 			),
 		);
 		
-		$response = wp_remote_get( "http://host.docker.internal:3000/shops/sales-as-seller", $args );
+		$response = wp_remote_get( "http://host.docker.internal:3000/shops/sales-as-promoter", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -74,7 +74,7 @@ class Sales_List extends WP_List_Table {
 
     /** Text displayed when no customer data is available */
     public function no_items() {
-        _e( 'No sales avaliable.', 'cartlassi' );
+        _e( 'No commissions avaliable.', 'cartlassi' );
     }
 
 
@@ -104,24 +104,24 @@ class Sales_List extends WP_List_Table {
         ) );
     }
 
-    public function column_shopOrderId ( $item ) {
+    // public function column_shopOrderId ( $item ) {
 
-        $order = wc_get_order( $item['shopOrderId'] );
-        $customer_id = $order->get_customer_id();
-        $customer = new WC_Customer( $customer_id );
+    //     $order = wc_get_order( $item['shopOrderId'] );
+    //     $customer_id = $order->get_customer_id();
+    //     $customer = new WC_Customer( $customer_id );
  
-        return '<a href="/wp-admin/post.php?post='.$item['shopOrderId'].'&action=edit">#'.$item['shopOrderId'].' '.$customer->get_first_name().' '.$customer->get_last_name().'</a>';
-    }
+    //     return '<a href="/wp-admin/post.php?post='.$item['shopOrderId'].'&action=edit">#'.$item['shopOrderId'].' '.$customer->get_first_name().' '.$customer->get_last_name().'</a>';
+    // }
 
-    public function column_shopProductId ( $item ) {
+    // public function column_shopProductId ( $item ) {
 
-        $product = wc_get_product( $item['shopProductId'] );
+    //     $product = wc_get_product( $item['shopProductId'] );
  
-        return $product->get_image();
-    }
+    //     return $product->get_image();
+    // }
 
     public function column_commissionAmount ( $item ) {
-        return wc_price($item['amount'] * Cartlassi_Constants::COMMISSION, array (
+        return wc_price($item['amount'] * Cartlassi_Constants::COMMISSION - $item['amount'] * Cartlassi_Constants::FEE, array (
             'currency'  => $item['currency']
         ) );
     }
@@ -136,8 +136,8 @@ class Sales_List extends WP_List_Table {
 
         $columns = array(
             'id'                => __( 'ID', 'cartlassi' ),
-            'shopOrderId'       => __( 'Order', 'cartlassi' ),
-            'shopProductId'     => __( 'Product', 'cartlassi' ),
+            // 'shopOrderId'       => __( 'Order', 'cartlassi' ),
+            // 'shopProductId'     => __( 'Product', 'cartlassi' ),
             'amount'            => __( 'Sale Amount', 'cartlassi' ),
             'commissionAmount' => __( 'Commission Amount', 'cartlassi' ),
             // 'currency'          => __( 'Currency', 'cartlassi' ),
@@ -186,7 +186,7 @@ class Sales_List extends WP_List_Table {
         /** Process bulk action */
         // $this->process_bulk_action();
         
-        $per_page = $this->get_items_per_page( 'sales_per_page', 10 );
+        $per_page = $this->get_items_per_page( 'commissions_per_page', 10 );
         // var_dump($per_page);
         $current_page = $this->get_pagenum();
         $total_items = self::record_count();
@@ -199,7 +199,7 @@ class Sales_List extends WP_List_Table {
             'per_page' => $per_page //WE have to determine how many items to show on a page
         ] );
         
-        $this->items = self::get_sales( $per_page, $current_page );
+        $this->items = self::get_commissions( $per_page, $current_page );
         // echo var_export($this->items, true).'<br/>';
     }
 
