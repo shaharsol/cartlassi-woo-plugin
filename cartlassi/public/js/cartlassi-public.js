@@ -31,6 +31,7 @@
 
 	$.ajax({
 		url: ajax_object.ajax_url,
+		type: 'post',
 		data: {
 			action: 'cartlassi_load_widget',
 			nonce: ajax_object.nonce,
