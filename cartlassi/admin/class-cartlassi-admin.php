@@ -368,11 +368,12 @@ class Cartlassi_Admin {
 
 	function cartlassi_options_page() {
 		add_menu_page(
-			'Cartlassi',
+			'',
 			'Cartlassi',
 			'manage_options',
 			'cartlassi',
-			array($this, 'cartlassi_options_page_html')
+			null,
+			// TBD insert cartlassi icon here
 		);
 
 		add_submenu_page(
@@ -380,7 +381,7 @@ class Cartlassi_Admin {
 			'Settings',
 			'Settings',
 			'manage_options',
-			'cartlassi-settings',
+			'cartlassi',
 			array($this, 'cartlassi_options_page_html')
 		);
 
