@@ -236,6 +236,19 @@ class Cartlassi_Admin {
 				'cartlassi_custom_data' => 'custom',
 			)
 		);
+
+		add_settings_field(
+			Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME, 
+			__( 'Should we include hashed customer email in the global cart id? (Recommended, enable if it adheres to your privacy policy ', 'cartlassi' ),
+			array($this, 'cartlassi_field_include_email_in_cart_id_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => 'custom',
+			)
+		);
 	}
 
 	function cartlassi_section_default_callback( $args ) {
@@ -364,6 +377,18 @@ class Cartlassi_Admin {
 			// }
 		}		
 		
+	}
+
+	function cartlassi_field_include_email_in_cart_id_cb ( $args ) {
+		$options = get_option( Cartlassi_Constants::OPTIONS_NAME );
+		?>
+			<input type="checkbox"
+				id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				value="<?php echo isset( $options[ $args['label_for'] ] ) ? true : false ; ?>"
+				<?php echo isset( $options[ $args['label_for'] ] ) ? 'checked' : '' ; ?>
+			>
+		<?php 
 	}
 
 	function cartlassi_options_page() {

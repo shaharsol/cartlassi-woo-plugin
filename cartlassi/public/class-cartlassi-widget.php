@@ -35,7 +35,7 @@ class Cartlassi_Widget extends WP_Widget {
 					'Authorization' => "token {$apiKey}"
 				),
 			);
-			$cartId = md5($_SERVER['REMOTE_ADDR']);
+			$cartId = Cartlassi_Utils::generate_cart_id();
 			$response = wp_remote_get( "{$this->config->get('api_url')}/carts/${cartId}/shop", $args );
 	
 			if ( is_wp_error( $response ) ) {
@@ -47,6 +47,7 @@ class Cartlassi_Widget extends WP_Widget {
 	
 			$body = wp_remote_retrieve_body( $response );
 			$data = json_decode( $body );
+			var_dump($data);
 			$products = array();
 			$cartItemToProductMap = array();
 			foreach($data as $product) {
