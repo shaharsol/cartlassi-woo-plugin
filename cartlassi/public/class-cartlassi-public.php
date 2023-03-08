@@ -129,7 +129,7 @@ class Cartlassi_Public {
 			),
 		);
 
-		$cartId = Cartlassi_Utils::generate_cart_id($_SERVER['REMOTE_ADDR']);
+		$cartId = Cartlassi_Utils::generate_cart_id();
 		$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -162,7 +162,7 @@ class Cartlassi_Public {
 			),
 		);
 
-		$cartId = Cartlassi_Utils::generate_cart_id($_SERVER['REMOTE_ADDR']);
+		$cartId = Cartlassi_Utils::generate_cart_id();
 		$response = wp_remote_request( "{$this->config->get('api_url')}/carts/${cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -482,7 +482,7 @@ class Cartlassi_Public {
 				),
 			);
 
-			$cartId = Cartlassi_Utils::generate_cart_id($_SERVER['REMOTE_ADDR']);
+			$cartId = Cartlassi_Utils::generate_cart_id();
 			$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${cartId}/checkout", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
