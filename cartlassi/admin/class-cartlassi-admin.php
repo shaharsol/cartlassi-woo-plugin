@@ -234,8 +234,21 @@ class Cartlassi_Admin {
 		);
 
 		add_settings_field(
+			Cartlassi_Constants::INCLUDE_IP_IN_CART_ID_FIELD_NAME, 
+			__( 'Hashed customer IP address.', 'cartlassi' ),
+			array($this, 'cartlassi_field_include_ip_in_cart_id_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DATA_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::INCLUDE_IP_IN_CART_ID_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => 'Mandatory, can\'t uncheck.',
+			)
+		);
+
+		add_settings_field(
 			Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME, 
-			__( 'Include hashed customer email in the global cart id.', 'cartlassi' ),
+			__( 'Hashed customer email.', 'cartlassi' ),
 			array($this, 'cartlassi_field_include_email_in_cart_id_cb'),
 			'cartlassi',
 			Cartlassi_Constants::DATA_SECTION_NAME,
@@ -283,7 +296,7 @@ class Cartlassi_Admin {
 
 	function cartlassi_section_data_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define what data you pass to Cartlassi.', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define what data your shop shares with Cartlassi. FYI we never submit any of the raw data. we hash it before so the data we share looks like `122c4a55d1a70cef972cac3982dd49a6`.', 'cartlassi' ); ?></p>
 		<?php
 	}
 
@@ -379,7 +392,7 @@ class Cartlassi_Admin {
 				class="regular-text"
 				>
 		<p class="description">
-			<?php esc_attr_e( 'This is the key your shop use to authenticate with Cartlassi servers. To regenarate the API Key, please click the Regenerate button below', 'cartlassi' ); ?>
+			<?php esc_attr_e( 'This is the key your shop uses to authenticate against Cartlassi servers. If you beleive your key was tempered with, you can regenarate the API Key by clicking the Regenerate button below', 'cartlassi' ); ?>
 		</p>
 		<button
 			id="regenerate-api-key-button"
@@ -419,6 +432,22 @@ class Cartlassi_Admin {
 			// }
 		}		
 		
+	}
+
+	function cartlassi_field_include_ip_in_cart_id_cb ( $args ) {
+		$options = get_option( Cartlassi_Constants::OPTIONS_NAME );
+		?>
+			<input type="checkbox"
+				disabled
+				id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				name="<?php echo esc_attr( Cartlassi_Constants::OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				value="<?php echo isset( $options[ $args['label_for'] ] ) ? true : false ; ?>"
+				checked
+			>
+			<p class="description">
+				<?php echo $args['cartlassi_custom_data']; ?>
+			</p>
+		<?php 
 	}
 
 	function cartlassi_field_include_email_in_cart_id_cb ( $args ) {

@@ -49,6 +49,7 @@ class Cartlassi_Constants {
 	const BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME 	= 'cartlassi_field_before_sidebar_other_pages_pages';
 	const BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME = 'cartlassi_field_before_sidebar_other_pages_strategy';
 	const INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME			= 'cartlassi_field_include_email_in_cart_id';
+	const INCLUDE_IP_IN_CART_ID_FIELD_NAME			= 'cartlassi_field_include_ip_in_cart_id';
 	const OTHER_PAGES_OPTION_SHOW_EXCEPT		= 'show_except';
 	const OTHER_PAGES_OPTION_DONT_SHOW_BUT		= 'dont_show_but';
 	const COMMISSION = 0.15;
