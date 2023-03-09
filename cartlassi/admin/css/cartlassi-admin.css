@@ -16,3 +16,7 @@
  .cartlassi-push-right {
     margin-left: 12px !important;
  }
+
+ #regenerate-api-key-button {
+   margin-top: 8px;
+ }

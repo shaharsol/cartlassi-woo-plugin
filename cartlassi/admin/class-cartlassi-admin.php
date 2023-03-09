@@ -396,7 +396,7 @@ class Cartlassi_Admin {
 		</p>
 		<button
 			id="regenerate-api-key-button"
-			class=""
+			class="button button-secondary"
 		><?php esc_html_e( 'Regenerate API Key', 'cartlassi' ); ?></button>
 		<?php
 	}
@@ -426,8 +426,8 @@ class Cartlassi_Admin {
 		
 				<button type="submit"
 					id="pay-button"
-					class=""
-				><?php esc_html_e( 'Payment Method', 'cartlassi' ); ?></button>
+					class="button button-secondary"
+				><?php esc_html_e( 'Add Payment Method', 'cartlassi' ); ?></button>
 				<?php
 			// }
 		}		
