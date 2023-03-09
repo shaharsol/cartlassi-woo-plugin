@@ -36,6 +36,10 @@ class Cartlassi_Constants {
 	const NONCE_ADMIN_NAME			= 'cartlassi-admin-nonce';
 	const NONCE_PUBLIC_NAME			= 'cartlassi-public-nonce';
 	const DEFAULT_SECTION_NAME 		= 'cartlassi_section_default';
+	const APPEARANCE_SECTION_NAME 	= 'cartlassi_section_appearance';
+	const DATA_SECTION_NAME 		= 'cartlassi_section_data';
+	const API_SECTION_NAME 			= 'cartlassi_section_api';
+	const PAYMENT_METHOD_SECTION_NAME 		= 'cartlassi_section_payment_method';
 	const OPTIONS_ROW_CLASS_NAME 	= 'cartlassi_row';	
 	const BEFORE_SIDEBAR_SHOP_FIELD_NAME 				= 'cartlassi_field_before_sidebar_shop';
 	const BEFORE_SIDEBAR_CATEGORY_FIELD_NAME 			= 'cartlassi_field_before_sidebar_category';

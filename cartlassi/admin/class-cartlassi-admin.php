@@ -114,8 +114,30 @@ class Cartlassi_Admin {
 	
 		// Register a new section in the "cartlassi" page.
 		add_settings_section(
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
-			__( 'Cartlassi settings', 'cartlassi' ), array($this, 'cartlassi_section_default_callback'),
+			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
+			__( 'Appearance settings', 'cartlassi' ), 
+			array($this, 'cartlassi_section_default_callback'),
+			'cartlassi'
+		);
+
+		add_settings_section(
+			Cartlassi_Constants::DATA_SECTION_NAME,
+			__( 'Data Settings', 'cartlassi' ), 
+			array($this, 'cartlassi_section_data_callback'),
+			'cartlassi'
+		);
+
+		add_settings_section(
+			Cartlassi_Constants::API_SECTION_NAME,
+			__( 'API Settings', 'cartlassi' ), 
+			array($this, 'cartlassi_section_api_callback'),
+			'cartlassi'
+		);
+
+		add_settings_section(
+			Cartlassi_Constants::PAYMENT_METHOD_SECTION_NAME,
+			__( 'Payment Method Settings', 'cartlassi' ), 
+			array($this, 'cartlassi_section_payment_method_callback'),
 			'cartlassi'
 		);
 	
@@ -125,7 +147,7 @@ class Cartlassi_Admin {
 			__( 'Shop page', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
@@ -138,7 +160,7 @@ class Cartlassi_Admin {
 			__( 'Category page', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
@@ -151,7 +173,7 @@ class Cartlassi_Admin {
 			__( 'Product tag page', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
@@ -164,7 +186,7 @@ class Cartlassi_Admin {
 			__( 'Product page', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
@@ -177,7 +199,7 @@ class Cartlassi_Admin {
 			__( 'Other pages', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
@@ -190,7 +212,7 @@ class Cartlassi_Admin {
 			__( '', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_other_pages_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME,
 				'class'             => 'cartlassi-stick-to-upper-field1',
@@ -203,7 +225,7 @@ class Cartlassi_Admin {
 			__( '', 'cartlassi' ),
 			array($this, 'cartlassi_field_before_sidebar_other_pages_pages_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME,
 				'class'             => 'cartlassi-stick-to-upper-field2',
@@ -212,11 +234,24 @@ class Cartlassi_Admin {
 		);
 
 		add_settings_field(
+			Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME, 
+			__( 'Include hashed customer email in the global cart id.', 'cartlassi' ),
+			array($this, 'cartlassi_field_include_email_in_cart_id_cb'),
+			'cartlassi',
+			Cartlassi_Constants::DATA_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => 'Recommended as it improves performance of the widget. Check this if it adheres with your privacy policy',
+			)
+		);
+
+		add_settings_field(
 			Cartlassi_Constants::API_KEY_FIELD_NAME, 
 			__( 'Your Cartlassi API Key', 'cartlassi' ),
 			array($this, 'cartlassi_field_api_key_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::API_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::API_KEY_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
@@ -229,7 +264,7 @@ class Cartlassi_Admin {
 			__( 'Payment Method', 'cartlassi' ),
 			array($this, 'cartlassi_field_payment_method_cb'),
 			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
+			Cartlassi_Constants::PAYMENT_METHOD_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
@@ -237,23 +272,30 @@ class Cartlassi_Admin {
 			)
 		);
 
-		add_settings_field(
-			Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME, 
-			__( 'Should we include hashed customer email in the global cart id? (Recommended, enable if it adheres to your privacy policy ', 'cartlassi' ),
-			array($this, 'cartlassi_field_include_email_in_cart_id_cb'),
-			'cartlassi',
-			Cartlassi_Constants::DEFAULT_SECTION_NAME,
-			array(
-				'label_for'         => Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME,
-				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => 'custom',
-			)
-		);
 	}
 
 	function cartlassi_section_default_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'In order not to mess with your template files, we\'ll hook into an existing and *active* sidebar and display the Cartlassi widget just before it. Please select which sidebar it should be for each of the page types.', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure how Cartlassi looks in your shop and where it appears. Please note that in order not to modify any of your template files, we\'ll hook into an existing and *active* sidebar and display the Cartlassi widget just before it. For each of the page types, please select which sidebar it should appear before.', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'We\'re not showing the Cartlassi widget on checkout, cart, account and any of the wc endpoint pages', 'cartlassi' ); ?></p>
+		<?php
+	}
+
+	function cartlassi_section_data_callback( $args ) {
+		?>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define what data you pass to Cartlassi.', 'cartlassi' ); ?></p>
+		<?php
+	}
+
+	function cartlassi_section_api_callback( $args ) {
+		?>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define how your shop communicates with the Cartlassi API servers.', 'cartlassi' ); ?></p>
+		<?php
+	}
+
+	function cartlassi_section_payment_method_callback( $args ) {
+		?>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define your payment method. It will be used both for charging you and paying you commissions.', 'cartlassi' ); ?></p>
 		<?php
 	}
 
@@ -388,6 +430,9 @@ class Cartlassi_Admin {
 				value="<?php echo isset( $options[ $args['label_for'] ] ) ? true : false ; ?>"
 				<?php echo isset( $options[ $args['label_for'] ] ) ? 'checked' : '' ; ?>
 			>
+			<p class="description">
+				<?php echo $args['cartlassi_custom_data']; ?>
+			</p>
 		<?php 
 	}
 
