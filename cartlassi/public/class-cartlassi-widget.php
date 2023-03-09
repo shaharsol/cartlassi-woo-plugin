@@ -47,7 +47,6 @@ class Cartlassi_Widget extends WP_Widget {
 	
 			$body = wp_remote_retrieve_body( $response );
 			$data = json_decode( $body );
-			var_dump($data);
 			$products = array();
 			$cartItemToProductMap = array();
 			foreach($data as $product) {
