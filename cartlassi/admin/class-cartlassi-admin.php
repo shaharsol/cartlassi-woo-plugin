@@ -110,35 +110,35 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_settings_init() {
-		register_setting( 'cartlassi', Cartlassi_Constants::OPTIONS_NAME );
+		register_setting( Cartlassi_Constants::OPTION_GROUP, Cartlassi_Constants::OPTIONS_NAME );
 	
 		// Register a new section in the "cartlassi" page.
 		add_settings_section(
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			__( 'Appearance settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_default_callback'),
-			'cartlassi'
+			Cartlassi_Constants::OPTIONS_PAGE,
 		);
 
 		add_settings_section(
 			Cartlassi_Constants::DATA_SECTION_NAME,
 			__( 'Data Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_data_callback'),
-			'cartlassi'
+			Cartlassi_Constants::OPTIONS_PAGE,
 		);
 
 		add_settings_section(
 			Cartlassi_Constants::API_SECTION_NAME,
 			__( 'API Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_api_callback'),
-			'cartlassi'
+			Cartlassi_Constants::OPTIONS_PAGE,
 		);
 
 		add_settings_section(
 			Cartlassi_Constants::PAYMENT_METHOD_SECTION_NAME,
 			__( 'Payment Method Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_payment_method_callback'),
-			'cartlassi'
+			Cartlassi_Constants::OPTIONS_PAGE,
 		);
 	
 		// Register a new field in the "cartlassi_section_developers" section, inside the "cartlassi" page.
@@ -146,7 +146,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME, 
 			__( 'Shop page', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME,
@@ -159,7 +159,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME, 
 			__( 'Category page', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME,
@@ -172,7 +172,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME, 
 			__( 'Product tag page', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME,
@@ -185,7 +185,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME, 
 			__( 'Product page', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME,
@@ -198,7 +198,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME, 
 			__( 'Other pages', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME,
@@ -211,7 +211,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME, 
 			__( '', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_other_pages_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME,
@@ -224,7 +224,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME, 
 			__( '', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_other_pages_pages_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME,
@@ -237,7 +237,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::INCLUDE_IP_IN_CART_ID_FIELD_NAME, 
 			__( 'Hashed customer IP address.', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_include_ip_in_cart_id_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::DATA_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::INCLUDE_IP_IN_CART_ID_FIELD_NAME,
@@ -250,7 +250,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME, 
 			__( 'Hashed customer email.', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_include_email_in_cart_id_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::DATA_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME,
@@ -263,7 +263,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::API_KEY_FIELD_NAME, 
 			__( 'Your Cartlassi API Key', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_api_key_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::API_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::API_KEY_FIELD_NAME,
@@ -276,7 +276,7 @@ class Cartlassi_Admin {
 			Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME, 
 			__( 'Payment Method', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_payment_method_cb'),
-			'cartlassi',
+			Cartlassi_Constants::OPTIONS_PAGE,
 			Cartlassi_Constants::PAYMENT_METHOD_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME,
@@ -470,13 +470,13 @@ class Cartlassi_Admin {
 			'',
 			'Cartlassi',
 			'manage_options',
-			'cartlassi',
+			Cartlassi_Constants::TOP_MENU_SLUG,
 			null,
 			// TBD insert cartlassi icon here
 		);
 
 		add_submenu_page(
-			'cartlassi',
+			Cartlassi_Constants::TOP_MENU_SLUG,
 			'Settings',
 			'Settings',
 			'manage_options',
@@ -485,7 +485,7 @@ class Cartlassi_Admin {
 		);
 
 		$hook = add_submenu_page(
-			'cartlassi',
+			Cartlassi_Constants::TOP_MENU_SLUG,
 			'Sales',
 			'Sales',
 			'manage_options',
@@ -495,7 +495,7 @@ class Cartlassi_Admin {
 		add_action( "load-$hook", [ $this, 'screen_option_sales' ] );
 
 		$hook = add_submenu_page(
-			'cartlassi',
+			Cartlassi_Constants::TOP_MENU_SLUG,
 			'Commissions',
 			'Commissions',
 			'manage_options',
@@ -601,10 +601,10 @@ class Cartlassi_Admin {
 			<form action="options.php" method="post">
 				<?php
 				// output security fields for the registered setting "cartlassi"
-				settings_fields( 'cartlassi' );
+				settings_fields( Cartlassi_Constants::OPTION_GROUP );
 				// output setting sections and their fields
 				// (sections are registered for "cartlassi", each field is registered to a specific section)
-				do_settings_sections( 'cartlassi' );
+				do_settings_sections( Cartlassi_Constants::OPTIONS_PAGE );
 				// output save settings button
 				submit_button( 'Save Settings' );
 				?>

@@ -27,6 +27,9 @@
 class Cartlassi_Constants {
 
 	const OPTIONS_NAME 				= 'cartlassi_options';
+	const OPTIONS_PAGE 				= 'cartlassi';
+	const OPTION_GROUP				= 'cartlassi';
+	const TOP_MENU_SLUG				= 'cartlassi';
 	const TEXT_DOMAIN 				= 'cartlassi';
 	const API_KEY_FIELD_NAME 		= 'cartlassi_field_api_key';
 	const PAYMENT_METHOD_FIELD_NAME	= 'cartlassi_field_payment_method';
