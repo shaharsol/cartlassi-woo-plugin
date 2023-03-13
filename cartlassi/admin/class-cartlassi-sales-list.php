@@ -6,8 +6,8 @@ class Sales_List extends WP_List_Table {
     public function __construct() {
 
         parent::__construct( [
-            'singular' => __( 'Sale', 'cartlassi' ), //singular name of the listed records
-            'plural' => __( 'Sales', 'cartlassi' ), //plural name of the listed records
+            'singular' => __( 'Sale', Cartlassi_Constants::TEXT_DOMAIN ), //singular name of the listed records
+            'plural' => __( 'Sales', Cartlassi_Constants::TEXT_DOMAIN ), //plural name of the listed records
             'ajax' => false //should this table support ajax?
         ] );
     }
@@ -74,7 +74,7 @@ class Sales_List extends WP_List_Table {
 
     /** Text displayed when no customer data is available */
     public function no_items() {
-        _e( 'No sales avaliable.', 'cartlassi' );
+        _e( 'No sales avaliable.', Cartlassi_Constants::TEXT_DOMAIN );
     }
 
 
@@ -135,15 +135,14 @@ class Sales_List extends WP_List_Table {
         // var_dump('get_columns');
 
         $columns = array(
-            'id'                => __( 'ID', 'cartlassi' ),
-            'shopOrderId'       => __( 'Order', 'cartlassi' ),
-            'shopProductId'     => __( 'Product', 'cartlassi' ),
-            'amount'            => __( 'Sale Amount', 'cartlassi' ),
-            'commissionAmount' => __( 'Commission Amount', 'cartlassi' ),
-            // 'currency'          => __( 'Currency', 'cartlassi' ),
-            'createdAt'         => __( 'created at', 'cartlassi' ),
-            'commissionDueDate' => __( 'Commission at', 'cartlassi' ),
-            'status'            => __( 'Status', 'cartlassi' ),
+            'id'                => __( 'ID', Cartlassi_Constants::TEXT_DOMAIN ),
+            'shopOrderId'       => __( 'Order',Cartlassi_Constants::TEXT_DOMAIN ),
+            'shopProductId'     => __( 'Product', Cartlassi_Constants::TEXT_DOMAIN ),
+            'amount'            => __( 'Sale Amount', Cartlassi_Constants::TEXT_DOMAIN ),
+            'commissionAmount' => __( 'Commission Amount', Cartlassi_Constants::TEXT_DOMAIN ),
+            'createdAt'         => __( 'created at', Cartlassi_Constants::TEXT_DOMAIN ),
+            'commissionDueDate' => __( 'Commission at',Cartlassi_Constants::TEXT_DOMAIN ),
+            'status'            => __( 'Status', Cartlassi_Constants::TEXT_DOMAIN ),
         );
         
         return $columns;

@@ -115,28 +115,28 @@ class Cartlassi_Admin {
 		// Register a new section in the "cartlassi" page.
 		add_settings_section(
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
-			__( 'Appearance settings', 'cartlassi' ), 
+			__( 'Appearance settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_default_callback'),
 			'cartlassi'
 		);
 
 		add_settings_section(
 			Cartlassi_Constants::DATA_SECTION_NAME,
-			__( 'Data Settings', 'cartlassi' ), 
+			__( 'Data Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_data_callback'),
 			'cartlassi'
 		);
 
 		add_settings_section(
 			Cartlassi_Constants::API_SECTION_NAME,
-			__( 'API Settings', 'cartlassi' ), 
+			__( 'API Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_api_callback'),
 			'cartlassi'
 		);
 
 		add_settings_section(
 			Cartlassi_Constants::PAYMENT_METHOD_SECTION_NAME,
-			__( 'Payment Method Settings', 'cartlassi' ), 
+			__( 'Payment Method Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_payment_method_callback'),
 			'cartlassi'
 		);
@@ -144,124 +144,124 @@ class Cartlassi_Admin {
 		// Register a new field in the "cartlassi_section_developers" section, inside the "cartlassi" page.
 		add_settings_field(
 			Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME, 
-			__( 'Shop page', 'cartlassi' ),
+			__( 'Shop page', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_SHOP_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', 'cartlassi' ),
+				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME, 
-			__( 'Category page', 'cartlassi' ),
+			__( 'Category page', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_CATEGORY_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', 'cartlassi' ),
+				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME, 
-			__( 'Product tag page', 'cartlassi' ),
+			__( 'Product tag page', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_TAG_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', 'cartlassi' ),
+				'cartlassi_custom_data' => __( 'Recommended before the top most widget on the page.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME, 
-			__( 'Product page', 'cartlassi' ),
+			__( 'Product page', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_PRODUCT_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
+				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME, 
-			__( 'Other pages', 'cartlassi' ),
+			__( 'Other pages', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_cb'),
 			'cartlassi',
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
+				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME, 
-			__( '', 'cartlassi' ),
+			__( '', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_other_pages_cb'),
 			'cartlassi',
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME,
 				'class'             => 'cartlassi-stick-to-upper-field1',
-				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
+				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME, 
-			__( '', 'cartlassi' ),
+			__( '', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_before_sidebar_other_pages_pages_cb'),
 			'cartlassi',
 			Cartlassi_Constants::APPEARANCE_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME,
 				'class'             => 'cartlassi-stick-to-upper-field2',
-				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', 'cartlassi' ),
+				'cartlassi_custom_data' => __( 'Recommended before the top of the footer widgets.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::INCLUDE_IP_IN_CART_ID_FIELD_NAME, 
-			__( 'Hashed customer IP address.', 'cartlassi' ),
+			__( 'Hashed customer IP address.', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_include_ip_in_cart_id_cb'),
 			'cartlassi',
 			Cartlassi_Constants::DATA_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::INCLUDE_IP_IN_CART_ID_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => 'Mandatory, can\'t uncheck.',
+				'cartlassi_custom_data' => __( 'Mandatory, can\'t uncheck.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME, 
-			__( 'Hashed customer email.', 'cartlassi' ),
+			__( 'Hashed customer email.', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_include_email_in_cart_id_cb'),
 			'cartlassi',
 			Cartlassi_Constants::DATA_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => 'Recommended as it improves performance of the widget. Check this if it adheres with your privacy policy',
+				'cartlassi_custom_data' => __('Recommended as it improves performance of the widget. Check this if it adheres with your privacy policy', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
 		add_settings_field(
 			Cartlassi_Constants::API_KEY_FIELD_NAME, 
-			__( 'Your Cartlassi API Key', 'cartlassi' ),
+			__( 'Your Cartlassi API Key', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_api_key_cb'),
 			'cartlassi',
 			Cartlassi_Constants::API_SECTION_NAME,
@@ -274,7 +274,7 @@ class Cartlassi_Admin {
 
 		add_settings_field(
 			Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME, 
-			__( 'Payment Method', 'cartlassi' ),
+			__( 'Payment Method', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_payment_method_cb'),
 			'cartlassi',
 			Cartlassi_Constants::PAYMENT_METHOD_SECTION_NAME,
@@ -289,26 +289,26 @@ class Cartlassi_Admin {
 
 	function cartlassi_section_default_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure how Cartlassi looks in your shop and where it appears. Please note that in order not to modify any of your template files, we\'ll hook into an existing and *active* sidebar and display the Cartlassi widget just before it. For each of the page types, please select which sidebar it should appear before.', 'cartlassi' ); ?></p>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'We\'re not showing the Cartlassi widget on checkout, cart, account and any of the wc endpoint pages', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure how Cartlassi looks in your shop and where it appears. Please note that in order not to modify any of your template files, we\'ll hook into an existing and *active* sidebar and display the Cartlassi widget just before it. For each of the page types, please select which sidebar it should appear before.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'We\'re not showing the Cartlassi widget on checkout, cart, account and any of the wc endpoint pages', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
 	function cartlassi_section_data_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define what data your shop shares with Cartlassi. FYI we never submit any of the raw data. we hash it before so the data we share looks like `122c4a55d1a70cef972cac3982dd49a6`.', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define what data your shop shares with Cartlassi. FYI we never submit any of the raw data. we hash it before so the data we share looks like `122c4a55d1a70cef972cac3982dd49a6`.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
 	function cartlassi_section_api_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define how your shop communicates with the Cartlassi API servers.', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define how your shop communicates with the Cartlassi API servers.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
 	function cartlassi_section_payment_method_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define your payment method. It will be used both for charging you and paying you commissions.', 'cartlassi' ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define your payment method. It will be used both for charging you and paying you commissions.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
@@ -332,7 +332,7 @@ class Cartlassi_Admin {
 					} 
 				?>
 				<option value="" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], '' , false ) ) : ( '' ); ?>>
-					<?php echo __( 'Don\'t show at all', 'cartlassi' ); ?>
+					<?php echo __( 'Don\'t show at all', Cartlassi_Constants::TEXT_DOMAIN ); ?>
 				</option>
 
 		</select>
@@ -392,12 +392,12 @@ class Cartlassi_Admin {
 				class="regular-text"
 				>
 		<p class="description">
-			<?php esc_attr_e( 'This is the key your shop uses to authenticate against Cartlassi servers. If you beleive your key was tempered with, you can regenarate the API Key by clicking the Regenerate button below', 'cartlassi' ); ?>
+			<?php esc_attr_e( 'This is the key your shop uses to authenticate against Cartlassi servers. If you beleive your key was tempered with, you can regenarate the API Key by clicking the Regenerate button below', Cartlassi_Constants::TEXT_DOMAIN ); ?>
 		</p>
 		<button
 			id="regenerate-api-key-button"
 			class="button button-secondary"
-		><?php esc_html_e( 'Regenerate API Key', 'cartlassi' ); ?></button>
+		><?php esc_html_e( 'Regenerate API Key', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
 		<?php
 	}
 
@@ -427,7 +427,7 @@ class Cartlassi_Admin {
 				<button type="submit"
 					id="pay-button"
 					class="button button-secondary"
-				><?php esc_html_e( 'Add Payment Method', 'cartlassi' ); ?></button>
+				><?php esc_html_e( 'Add Payment Method', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
 				<?php
 			// }
 		}		
@@ -590,7 +590,7 @@ class Cartlassi_Admin {
 		// WordPress will add the "settings-updated" $_GET parameter to the url
 		if ( isset( $_GET['settings-updated'] ) ) {
 			// add settings saved message with the class of "updated"
-			add_settings_error( 'cartlassi_messages', 'cartlassi_message', __( 'Settings Saved', 'cartlassi' ), 'updated' );
+			add_settings_error( 'cartlassi_messages', 'cartlassi_message', __( 'Settings Saved', Cartlassi_Constants::TEXT_DOMAIN ), 'updated' );
 		}
 	
 		// show error/update messages
