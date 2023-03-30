@@ -2,14 +2,17 @@
 
 class Sales_List extends WP_List_Table {
 
+    protected $config;
     /** Class constructor */
-    public function __construct() {
+    public function __construct($config) {
 
         parent::__construct( [
             'singular' => __( 'Sale', Cartlassi_Constants::TEXT_DOMAIN ), //singular name of the listed records
             'plural' => __( 'Sales', Cartlassi_Constants::TEXT_DOMAIN ), //plural name of the listed records
             'ajax' => false //should this table support ajax?
         ] );
+
+        $this->config = $config;
     }
 
     /**
@@ -29,7 +32,7 @@ class Sales_List extends WP_List_Table {
 			),
 		);
 		
-		$response = wp_remote_get( "http://host.docker.internal:3000/shops/sales-as-seller", $args );
+		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/sales-as-seller", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -60,7 +63,7 @@ class Sales_List extends WP_List_Table {
 			),
 		);
 		
-		$response = wp_remote_get( "http://host.docker.internal:3000/shops/sales-as-seller", $args );
+		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/sales-as-seller", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();

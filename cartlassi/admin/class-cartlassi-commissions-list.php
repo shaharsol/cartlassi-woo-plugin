@@ -2,14 +2,17 @@
 
 class Commissions_List extends WP_List_Table {
 
+    protected $config;
     /** Class constructor */
-    public function __construct() {
-
+    public function __construct($config) {
+        
         parent::__construct( [
             'singular' => __( 'Commission', Cartlassi_Constants::TEXT_DOMAIN ), //singular name of the listed records
             'plural' => __( 'Commissions', Cartlassi_Constants::TEXT_DOMAIN ), //plural name of the listed records
             'ajax' => false //should this table support ajax?
         ] );
+
+        $this->config = $config;
     }
 
     /**
@@ -29,7 +32,7 @@ class Commissions_List extends WP_List_Table {
 			),
 		);
 		
-		$response = wp_remote_get( "http://host.docker.internal:3000/shops/sales-as-promoter", $args );
+		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/sales-as-promoter", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -60,7 +63,7 @@ class Commissions_List extends WP_List_Table {
 			),
 		);
 		
-		$response = wp_remote_get( "http://host.docker.internal:3000/shops/sales-as-promoter", $args );
+		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/sales-as-promoter", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -137,7 +140,7 @@ class Commissions_List extends WP_List_Table {
         $columns = array(
             'id'                => __( 'ID', Cartlassi_Constants::TEXT_DOMAIN ),
             'amount'            => __( 'Sale Amount', Cartlassi_Constants::TEXT_DOMAIN ),
-            'commissionAmount' => __( 'Commission Amount', Cartlassi_Constants::TEXT_DOMAIN ),
+            'commissionAmount'  => __( 'Commission Amount', Cartlassi_Constants::TEXT_DOMAIN ),
             'createdAt'         => __( 'created at', Cartlassi_Constants::TEXT_DOMAIN ),
             'commissionDueDate' => __( 'Commission at', Cartlassi_Constants::TEXT_DOMAIN ),
             'status'            => __( 'Status', Cartlassi_Constants::TEXT_DOMAIN ),

@@ -57,12 +57,15 @@ class Cartlassi_Config {
 			'test_key' => 'local'
 		),
 		'development' => array (
+			'api_url' => 'http://host.docker.internal:3000',
 			'test_key' => 'development'
 		),
 		'staging' => array (
+			'api_url' => 'http://host.docker.internal:3000',
 			'test_key' => 'staging'
 		),
 		'production' => array (
+			'api_url' => 'http://host.docker.internal:3000',
 			'test_key' => 'production'
 		)
 	);
