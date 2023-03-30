@@ -58,15 +58,12 @@ class Cartlassi_Config {
 		),
 		'development' => array (
 			'test_key' => 'development'
-
 		),
 		'staging' => array (
 			'test_key' => 'staging'
-
 		),
 		'production' => array (
 			'test_key' => 'production'
-
 		)
 	);
 

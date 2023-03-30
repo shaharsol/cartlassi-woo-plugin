@@ -556,7 +556,7 @@ class Cartlassi_Admin {
 								</form>
 							</div>
 						</div>
-					</div>
+					</div> 
 					<br class="clear">
 					</div>
 				</div>
