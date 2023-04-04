@@ -33,6 +33,7 @@ class Cartlassi_Constants {
 	const TEXT_DOMAIN 				= 'cartlassi';
 	const API_KEY_FIELD_NAME 		= 'cartlassi_field_api_key';
 	const PAYMENT_METHOD_FIELD_NAME	= 'cartlassi_field_payment_method';
+	const PAYOUT_METHOD_FIELD_NAME	= 'cartlassi_field_payout_method';
 	const BEFORE_SIDEBAR_FIELD_NAME	= 'cartlassi_field_before_sidebar';
 	const SIDEBAR_ID 				= 'sidebar-cartlassi';
 	const ORDER_ITEM_CART_ITEM_KEY 	= '_cartlassi_cart_item_key';
@@ -43,7 +44,7 @@ class Cartlassi_Constants {
 	const APPEARANCE_SECTION_NAME 	= 'cartlassi_section_appearance';
 	const DATA_SECTION_NAME 		= 'cartlassi_section_data';
 	const API_SECTION_NAME 			= 'cartlassi_section_api';
-	const PAYMENT_METHOD_SECTION_NAME 		= 'cartlassi_section_payment_method';
+	const PAYMENTS_SECTION_NAME 		= 'cartlassi_section_payments';
 	const OPTIONS_ROW_CLASS_NAME 	= 'cartlassi_row';	
 	const BEFORE_SIDEBAR_SHOP_FIELD_NAME 				= 'cartlassi_field_before_sidebar_shop';
 	const BEFORE_SIDEBAR_CATEGORY_FIELD_NAME 			= 'cartlassi_field_before_sidebar_category';

@@ -53,16 +53,28 @@
 			regenerateAPIKey();
 			// // Event.stop(event); // suppress default click behavior, cancel the event
 		});
-		const form = $('<form></form>');
-		form.attr('id', 'pay-form');
-		form.attr('method', 'POST');
-		form.attr('action', 'http://localhost:3000/shops/payment-method')
-		form.append('<input type="hidden" name="apiKey" value="' + ajax_object.api_key + '">');
-		$('body').append(form);
+		const paymentMethodform = $('<form></form>');
+		paymentMethodform.attr('id', 'pay-form');
+		paymentMethodform.attr('method', 'POST');
+		paymentMethodform.attr('action', ajax_object.api_url + '/shops/payment-method')
+		paymentMethodform.append('<input type="hidden" name="apiKey" value="' + ajax_object.api_key + '">');
+		const payoutMethodform = $('<form></form>');
+		payoutMethodform.attr('id', 'payout-form');
+		payoutMethodform.attr('method', 'POST');
+		payoutMethodform.attr('action', ajax_object.api_url + '/shops/payout-method')
+		payoutMethodform.append('<input type="hidden" name="apiKey" value="' + ajax_object.api_key + '">');
+		$('body').append(paymentMethodform);
+		$('body').append(payoutMethodform);
 		$('#pay-button').click(function(event) {
 			event.preventDefault();
 			// alert('aloha');
 			$('#pay-form').submit();
+			// alert('shaloa');
+		});
+		$('#payout-button').click(function(event) {
+			event.preventDefault();
+			// alert('aloha');
+			$('#payout-form').submit();
 			// alert('shaloa');
 		});
 	
