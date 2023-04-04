@@ -103,7 +103,7 @@ class Cartlassi_Admin {
 
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 		wp_localize_script( $this->plugin_name, 'ajax_object',
-				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $apiKey , 'nonce' => $nonce) 
+				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $apiKey , 'nonce' => $nonce, 'api_url' => ) 
 		);
 		
 
@@ -135,7 +135,7 @@ class Cartlassi_Admin {
 		);
 
 		add_settings_section(
-			Cartlassi_Constants::PAYMENT_METHOD_SECTION_NAME,
+			Cartlassi_Constants::PAYMENTS_SECTION_NAME,
 			__( 'Payment Method Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_payment_method_callback'),
 			Cartlassi_Constants::OPTIONS_PAGE,
@@ -277,7 +277,7 @@ class Cartlassi_Admin {
 			__( 'Payment Method', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_payment_method_cb'),
 			Cartlassi_Constants::OPTIONS_PAGE,
-			Cartlassi_Constants::PAYMENT_METHOD_SECTION_NAME,
+			Cartlassi_Constants::PAYMENTS_SECTION_NAME,
 			array(
 				'label_for'         => Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
@@ -285,6 +285,18 @@ class Cartlassi_Admin {
 			)
 		);
 
+		add_settings_field(
+			Cartlassi_Constants::PAYOUT_METHOD_FIELD_NAME, 
+			__( 'Payout Method', Cartlassi_Constants::TEXT_DOMAIN ),
+			array($this, 'cartlassi_field_payout_method_cb'),
+			Cartlassi_Constants::OPTIONS_PAGE,
+			Cartlassi_Constants::PAYMENTS_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::PAYOUT_METHOD_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => 'custom',
+			)
+		);
 	}
 
 	function cartlassi_section_default_callback( $args ) {
@@ -419,9 +431,9 @@ class Cartlassi_Admin {
 		} else {
 			$body = wp_remote_retrieve_body( $response );
 			$data = json_decode( $body );
-			// if ($data->brand && $data->last4) {
-			// 	echo "{$data->brand} {$data->last4}";
-			// } else {
+			if ($data->brand && $data->last4) {
+				echo "{$data->brand} {$data->last4}";
+			} else {
 				?>
 		
 				<button type="submit"
@@ -429,9 +441,41 @@ class Cartlassi_Admin {
 					class="button button-secondary"
 				><?php esc_html_e( 'Add Payment Method', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
 				<?php
-			// }
+			}
 		}		
 		
+	}
+
+	function cartlassi_field_payout_method_cb( $args ) {
+		$apiKey = $this->getApiKey();
+
+		$args = array(
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
+		);
+		
+		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payout-method", $args );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			error_log("WWWWWWWWWWW ${error_message}");
+			wp_send_json_error($response);
+		} else {
+			$body = wp_remote_retrieve_body( $response );
+			$data = json_decode( $body );
+			if (false) {
+				// never do
+			} else {
+				?>
+		
+				<button type="submit"
+					id="payout-button"
+					class="button button-secondary"
+				><?php esc_html_e( 'Add Payout Method', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
+				<?php
+			}
+		}		
 	}
 
 	function cartlassi_field_include_ip_in_cart_id_cb ( $args ) {
