@@ -54,6 +54,7 @@ class Cartlassi_Config {
 	protected $config = array(
 		'local' => array (
 			'api_url' => 'http://host.docker.internal:3000',
+			'api_public_url' => 'http://localhost:3000',
 			'test_key' => 'local'
 		),
 		'development' => array (

@@ -103,10 +103,8 @@ class Cartlassi_Admin {
 
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 		wp_localize_script( $this->plugin_name, 'ajax_object',
-				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $apiKey , 'nonce' => $nonce, 'api_url' => ) 
+				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $apiKey , 'nonce' => $nonce, 'api_url' => $this->config->get('api_public_url')) 
 		);
-		
-
 	}
 
 	function cartlassi_settings_init() {
@@ -308,19 +306,19 @@ class Cartlassi_Admin {
 
 	function cartlassi_section_data_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define what data your shop shares with Cartlassi. FYI we never submit any of the raw data. we hash it before so the data we share looks like `122c4a55d1a70cef972cac3982dd49a6`.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure what data your shop shares with Cartlassi. FYI we never submit any of the raw data. we hash it before so the data we share looks like `122c4a55d1a70cef972cac3982dd49a6`.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
 	function cartlassi_section_api_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define how your shop communicates with the Cartlassi API servers.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure how your shop communicates with the Cartlassi API servers.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
 	function cartlassi_section_payment_method_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can define your payment method. It will be used both for charging you and paying you commissions.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure your payment and payout methods.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
@@ -464,8 +462,8 @@ class Cartlassi_Admin {
 		} else {
 			$body = wp_remote_retrieve_body( $response );
 			$data = json_decode( $body );
-			if (false) {
-				// never do
+			if ($data->stripeConnectConnected) {
+				esc_html_e( 'Connected via Stripe Connect', Cartlassi_Constants::TEXT_DOMAIN );
 			} else {
 				?>
 		
@@ -627,6 +625,18 @@ class Cartlassi_Admin {
 				),
 			);
 			$response = wp_remote_post( "{$this->config->get('api_url')}/shops/complete-stripe", $args );
+		}
+
+		if ( $_GET['account-connected'] ) {
+			// a stripe connect process has just ended, need to process it.
+			$apiKey = $this->getApiKey();
+
+			$args = array(
+				'headers'     => array(
+					'Authorization' => "token {$apiKey}"
+				),
+			);
+			$response = wp_remote_post( "{$this->config->get('api_url')}/shops/complete-stripe-connect", $args );
 		}
 		// add error/update messages
 	
