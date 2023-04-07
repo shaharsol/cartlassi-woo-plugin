@@ -27,6 +27,10 @@
 class Cartlassi_Constants {
 
 	const OPTIONS_NAME 				= 'cartlassi_options';
+	const APPEARANCE_OPTIONS_NAME 	= 'cartlassi_options_appearance';
+	const DATA_OPTIONS_NAME 		= 'cartlassi_options_data';
+	const API_OPTIONS_NAME 			= 'cartlassi_options_api';
+	const PAYMENTS_OPTIONS_NAME 	= 'cartlassi_options_payments';
 	const OPTIONS_PAGE 				= 'cartlassi';
 	const OPTION_GROUP				= 'cartlassi';
 	const TOP_MENU_SLUG				= 'cartlassi';
