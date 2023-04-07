@@ -23,7 +23,7 @@ class Sales_List extends WP_List_Table {
     *
     * @return mixed
     */    
-    public static function get_sales( $per_page = 10, $page_number = 1 ) {
+    public static function get_sales( $config, $per_page = 10, $page_number = 1 ) {
         $apiKey = self::getApiKey();
 
 		$args = array(
@@ -32,7 +32,7 @@ class Sales_List extends WP_List_Table {
 			),
 		);
 		
-		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/sales-as-seller", $args );
+		$response = wp_remote_get( "{$config->get('api_url')}/shops/sales-as-seller", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -53,7 +53,7 @@ class Sales_List extends WP_List_Table {
     *
     * @return null|string
     */
-    public static function record_count() {
+    public static function record_count($config) {
         // var_dump('in counttttttt');
         $apiKey = self::getApiKey();
 
@@ -63,7 +63,7 @@ class Sales_List extends WP_List_Table {
 			),
 		);
 		
-		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/sales-as-seller", $args );
+		$response = wp_remote_get( "{$config->get('api_url')}/shops/sales-as-seller", $args );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -191,7 +191,7 @@ class Sales_List extends WP_List_Table {
         $per_page = $this->get_items_per_page( 'sales_per_page', 10 );
         // var_dump($per_page);
         $current_page = $this->get_pagenum();
-        $total_items = self::record_count();
+        $total_items = self::record_count($this->config);
 
         // var_dump($current_page);
         // var_dump($total_items);
@@ -201,7 +201,7 @@ class Sales_List extends WP_List_Table {
             'per_page' => $per_page //WE have to determine how many items to show on a page
         ] );
         
-        $this->items = self::get_sales( $per_page, $current_page );
+        $this->items = self::get_sales( $this->config, $per_page, $current_page );
         // echo var_export($this->items, true).'<br/>';
     }
 
