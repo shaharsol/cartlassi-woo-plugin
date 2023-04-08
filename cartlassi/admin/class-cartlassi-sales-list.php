@@ -206,7 +206,7 @@ class Sales_List extends WP_List_Table {
     }
 
     protected static function getApiKey() {
-		return get_option(Cartlassi_Constants::OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	}
     
 }

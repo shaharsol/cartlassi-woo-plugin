@@ -244,7 +244,7 @@ class Cartlassi_Public {
 		}
 
 		$sidebarId = $params[0]['id'];
-		$cartlassiOptions = get_option(Cartlassi_Constants::OPTIONS_NAME);
+		$cartlassiOptions = get_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME);
 
 		$invocations = array (
 			array (
@@ -546,7 +546,7 @@ class Cartlassi_Public {
 	}
 
 	protected function getApiKey() {
-		return get_option(Cartlassi_Constants::OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	}
 	
 

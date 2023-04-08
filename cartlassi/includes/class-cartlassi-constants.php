@@ -49,6 +49,10 @@ class Cartlassi_Constants {
 	const DATA_SECTION_NAME 		= 'cartlassi_section_data';
 	const API_SECTION_NAME 			= 'cartlassi_section_api';
 	const PAYMENTS_SECTION_NAME 		= 'cartlassi_section_payments';
+	const APPEARANCE_SECTION_PAGE 	= 'cartlassi_page_appearance';
+	const DATA_SECTION_PAGE 		= 'cartlassi_page_data';
+	const API_SECTION_PAGE 			= 'cartlassi_page_api';
+	const PAYMENTS_SECTION_PAGE 		= 'cartlassi_page_payments';
 	const OPTIONS_ROW_CLASS_NAME 	= 'cartlassi_row';	
 	const BEFORE_SIDEBAR_SHOP_FIELD_NAME 				= 'cartlassi_field_before_sidebar_shop';
 	const BEFORE_SIDEBAR_CATEGORY_FIELD_NAME 			= 'cartlassi_field_before_sidebar_category';

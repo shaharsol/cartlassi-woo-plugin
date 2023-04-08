@@ -34,7 +34,7 @@ class Cartlassi_Utils {
 	 */
 	public static function generate_cart_id () {
 		$cart_id = md5($_SERVER['REMOTE_ADDR']);
-		$options = get_option( Cartlassi_Constants::OPTIONS_NAME );
+		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
 		if ( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] )) {
 			$customer = new WC_Customer(WC()->session->get_customer_id());
 			$cart_id .= md5($customer->get_email());
