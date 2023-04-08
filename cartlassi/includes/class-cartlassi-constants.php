@@ -67,6 +67,7 @@ class Cartlassi_Constants {
 	const OTHER_PAGES_OPTION_DONT_SHOW_BUT		= 'dont_show_but';
 	const COMMISSION = 0.15;
 	const FEE = 0.015;
+	const PLUGIN_FILE = 'cartlassi/cartlassi.php';
 	
 	
 

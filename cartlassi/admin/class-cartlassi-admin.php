@@ -779,4 +779,11 @@ class Cartlassi_Admin {
 		
 		$this->commissionsList = new Commissions_List($this->config, $this->getApiKey());
 	}
+
+	public function activation_redirect($plugin) {
+		if( $plugin == Cartlassi_Constants::PLUGIN_FILE ) {
+			error_log("admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE);
+			exit( wp_redirect( admin_url( "admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE ) ) );
+		}
+	}
 }
