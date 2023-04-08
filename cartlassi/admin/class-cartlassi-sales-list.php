@@ -36,7 +36,7 @@ class Sales_List extends WP_List_Table {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW ${error_message}");
+			error_log("WWWWWWWWWWW {$error_message}");
 			return wp_send_json_error($response);
 		}
         $body = wp_remote_retrieve_body( $response );
@@ -67,7 +67,7 @@ class Sales_List extends WP_List_Table {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW ${error_message}");
+			error_log("WWWWWWWWWWW {$error_message}");
 			return wp_send_json_error($response);
 		}
         $body = wp_remote_retrieve_body( $response );

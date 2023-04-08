@@ -83,13 +83,13 @@ class Cartlassi_Widget extends WP_Widget {
 		} else {
 			extract( $args );
 			echo $before_widget;
-			echo '<div style="border:1px solid;"><span>We think you may like</span>';
+			//echo '<div style="border:1px solid;"><span>We think you may like</span>';
 			if ( ! empty( $title ) ) {
 				echo $before_title . $title . $after_title;
 			}
 			echo '<div id="cartlassi-ajax-widget"></div>';
-			echo '</div>';
-			// echo $after_widget;
+			//echo '</div>';
+			echo $after_widget;
 		}
 
 

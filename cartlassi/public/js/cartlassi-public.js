@@ -39,7 +39,7 @@
 		success: (data, status) => {
 			$('#cartlassi-ajax-widget').html(data);
 			$('#cartlassi-ajax-widget').on('click', 'a', (event) => {
-				jQuery.post(ajax_object.ajax_url, {
+				$.post(ajax_object.ajax_url, {
 					action: 'cartlassi_log_click',
 					nonce: ajax_object.nonce,
 					product_id: $(event.currentTarget).data('product-id'),
@@ -50,7 +50,7 @@
 				}, 'json');
 		
 			})
-			jQuery( document.body ).trigger( 'post-load' );
+			$( document.body ).trigger( 'post-load' );
 		},
 		error: (err) => {
 			// alert(JSON.stringify(err));

@@ -130,10 +130,10 @@ class Cartlassi_Public {
 		);
 
 		$cartId = Cartlassi_Utils::generate_cart_id();
-		$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${cartId}", $args );
+		$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("error in add_to_cart: ${error_message}");
+			error_log("error in add_to_cart: {$error_message}");
 		}
 	} 
 
@@ -166,7 +166,7 @@ class Cartlassi_Public {
 		$response = wp_remote_request( "{$this->config->get('api_url')}/carts/${cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("error in remove_from_cart: ${error_message}");
+			error_log("error in remove_from_cart: {$error_message}");
 		}
 	}
 
@@ -175,8 +175,8 @@ class Cartlassi_Public {
 			'name'          => __( 'Cartlassi Sidebar', 'textdomain' ),
 			'id'            => Cartlassi_Constants::SIDEBAR_ID,
 			'description'   => __( 'A sidebar for cartlassi plugin.', 'textdomain' ),
-			'before_widget' => '<li id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</li>',
+			'before_widget' => '<div id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</div>',
 			'before_title'  => '<h2 class="widgettitle">',
 			'after_title'   => '</h2>',
 		) );
@@ -355,7 +355,7 @@ class Cartlassi_Public {
 	// 		$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
 	// 		if ( is_wp_error( $response ) ) {
 	// 			$error_message = $response->get_error_message();
-	// 			error_log("error in log_click_to_product: ${error_message}");
+	// 			error_log("error in log_click_to_product: {$error_message}");
 	// 		}
 	// 	}
 	// }
@@ -379,7 +379,7 @@ class Cartlassi_Public {
 			$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
-				error_log("error in log_click: ${error_message}");
+				error_log("error in log_click: {$error_message}");
 			}
 		}
 		wp_die();
@@ -430,7 +430,7 @@ class Cartlassi_Public {
 	// 		$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
 	// 		if ( is_wp_error( $response ) ) {
 	// 			$error_message = $response->get_error_message();
-	// 			error_log("error in log_ajax_add_to_cart: ${error_message}");
+	// 			error_log("error in log_ajax_add_to_cart: {$error_message}");
 	// 		}
 	// 	}
 	// 	// no wp_die() here. we hook to an ajax action which will fire it itself. if we we wp_die
@@ -483,10 +483,10 @@ class Cartlassi_Public {
 			);
 
 			$cartId = Cartlassi_Utils::generate_cart_id();
-			$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${cartId}/checkout", $args );
+			$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}/checkout", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
-				error_log("WWWWWWWWWWW ${error_message}");
+				error_log("WWWWWWWWWWW {$error_message}");
 			}			
 
 		}
@@ -512,10 +512,10 @@ class Cartlassi_Public {
 						$args['body'] = array(
 							"shopCartId" => $cart_item_key
 						);
-						$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${order_id}/refund", $args );
+						$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$order_id}/refund", $args );
 						if ( is_wp_error( $response ) ) {
 							$error_message = $response->get_error_message();
-							error_log("WWWWWWWWWWW ${error_message}");
+							error_log("WWWWWWWWWWW {$error_message}");
 						}	
 						// $order = wc_get_order( $order_id );
 						// error_log(var_export($order, true));

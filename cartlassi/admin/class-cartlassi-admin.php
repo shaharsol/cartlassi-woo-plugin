@@ -428,7 +428,7 @@ class Cartlassi_Admin {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW ${error_message}");
+			error_log("WWWWWWWWWWW {$error_message}");
 			wp_send_json_error($response);
 		} else {
 			$body = wp_remote_retrieve_body( $response );
@@ -461,7 +461,7 @@ class Cartlassi_Admin {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW ${error_message}");
+			error_log("WWWWWWWWWWW {$error_message}");
 			wp_send_json_error($response);
 		} else {
 			$body = wp_remote_retrieve_body( $response );
@@ -714,7 +714,7 @@ class Cartlassi_Admin {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW ${error_message}");
+			error_log("WWWWWWWWWWW {$error_message}");
 			wp_send_json_error($response);
 		} else {
 			$body = wp_remote_retrieve_body( $response );
