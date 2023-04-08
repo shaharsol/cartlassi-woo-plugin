@@ -733,12 +733,10 @@ class Cartlassi_Admin {
 	}
 
 	public function add_action_links($links, $file){
-		error_log($file);
 		if ($file == 'cartlassi/cartlassi.php') {
 			$mylinks = array(
 			 '<a href="' . admin_url( 'admin.php?page=cartlassi' ) . '">Settings</a>',
 			);
-			error_log(var_export($mylinks,true));
 			return array_merge( $mylinks , $links );
 		}else{
 			return $links;
@@ -782,8 +780,43 @@ class Cartlassi_Admin {
 
 	public function activation_redirect($plugin) {
 		if( $plugin == Cartlassi_Constants::PLUGIN_FILE ) {
-			error_log("admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE);
 			exit( wp_redirect( admin_url( "admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE ) ) );
 		}
+	}
+
+	protected function admin_notice_no_payout_method() {
+		?>
+			<div class="notice notice-warning is-dismissible">
+				<p><Strong>Cartlassi:<strong> We're able to use your shop's abandoned carts data to generate extra revenue for you. However, until you add a payout method, we can't really pay you, can we? Please <a href="<?php echo admin_url( 'admin.php?page=cartlassi&tab=billing') ?>">add a payout method</a></p>
+			</div>
+		<?php    
+	}
+
+	protected function admin_notice_no_payment_method() {
+		?>
+			<div class="notice notice-warning is-dismissible">
+				<p><Strong>Cartlassi:<strong> We're not showing the Cartlassi widget on your shop and you're missing on sales. Please <a href="<?php echo admin_url( 'admin.php?page=cartlassi&tab=billing') ?>">add a payment method</a> to start showing your widget.</p>
+			</div>
+		<?php    
+	}
+
+	protected function admin_notice_no_appearance_setting() {
+		?>
+			<div class="notice notice-warning is-dismissible">
+				<p><Strong>Cartlassi:<strong> We're not showing the Cartlassi widget on your shop and you're missing on sales. Please <a href="<?php echo admin_url( 'admin.php?page=cartlassi&tab=appearance') ?>">configure the widget appearance</a> to start showing your widget.</p>
+			</div>
+		<?php    
+	}
+
+	public function display_admin_notices() {
+		error_log('ACCCUUUIIII');
+		// if no stripe connect, notice that we can't pay
+		if (!get_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME)) {
+			$this->admin_notice_no_appearance_setting();
+		}
+		$this->admin_notice_no_payout_method();
+		$this->admin_notice_no_payment_method();
+		// if no stripe checkout, notice that we can't display widget
+		// if appearance is not set, notice that we can't display the widget
 	}
 }
