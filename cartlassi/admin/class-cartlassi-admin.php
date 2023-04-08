@@ -814,8 +814,8 @@ class Cartlassi_Admin {
 		if (!get_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME)) {
 			$this->admin_notice_no_appearance_setting();
 		}
-		$this->admin_notice_no_payout_method();
-		$this->admin_notice_no_payment_method();
+		// $this->admin_notice_no_payout_method();
+		// $this->admin_notice_no_payment_method();
 		// if no stripe checkout, notice that we can't display widget
 		// if appearance is not set, notice that we can't display the widget
 	}
