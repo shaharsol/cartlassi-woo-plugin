@@ -2,3 +2,21 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+
+ #cartlassi-widget-container {
+    position: relative;
+    border:1px solid #ccc;
+ }
+
+ #powered-by-cartlassi {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+ }
+
+ #cartlassi-widget-title {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    font-size: 16px;
+}
