@@ -116,12 +116,30 @@ class Cartlassi_Public {
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
 		$apiKey = $this->getApiKey();
 		$product = wc_get_product( $product_id );
+		$tagIds = $product->get_tag_ids();
+		$tags = array_map(function($tagId) {
+			error_log(var_export(get_term($tagId), true));
+			return (get_term($tagId))->name;
+		}, $tagIds);
+		$description = $product->get_description();
+		if (!$description) {
+			$description = $product->get_short_description();
+		}
 		$body = array(
 			'shopProductId' => strval($product_id),
 			'shopCartId' 	=> strval($cart_id),
 			'sku'     		=> $product->get_sku(), //
-			'description'	=> $product->get_name(), // TBD consider get_short_description?
+			'title'			=> $product->get_name(),
 		);
+		
+		if ($description) {
+			$body['description'] = $description;
+		}
+		
+		if (count($tags) > 0) {
+			$body['tags'] = implode(',', $tags);
+		}
+		
 		$args = array(
 			'body'        => $body,
 			'headers'     => array(
