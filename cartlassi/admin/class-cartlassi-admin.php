@@ -310,7 +310,8 @@ class Cartlassi_Admin {
 
 	function cartlassi_section_data_callback( $args ) {
 		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure what data your shop shares with Cartlassi. FYI we never submit any of the raw data. we hash it before so the data we share looks like `122c4a55d1a70cef972cac3982dd49a6`.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure what data your shop shares with Cartlassi.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'FYI we never submit any of the raw data. we hash it before so the data you share with looks something like:', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
@@ -334,6 +335,9 @@ class Cartlassi_Admin {
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
 				data-custom="<?php echo esc_attr( $args['cartlassi_custom_data'] ); ?>"
 				name="<?php echo esc_attr( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]">
+				<option value="" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], '' , false ) ) : ( '' ); ?>>
+					<?php echo __( 'Please Select', Cartlassi_Constants::TEXT_DOMAIN ); ?>
+				</option>
 				<?php 
 					foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) { 
 						if (is_active_sidebar($sidebar['id']) && $sidebar['id'] !== Cartlassi_Constants::SIDEBAR_ID) {
@@ -345,7 +349,7 @@ class Cartlassi_Admin {
 						}
 					} 
 				?>
-				<option value="" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], '' , false ) ) : ( '' ); ?>>
+				<option value="do-not-show" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], 'do-not-show' , false ) ) : ( '' ); ?>>
 					<?php echo __( 'Don\'t show at all', Cartlassi_Constants::TEXT_DOMAIN ); ?>
 				</option>
 
@@ -642,7 +646,8 @@ class Cartlassi_Admin {
 			);
 			$response = wp_remote_post( "{$this->config->get('api_url')}/shops/complete-stripe-connect", $args );
 		}
-		// add error/update messages
+
+		$welcome = isset( $_GET['welcome'] );
 	
 		// check if the user have submitted the settings
 		// WordPress will add the "settings-updated" $_GET parameter to the url
@@ -780,7 +785,7 @@ class Cartlassi_Admin {
 
 	public function activation_redirect($plugin) {
 		if( $plugin == Cartlassi_Constants::PLUGIN_FILE ) {
-			exit( wp_redirect( admin_url( "admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE ) ) );
+			exit( wp_redirect( admin_url( "admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE."&welcome=true" ) ) );
 		}
 	}
 
@@ -808,8 +813,26 @@ class Cartlassi_Admin {
 		<?php    
 	}
 
+	protected function admin_notice_welcome() {
+		?>
+			<div class="notice notice-success is-dismissible">
+				<h2><?php _e('Welcome to Cartlassi.')?></h2>
+				<h3><?php _e('Please take a few minutes to complete the setup. Hopefully by the end of it you\'ll have'); ?></h3> 
+				<ul>
+					<li><?php _e('Your shop collecting data and monetizing your abandoned carts')?></li>
+					<li><?php _e('Cartlassi widget displaying on your shop driving more sales')?></li>
+					<li><?php _e('Established a way for us to collect payments and pay you.')?></li>
+				</ul>
+			</div>
+		<?php    
+	}
+
 	public function display_admin_notices() {
-		error_log('ACCCUUUIIII');
+		$welcome = isset( $_GET['welcome'] );
+		if ($welcome) {
+			$this->admin_notice_welcome();
+			return;
+		}
 		// if no stripe connect, notice that we can't pay
 		if (!get_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME)) {
 			$this->admin_notice_no_appearance_setting();
