@@ -25,13 +25,6 @@
  * @author     Your Name <email@example.com>
  */
 class Cartlassi_Utils {
-
-
-	/**
-	 * Load the plugin text domain for translation.
-	 *
-	 * @since    1.0.0
-	 */
 	public static function generate_cart_id () {
 		$cart_id = md5($_SERVER['REMOTE_ADDR']);
 		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
@@ -41,9 +34,14 @@ class Cartlassi_Utils {
 		}
 
 		return $cart_id;
-
 	}
 
-
-
+	public static function demo_cart_id ($include_email) {
+		$cart_id = md5($_SERVER['REMOTE_ADDR']);
+		if ( $include_email ) {
+			error_log('axqui');
+			$cart_id .= md5(get_bloginfo('admin_email'));
+		}
+		return $cart_id;
+	}
 }

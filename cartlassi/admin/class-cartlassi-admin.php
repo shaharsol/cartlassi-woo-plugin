@@ -311,7 +311,8 @@ class Cartlassi_Admin {
 	function cartlassi_section_data_callback( $args ) {
 		?>
 		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure what data your shop shares with Cartlassi.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'FYI we never submit any of the raw data. we hash it before so the data you share with looks something like:', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'FYI we never allow any of the raw data to leave your site. We hash the data before we send it to our servers. Here is what your own hash looks like:', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<input id="cartlassi-demo-hash" type="text" disabled value="<?php $options = get_option(Cartlassi_Constants::DATA_OPTIONS_NAME); echo Cartlassi_Utils::demo_cart_id( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] ) );?>">
 		<?php
 	}
 
@@ -419,7 +420,7 @@ class Cartlassi_Admin {
 		<?php
 	}
 
-	function cartlassi_field_payment_method_cb( $args ) {
+	protected function get_payment_method () {
 		$apiKey = $this->getApiKey();
 
 		$args = array(
@@ -433,26 +434,14 @@ class Cartlassi_Admin {
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			error_log("WWWWWWWWWWW {$error_message}");
-			wp_send_json_error($response);
-		} else {
-			$body = wp_remote_retrieve_body( $response );
-			$data = json_decode( $body );
-			if ($data->brand && $data->last4) {
-				echo "{$data->brand} {$data->last4}";
-			} else {
-				?>
-		
-				<button type="submit"
-					id="pay-button"
-					class="button button-secondary"
-				><?php esc_html_e( 'Add Payment Method', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
-				<?php
-			}
-		}		
-		
+			return wp_send_json_error($response);
+		}
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body );
+		return $data;
 	}
 
-	function cartlassi_field_payout_method_cb( $args ) {
+	protected function get_payout_method () {
 		$apiKey = $this->getApiKey();
 
 		$args = array(
@@ -466,22 +455,42 @@ class Cartlassi_Admin {
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			error_log("WWWWWWWWWWW {$error_message}");
-			wp_send_json_error($response);
-		} else {
-			$body = wp_remote_retrieve_body( $response );
-			$data = json_decode( $body );
-			if ($data->stripeConnectConnected) {
-				esc_html_e( 'Connected via Stripe Connect', Cartlassi_Constants::TEXT_DOMAIN );
-			} else {
-				?>
+			return wp_send_json_error($response);
+		}
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body );
+		return $data;
+	}
+
+	function cartlassi_field_payment_method_cb( $args ) {
+		$data = $this->get_payment_method();
 		
-				<button type="submit"
-					id="payout-button"
-					class="button button-secondary"
-				><?php esc_html_e( 'Add Payout Method', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
-				<?php
-			}
-		}		
+		if ($data->brand && $data->last4) {
+			echo "{$data->brand} {$data->last4}";
+		} else {
+			?>
+	
+			<button type="submit"
+				id="pay-button"
+				class="button button-secondary"
+			><?php esc_html_e( 'Add Payment Method', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
+			<?php
+		}
+	}
+
+	function cartlassi_field_payout_method_cb( $args ) {
+		$data = $this->get_payout_method();
+		if ($data->stripeConnectConnected) {
+			esc_html_e( 'Connected via Stripe Connect', Cartlassi_Constants::TEXT_DOMAIN );
+		} else {
+			?>
+	
+			<button type="submit"
+				id="payout-button"
+				class="button button-secondary"
+			><?php esc_html_e( 'Add Payout Method', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
+			<?php
+		}
 	}
 
 	function cartlassi_field_include_ip_in_cart_id_cb ( $args ) {
@@ -733,6 +742,16 @@ class Cartlassi_Admin {
 		wp_die();
 	}
 
+	function demo_hash () {
+		check_ajax_referer(Cartlassi_Constants::NONCE_ADMIN_NAME, 'nonce');
+		error_log($_POST['include_email']);
+		$hash = Cartlassi_Utils::demo_cart_id(filter_var($_POST['include_email'], FILTER_VALIDATE_BOOLEAN));
+		echo wp_json_encode(array('hash' => $hash));
+		wp_die();
+	}
+
+	
+
 	protected function getApiKey() {
 		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	}
@@ -814,14 +833,37 @@ class Cartlassi_Admin {
 	}
 
 	protected function admin_notice_welcome() {
+		$paymentMethod = $this->get_payment_method();
+		$payoutMethod = $this->get_payout_method();
+		$isCollectingData = true;
+		$isPaymentMethod = $paymentMethod->brand && $paymentMethod->last4;
+		$isPayoutMethod = $payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected;
+		$isAppearanceSet = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
+
+		$isDisplayingWidget = $isAppearanceSet && $isPaymentMethod;
 		?>
 			<div data-dismissible="disable-done-notice-forever" class="notice notice-success is-dismissible">
 				<h2><?php _e('Welcome to Cartlassi.')?></h2>
 				<h3><?php _e('Please take a few minutes to complete the setup. Hopefully by the end of it you\'ll have all boxes checked.'); ?></h3> 
 				<ul>
-					<li><input type="checkbox" id="is-collecting-data" checked><?php _e('Your shop collecting data and monetizing your abandoned carts')?></li>
-					<li><input type="checkbox" id="is-displaying-widget"><?php _e('Cartlassi widget displaying on your shop driving more sales')?></li>
-					<li><input type="checkbox" id="is-payout"><?php _e('Established a way for us to collect payments and pay you.')?></li>
+					<li><input disabled type="checkbox" id="is-collecting-data" <?php checked($isCollectingData, true)?>><?php _e('Your shop is collecting data and monetizing your abandoned carts')?></li>
+					<li><input disabled type="checkbox" id="is-displaying-widget" <?php checked($isDisplayingWidget, true)?>><?php _e('Cartlassi widget is displaying on your shop driving more sales')?></li>
+					<?php if (!$isPaymentMethod) { ?>
+						<ul class="cartlassi-admin-checkbox-reasons">
+							<li>Paymet method not set.</li>
+						</ul>
+					<?php } ?>
+					<?php if (!$isAppearanceSet) { ?>
+						<ul class="cartlassi-admin-checkbox-reasons">
+							<li>Appearance settings not set.</li>
+						</ul>
+					<?php } ?>
+					<li><input disabled type="checkbox" id="is-payout" <?php checked($isPayoutMethod, true)?>><?php _e('You\'ve established a payout method so we can pay you your earnings with us.')?></li>
+					<?php if (!$isPayoutMethod) { ?>
+						<ul id="" class="cartlassi-admin-checkbox-reasons">
+							<li>Payout method not set</li>
+						</ul>
+					<?php } ?>
 				</ul>
 			</div>
 		<?php    
