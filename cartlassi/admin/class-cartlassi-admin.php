@@ -666,10 +666,10 @@ class Cartlassi_Admin {
 				$active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'appearance';
 			?>
 			<h2 class="nav-tab-wrapper">
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=appearance" class="nav-tab <?php echo $active_tab == 'appearance' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Appearance', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=data" class="nav-tab <?php echo $active_tab == 'data' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Data Sharing', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=api" class="nav-tab <?php echo $active_tab == 'api' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'API Settings', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=billing" class="nav-tab <?php echo $active_tab == 'billing' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Payment & Payout', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=appearance<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'appearance' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Appearance', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=data<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'data' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Data Sharing', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=api<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'api' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'API Settings', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=billing<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'billing' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Payment & Payout', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
 			</h2>
 
 			<form action="options.php" method="post">
@@ -791,7 +791,7 @@ class Cartlassi_Admin {
 
 	protected function admin_notice_no_payout_method() {
 		?>
-			<div class="notice notice-warning is-dismissible">
+			<div data-dismissible="disable-done-notice-forever" class="notice notice-warning is-dismissible">
 				<p><Strong>Cartlassi:<strong> We're able to use your shop's abandoned carts data to generate extra revenue for you. However, until you add a payout method, we can't really pay you, can we? Please <a href="<?php echo admin_url( 'admin.php?page=cartlassi&tab=billing') ?>">add a payout method</a></p>
 			</div>
 		<?php    
@@ -799,7 +799,7 @@ class Cartlassi_Admin {
 
 	protected function admin_notice_no_payment_method() {
 		?>
-			<div class="notice notice-warning is-dismissible">
+			<div data-dismissible="disable-done-notice-forever" class="notice notice-warning is-dismissible">
 				<p><Strong>Cartlassi:<strong> We're not showing the Cartlassi widget on your shop and you're missing on sales. Please <a href="<?php echo admin_url( 'admin.php?page=cartlassi&tab=billing') ?>">add a payment method</a> to start showing your widget.</p>
 			</div>
 		<?php    
@@ -807,7 +807,7 @@ class Cartlassi_Admin {
 
 	protected function admin_notice_no_appearance_setting() {
 		?>
-			<div class="notice notice-warning is-dismissible">
+			<div data-dismissible="disable-done-notice-forever" class="notice notice-warning is-dismissible">
 				<p><Strong>Cartlassi:<strong> We're not showing the Cartlassi widget on your shop and you're missing on sales. Please <a href="<?php echo admin_url( 'admin.php?page=cartlassi&tab=appearance') ?>">configure the widget appearance</a> to start showing your widget.</p>
 			</div>
 		<?php    
@@ -815,13 +815,13 @@ class Cartlassi_Admin {
 
 	protected function admin_notice_welcome() {
 		?>
-			<div class="notice notice-success is-dismissible">
+			<div data-dismissible="disable-done-notice-forever" class="notice notice-success is-dismissible">
 				<h2><?php _e('Welcome to Cartlassi.')?></h2>
-				<h3><?php _e('Please take a few minutes to complete the setup. Hopefully by the end of it you\'ll have'); ?></h3> 
+				<h3><?php _e('Please take a few minutes to complete the setup. Hopefully by the end of it you\'ll have all boxes checked.'); ?></h3> 
 				<ul>
-					<li><?php _e('Your shop collecting data and monetizing your abandoned carts')?></li>
-					<li><?php _e('Cartlassi widget displaying on your shop driving more sales')?></li>
-					<li><?php _e('Established a way for us to collect payments and pay you.')?></li>
+					<li><input type="checkbox" id="is-collecting-data" checked><?php _e('Your shop collecting data and monetizing your abandoned carts')?></li>
+					<li><input type="checkbox" id="is-displaying-widget"><?php _e('Cartlassi widget displaying on your shop driving more sales')?></li>
+					<li><input type="checkbox" id="is-payout"><?php _e('Established a way for us to collect payments and pay you.')?></li>
 				</ul>
 			</div>
 		<?php    
