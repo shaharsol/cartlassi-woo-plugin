@@ -485,7 +485,7 @@ class Cartlassi_Admin {
 
 	function cartlassi_field_payout_method_cb( $args ) {
 		$data = $this->get_payout_method();
-		if ($data->stripeConnectConnected) {
+		if ($data->stripeConnectAccountId && $data->stripeConnectConnected) {
 			esc_html_e( 'Connected via Stripe Connect', Cartlassi_Constants::TEXT_DOMAIN );
 		} else {
 			?>
@@ -842,7 +842,7 @@ class Cartlassi_Admin {
 		$paymentMethod = $this->get_payment_method();
 		$payoutMethod = $this->get_payout_method();
 		$isCollectingData = true;
-		$isPaymentMethod = $paymentMethod->brand && $paymentMethod->last4;
+		$isPaymentMethod = ($paymentMethod->brand && $paymentMethod->last4) || $_GET['session_id'];
 		$isPayoutMethod = $payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected;
 		$isAppearanceSet = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
 
