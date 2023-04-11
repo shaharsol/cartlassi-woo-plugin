@@ -40,6 +40,7 @@ class Cartlassi_Public {
 	 */
 	private $version;
 	private $config;
+	private $utils;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -48,11 +49,12 @@ class Cartlassi_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version, $config ) {
+	public function __construct( $plugin_name, $version, $config, $utils ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->config = $config;
+		$this->utils = $utils;
 
 	}
 
@@ -147,7 +149,7 @@ class Cartlassi_Public {
 			),
 		);
 
-		$cartId = Cartlassi_Utils::generate_cart_id();
+		$cartId = $this->utils->generate_cart_id();
 		$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -180,8 +182,8 @@ class Cartlassi_Public {
 			),
 		);
 
-		$cartId = Cartlassi_Utils::generate_cart_id();
-		$response = wp_remote_request( "{$this->config->get('api_url')}/carts/${cartId}", $args );
+		$cartId = $this->utils->generate_cart_id();
+		$response = wp_remote_request( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			error_log("error in remove_from_cart: {$error_message}");
@@ -500,7 +502,7 @@ class Cartlassi_Public {
 				),
 			);
 
-			$cartId = Cartlassi_Utils::generate_cart_id();
+			$cartId = $this->utils->generate_cart_id();
 			$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}/checkout", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();

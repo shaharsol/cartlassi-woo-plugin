@@ -40,6 +40,7 @@ class Cartlassi_Admin {
 	 */
 	private $version;
 	private $config;
+	private $utils;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -48,11 +49,12 @@ class Cartlassi_Admin {
 	 * @param      string    $plugin_name       The name of this cartlassi.
 	 * @param      string    $version    The version of this cartlassi.
 	 */
-	public function __construct( $plugin_name, $version, $config ) {
+	public function __construct( $plugin_name, $version, $config, $utils ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->config = $config;
+		$this->utils = $utils;
 
 	}
 
@@ -312,7 +314,7 @@ class Cartlassi_Admin {
 		?>
 		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure what data your shop shares with Cartlassi.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'FYI we never allow any of the raw data to leave your site. We hash the data before we send it to our servers. Here is what your own hash looks like:', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
-		<input id="cartlassi-demo-hash" type="text" disabled value="<?php $options = get_option(Cartlassi_Constants::DATA_OPTIONS_NAME); echo Cartlassi_Utils::demo_cart_id( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] ) );?>">
+		<input id="cartlassi-demo-hash" type="text" disabled value="<?php $options = get_option(Cartlassi_Constants::DATA_OPTIONS_NAME); echo $this->utils->demo_cart_id( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] ) );?>">
 		<?php
 	}
 
@@ -420,46 +422,49 @@ class Cartlassi_Admin {
 		<?php
 	}
 
-	protected function get_payment_method () {
-		$apiKey = $this->getApiKey();
+	public function get_payment_method () {
+		// $apiKey = $this->getApiKey();
 
-		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
-		);
+		// $args = array(
+		// 	'headers'     => array(
+		// 		'Authorization' => "token {$apiKey}"
+		// 	),
+		// );
 		
-		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payment-method", $args );
+		// $response = wp_remote_get( "{$this->config->get('api_url')}/shops/payment-method", $args );
 
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW {$error_message}");
-			return wp_send_json_error($response);
-		}
-		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body );
-		return $data;
+		// if ( is_wp_error( $response ) ) {
+		// 	$error_message = $response->get_error_message();
+		// 	error_log("WWWWWWWWWWW {$error_message}");
+		// 	return wp_send_json_error($response);
+		// }
+		// $body = wp_remote_retrieve_body( $response );
+		// $data = json_decode( $body );
+		// return $data;
+
+		return $this->utils->get_payment_method();
 	}
 
 	protected function get_payout_method () {
-		$apiKey = $this->getApiKey();
+		// $apiKey = $this->getApiKey();
 
-		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
-		);
+		// $args = array(
+		// 	'headers'     => array(
+		// 		'Authorization' => "token {$apiKey}"
+		// 	),
+		// );
 		
-		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payout-method", $args );
+		// $response = wp_remote_get( "{$this->config->get('api_url')}/shops/payout-method", $args );
 
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW {$error_message}");
-			return wp_send_json_error($response);
-		}
-		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body );
-		return $data;
+		// if ( is_wp_error( $response ) ) {
+		// 	$error_message = $response->get_error_message();
+		// 	error_log("WWWWWWWWWWW {$error_message}");
+		// 	return wp_send_json_error($response);
+		// }
+		// $body = wp_remote_retrieve_body( $response );
+		// $data = json_decode( $body );
+		// return $data;
+		return $this->utils->get_payout_method();
 	}
 
 	function cartlassi_field_payment_method_cb( $args ) {
@@ -745,7 +750,7 @@ class Cartlassi_Admin {
 	function demo_hash () {
 		check_ajax_referer(Cartlassi_Constants::NONCE_ADMIN_NAME, 'nonce');
 		error_log($_POST['include_email']);
-		$hash = Cartlassi_Utils::demo_cart_id(filter_var($_POST['include_email'], FILTER_VALIDATE_BOOLEAN));
+		$hash = $this->utils->demo_cart_id(filter_var($_POST['include_email'], FILTER_VALIDATE_BOOLEAN));
 		echo wp_json_encode(array('hash' => $hash));
 		wp_die();
 	}
@@ -753,7 +758,8 @@ class Cartlassi_Admin {
 	
 
 	protected function getApiKey() {
-		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+		// return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+		return $this->utils->get_api_key();
 	}
 
 	public function add_action_links($links, $file){

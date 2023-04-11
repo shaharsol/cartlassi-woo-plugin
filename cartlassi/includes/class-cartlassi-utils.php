@@ -25,7 +25,14 @@
  * @author     Your Name <email@example.com>
  */
 class Cartlassi_Utils {
-	public static function generate_cart_id () {
+
+	protected $config;
+
+	public function __construct($config) {
+		$this->config = $config;
+	}
+
+	public function generate_cart_id () {
 		$cart_id = md5($_SERVER['REMOTE_ADDR']);
 		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
 		if ( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] )) {
@@ -36,12 +43,57 @@ class Cartlassi_Utils {
 		return $cart_id;
 	}
 
-	public static function demo_cart_id ($include_email) {
+	public function demo_cart_id ($include_email) {
 		$cart_id = md5($_SERVER['REMOTE_ADDR']);
 		if ( $include_email ) {
-			error_log('axqui');
 			$cart_id .= md5(get_bloginfo('admin_email'));
 		}
 		return $cart_id;
+	}
+
+	public function get_api_key() {
+		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+	}
+
+	public function get_payment_method () {
+		$apiKey = self::get_api_key();
+
+		$args = array(
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
+		);
+		
+		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payment-method", $args );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			error_log("WWWWWWWWWWW {$error_message}");
+			return wp_send_json_error($response);
+		}
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body );
+		return $data;
+	}
+
+	public function get_payout_method () {
+		$apiKey = self::get_api_key();
+
+		$args = array(
+			'headers'     => array(
+				'Authorization' => "token {$apiKey}"
+			),
+		);
+		
+		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payout-method", $args );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			error_log("WWWWWWWWWWW {$error_message}");
+			return wp_send_json_error($response);
+		}
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body );
+		return $data;
 	}
 }

@@ -65,6 +65,7 @@ class Cartlassi {
 	 * @var      string    $version    The current version of the plugin.
 	 */
 	protected $config;
+	protected $utils;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -86,6 +87,7 @@ class Cartlassi {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->load_config();
+		$this->load_utils();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
@@ -190,6 +192,12 @@ class Cartlassi {
 
 	}
 
+	private function load_utils() {
+
+		$this->utils = new Cartlassi_Utils($this->config);
+
+	}
+
 	/**
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
@@ -199,7 +207,7 @@ class Cartlassi {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Cartlassi_Admin( $this->get_plugin_name(), $this->get_version(), $this->get_config() );
+		$plugin_admin = new Cartlassi_Admin( $this->get_plugin_name(), $this->get_version(), $this->get_config(), $this->get_utils() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -227,7 +235,7 @@ class Cartlassi {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Cartlassi_Public( $this->get_plugin_name(), $this->get_version(), $this->get_config() );
+		$plugin_public = new Cartlassi_Public( $this->get_plugin_name(), $this->get_version(), $this->get_config(), $this->get_utils() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -296,6 +304,10 @@ class Cartlassi {
 
 	public function get_config() {
 		return $this->config;
+	}
+
+	public function get_utils() {
+		return $this->utils;
 	}
 
 }

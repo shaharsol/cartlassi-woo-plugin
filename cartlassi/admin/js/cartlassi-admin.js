@@ -53,16 +53,26 @@
 			regenerateAPIKey();
 			// // Event.stop(event); // suppress default click behavior, cancel the event
 		});
+		const queryParams = new Proxy(new URLSearchParams(window.location.search), {
+			get: (searchParams, prop) => searchParams.get(prop),
+		});
+		  
 		const paymentMethodform = $('<form></form>');
 		paymentMethodform.attr('id', 'pay-form');
 		paymentMethodform.attr('method', 'POST');
 		paymentMethodform.attr('action', ajax_object.api_url + '/shops/payment-method')
 		paymentMethodform.append('<input type="hidden" name="apiKey" value="' + ajax_object.api_key + '">');
+		if(queryParams.welcome){
+			paymentMethodform.append('<input type="hidden" name="welcome" value="true">');
+		}
 		const payoutMethodform = $('<form></form>');
 		payoutMethodform.attr('id', 'payout-form');
 		payoutMethodform.attr('method', 'POST');
 		payoutMethodform.attr('action', ajax_object.api_url + '/shops/payout-method')
 		payoutMethodform.append('<input type="hidden" name="apiKey" value="' + ajax_object.api_key + '">');
+		if(queryParams.welcome){
+			payoutMethodform.append('<input type="hidden" name="welcome" value="true">');
+		}
 		$('body').append(paymentMethodform);
 		$('body').append(payoutMethodform);
 		$('#pay-button').click(function(event) {

@@ -2,6 +2,7 @@
 
 class Cartlassi_Widget extends WP_Widget {
 	private $config;
+	private $utils;
 
 	public function __construct() {
 		parent::__construct(
@@ -10,6 +11,7 @@ class Cartlassi_Widget extends WP_Widget {
 			array( 'description' => __( 'Cartlassi Widget', 'text_domain' ) ) // Args
 		);
 		$this->config = new Cartlassi_Config();
+		$this->utils = new Cartlassi_Utils($this->config);
 	}
 
 	public function widget( $args, $instance ) {
@@ -35,8 +37,8 @@ class Cartlassi_Widget extends WP_Widget {
 					'Authorization' => "token {$apiKey}"
 				),
 			);
-			$cartId = Cartlassi_Utils::generate_cart_id();
-			$response = wp_remote_get( "{$this->config->get('api_url')}/carts/${cartId}/shop", $args );
+			$cartId = $this->utils->generate_cart_id();
+			$response = wp_remote_get( "{$this->config->get('api_url')}/carts/{$cartId}/shop", $args );
 	
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
@@ -81,20 +83,24 @@ class Cartlassi_Widget extends WP_Widget {
 			echo $rendered_block;
 			wp_die();
 		} else {
-			extract( $args );
-			// echo $before_widget;
-			echo '<div id="cartlassi-widget-container"><span id="cartlassi-widget-title">We think you may like</span>';
-			if ( ! empty( $title ) ) {
-				//echo $before_title . $title . $after_title;
+			
+			$paymentMethod = $this->utils->get_payment_method();
+			$isPaymentMethod = $paymentMethod->brand && $paymentMethod->last4;
+			$isAppearanceSet = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
+			$isDisplayingWidget = $isAppearanceSet && $isPaymentMethod;
+			if ( $isDisplayingWidget ) {
+				extract( $args );
+				// echo $before_widget;
+				echo '<div id="cartlassi-widget-container"><span id="cartlassi-widget-title">We think you may like</span>';
+				if ( ! empty( $title ) ) {
+					//echo $before_title . $title . $after_title;
+				}
+				echo '<div id="cartlassi-ajax-widget"></div>';
+				echo '<div id="powered-by-cartlassi">powered by <a href="https://cartlassi.com">Cartlassi</a></div>';
+				echo '</div>';
+				// echo $after_widget;
 			}
-			echo '<div id="cartlassi-ajax-widget"></div>';
-			echo '<div id="powered-by-cartlassi">powered by <a href="https://cartlassi.com">Cartlassi</a></div>';
-			echo '</div>';
-			// echo $after_widget;
 		}
-
-
-		
 	}
 
 	public function form( $instance ) {
