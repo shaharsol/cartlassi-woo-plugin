@@ -81,6 +81,9 @@
 			$('#pay-form').submit();
 			// alert('shaloa');
 		});
+		if(queryParams['stripe-refresh']){
+			$('#pay-form').submit();
+		}
 		$('#payout-button').click(function(event) {
 			event.preventDefault();
 			// alert('aloha');

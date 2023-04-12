@@ -843,7 +843,7 @@ class Cartlassi_Admin {
 		$payoutMethod = $this->get_payout_method();
 		$isCollectingData = true;
 		$isPaymentMethod = ($paymentMethod->brand && $paymentMethod->last4) || $_GET['session_id'];
-		$isPayoutMethod = $payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected;
+		$isPayoutMethod = ($payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected) || $_GET['account-connected'];
 		$isAppearanceSet = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
 
 		$isDisplayingWidget = $isAppearanceSet && $isPaymentMethod;
