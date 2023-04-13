@@ -581,10 +581,9 @@ class Cartlassi_Public {
 			}, $tagIds);
 
 			$categoryIds = $product->get_category_ids();
-			var_dump($categoryIds);
 			$categories = array_map(function($categoryId) {
-				var_dump(get_cat_name($categoryId));
-				return get_cat_name($categoryId);
+				$term = get_term_by( 'id', $categoryId, 'product_cat' );
+				return isset ($term->name) ? $term->name : '';
 			}, $categoryIds);
 			$description = $product->get_description();
 			if (!$description) {
@@ -597,6 +596,7 @@ class Cartlassi_Public {
 				'short_description' => $product->get_short_description(),
 				'tags'				=> implode(', ', $tags),
 				'categories'				=> implode(', ', $categories),
+				'sku'     		=> $product->get_sku(),
 			);
 		}, $products);
 		return $filtered;
