@@ -139,7 +139,7 @@ class Cartlassi_Public {
 		}
 		
 		if (count($tags) > 0) {
-			$body['tags'] = implode(',', $tags);
+			$body['tags'] = implode(', ', $tags);
 		}
 		
 		$args = array(
@@ -575,24 +575,39 @@ class Cartlassi_Public {
 			'status' => 'publish', // Only published products
 		) );
 		$filtered = array_map(function($product) {
+			$tagIds = $product->get_tag_ids();
+			$tags = array_map(function($tagId) {
+				return (get_term($tagId))->name;
+			}, $tagIds);
+
+			$categoryIds = $product->get_category_ids();
+			var_dump($categoryIds);
+			$categories = array_map(function($categoryId) {
+				var_dump(get_cat_name($categoryId));
+				return get_cat_name($categoryId);
+			}, $categoryIds);
+			$description = $product->get_description();
+			if (!$description) {
+				$description = $product->get_short_description();
+			}
 			return array (
-				'id' 	=> $product->get_id(),
-				'name'	=> $product->get_name(),
+				'id' => $product->get_id(),
+				'name' => $product->get_name(),
 				'description' => $product->get_description(),
-				'short_description' => $product->get_short_description()
+				'short_description' => $product->get_short_description(),
+				'tags'				=> implode(', ', $tags),
+				'categories'				=> implode(', ', $categories),
 			);
 		}, $products);
 		return $filtered;
 	}
 
 	function cartlassi_api_init() {
-		error_log('AAAQQQUIIIIIII');
 		$reg = register_rest_route( 'cartlassi/v1', 'feed', array(
 			'methods' => WP_REST_Server::READABLE,
 			'callback' => array($this, 'get_product_feed'),
 			'permission_callback' => '__return_true',
 		) );
-		error_log($reg);
 	}
 
 	
