@@ -257,7 +257,8 @@ class Cartlassi {
 		$this->loader->add_action( 'wp_ajax_nopriv_cartlassi_load_widget', $plugin_public, 'load_widget' );
 		$this->loader->add_action( 'wp_ajax_cartlassi_log_click', $plugin_public, 'log_click' );
 		$this->loader->add_action( 'wp_ajax_nopriv_cartlassi_log_click', $plugin_public, 'log_click' );
-
+		$this->loader->add_action( 'rest_api_init', $plugin_public, 'cartlassi_api_init' );
+		
 		$this->loader->add_filter( 'woocommerce_blocks_product_grid_item_html', $plugin_public, 'add_tag_to_block_product_link', 10, 3 );
 		$this->loader->add_filter( 'query_vars', $plugin_public, 'expose_cartlassi_query_var' );
 	}

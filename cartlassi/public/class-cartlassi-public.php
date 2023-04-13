@@ -568,6 +568,35 @@ class Cartlassi_Public {
 	protected function getApiKey() {
 		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	}
+
+	function get_product_feed() {
+		$products = wc_get_products( array(
+			'limit'  => -1, // All products
+			'status' => 'publish', // Only published products
+		) );
+		$filtered = array_map(function($product) {
+			return array (
+				'id' 	=> $product->get_id(),
+				'name'	=> $product->get_name(),
+				'description' => $product->get_description(),
+				'short_description' => $product->get_short_description()
+			);
+		}, $products);
+		return $filtered;
+	}
+
+	function cartlassi_api_init() {
+		error_log('AAAQQQUIIIIIII');
+		$reg = register_rest_route( 'cartlassi/v1', 'feed', array(
+			'methods' => WP_REST_Server::READABLE,
+			'callback' => array($this, 'get_product_feed'),
+			'permission_callback' => '__return_true',
+		) );
+		error_log($reg);
+	}
+
+	
+	
 	
 
 }
