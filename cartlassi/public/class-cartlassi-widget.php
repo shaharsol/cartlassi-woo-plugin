@@ -18,7 +18,7 @@ class Cartlassi_Widget extends WP_Widget {
 		// if ( is_admin() ) { 
 		// 	return;
 		// }
-		
+	
 		// when the widget is rendered, it adds a placeholder div tag into which
 		// a 2nd ajax call will poor content into 
 
@@ -44,39 +44,61 @@ class Cartlassi_Widget extends WP_Widget {
 					),
 				);
 				$cartId = $this->utils->generate_cart_id();
-				$response = wp_remote_get( "{$this->config->get('api_url')}/carts/{$cartId}/shop", $args );
+				// $response = wp_remote_get( "{$this->config->get('api_url')}/carts/{$cartId}/shop", $args );
 		
+				// if ( is_wp_error( $response ) ) {
+				// 	$error_message = $response->get_error_message();
+				// 	echo "Something went wrong: $error_message";
+				// 	error_log($error_message);
+				// 	return;
+				// }
+		
+				// $body = wp_remote_retrieve_body( $response );
+				// $data = json_decode( $body );
+				// $products = array();
+				// $cartItemToProductMap = array();
+				// foreach($data as $product) {
+				// 	$the_query = new WP_Query( array( 's' => $product->description ) );
+				// 	if ( $the_query->have_posts() ) {
+				// 		$the_query->the_post();
+				// 		$postID = get_the_ID();
+				// 		array_push($products, $postID);
+				// 		$cartItemToProductMap += [$product->id => $postID];
+				// 	}
+				// 	/* Restore original Post Data */
+				// 	wp_reset_postdata();
+		
+				// 	// limit the items in widget (need to find the default # of items per line from woo config)
+				// 	if ( count($products) == wc_get_theme_support( 'product_blocks::default_columns', 3 )) {
+				// 		break;
+				// 	}
+				// }
+		
+				$response = wp_remote_get( "{$this->config->get('api_url')}/shops/widget/{$cartId}", $args );
+
 				if ( is_wp_error( $response ) ) {
 					$error_message = $response->get_error_message();
 					echo "Something went wrong: $error_message";
 					error_log($error_message);
 					return;
 				}
-		
+
 				$body = wp_remote_retrieve_body( $response );
-				$data = json_decode( $body );
-				$products = array();
-				$cartItemToProductMap = array();
-				foreach($data as $product) {
-					$the_query = new WP_Query( array( 's' => $product->description ) );
-					if ( $the_query->have_posts() ) {
-						$the_query->the_post();
-						$postID = get_the_ID();
-						array_push($products, $postID);
-						$cartItemToProductMap += [$product->id => $postID];
-					}
-					/* Restore original Post Data */
-					wp_reset_postdata();
-		
-					// limit the items in widget (need to find the default # of items per line from woo config)
-					if ( count($products) == wc_get_theme_support( 'product_blocks::default_columns', 3 )) {
-						break;
-					}
-				}
-		
+				$products = json_decode( $body );
+				error_log(var_export($products, true));
+
 				if (count($products) == 0) {
 					return; // TBD replace to wp_die() here?
 				}
+				$products = json_decode( $body );
+				$cartItemToProductMap = array_map(function($product){
+					return array ($product->cartItemId => $product->id);
+				}, $products);
+				error_log(var_export($cartItemToProductMap,true));
+				$products = array_map(function($product) {
+					return $product->id;
+				}, $products);
+				error_log(var_export($products,true));
 				WC()->session->set(Cartlassi_Constants::CURRENT_MAP_NAME, $cartItemToProductMap);
 				$block_name = 'woocommerce/handpicked-products';
 				$converted_block = new WP_Block_Parser_Block( $block_name, array(

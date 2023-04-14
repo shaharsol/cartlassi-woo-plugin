@@ -248,7 +248,7 @@ class Cartlassi_Public {
 				return true;
 			}
 			if ($sidebarId == $cartlassiOptions[$optionName]) {
-				echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+				dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 			}
 			return false;
 		}
@@ -257,7 +257,6 @@ class Cartlassi_Public {
 	}
 
 	function display_widget($params) {
-
 		// First determine if to show the widget at all.
 		if ( is_cart() || is_checkout() || is_account_page() || is_wc_endpoint_url() ) {
 			return $params;
@@ -305,7 +304,7 @@ class Cartlassi_Public {
 					|| ( ( $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME] ==  Cartlassi_Constants::OTHER_PAGES_OPTION_SHOW_EXCEPT ) && !$is_listed_page )
 				) {
 					if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME]) {
-						echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+						dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 					}
 				}
 			}
@@ -315,7 +314,7 @@ class Cartlassi_Public {
 	}
 
 	function load_widget() {
-		echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+		dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 		wp_die();
 	}
 
