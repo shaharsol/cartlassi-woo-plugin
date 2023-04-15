@@ -36,9 +36,11 @@ class Cartlassi_Constants {
 	const TOP_MENU_SLUG				= 'cartlassi';
 	const TEXT_DOMAIN 				= 'cartlassi';
 	const API_KEY_FIELD_NAME 		= 'cartlassi_field_api_key';
+	const API_SECRET_FIELD_NAME		= 'cartlassi_field_api_secret';
 	const PAYMENT_METHOD_FIELD_NAME	= 'cartlassi_field_payment_method';
 	const PAYOUT_METHOD_FIELD_NAME	= 'cartlassi_field_payout_method';
 	const BEFORE_SIDEBAR_FIELD_NAME	= 'cartlassi_field_before_sidebar';
+	const EXTRA_ENCRYPTION_FIELD_NAME = 'cartlassi_field_extra_encryption';
 	const SIDEBAR_ID 				= 'sidebar-cartlassi';
 	const ORDER_ITEM_CART_ITEM_KEY 	= '_cartlassi_cart_item_key';
 	const CURRENT_MAP_NAME			= 'cartlassi_current_map';

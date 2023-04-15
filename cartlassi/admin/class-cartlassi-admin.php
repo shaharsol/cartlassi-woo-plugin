@@ -239,7 +239,7 @@ class Cartlassi_Admin {
 
 		add_settings_field(
 			Cartlassi_Constants::INCLUDE_IP_IN_CART_ID_FIELD_NAME, 
-			__( 'Hashed customer IP address.', Cartlassi_Constants::TEXT_DOMAIN ),
+			__( 'Hashed customer IP address', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_include_ip_in_cart_id_cb'),
 			Cartlassi_Constants::DATA_SECTION_PAGE,
 			Cartlassi_Constants::DATA_SECTION_NAME,
@@ -252,7 +252,7 @@ class Cartlassi_Admin {
 
 		add_settings_field(
 			Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME, 
-			__( 'Hashed customer email.', Cartlassi_Constants::TEXT_DOMAIN ),
+			__( 'Hashed customer email', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_include_email_in_cart_id_cb'),
 			Cartlassi_Constants::DATA_SECTION_PAGE,
 			Cartlassi_Constants::DATA_SECTION_NAME,
@@ -260,6 +260,19 @@ class Cartlassi_Admin {
 				'label_for'         => Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME,
 				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
 				'cartlassi_custom_data' => __('Recommended as it improves performance of the widget. Check this if it adheres with your privacy policy', Cartlassi_Constants::TEXT_DOMAIN ),
+			)
+		);
+
+		add_settings_field(
+			Cartlassi_Constants::EXTRA_ENCRYPTION_FIELD_NAME, 
+			__( 'Add extra encryption layer', Cartlassi_Constants::TEXT_DOMAIN ),
+			array($this, 'cartlassi_field_extra_encryption_cb'),
+			Cartlassi_Constants::DATA_SECTION_PAGE,
+			Cartlassi_Constants::DATA_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::EXTRA_ENCRYPTION_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => __('Will further encrypt the hashed IP address and/or email address before sending it over the network. Will cost a little extra CPU on your end and ours. Your call.', Cartlassi_Constants::TEXT_DOMAIN ),
 			)
 		);
 
@@ -515,6 +528,21 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_field_include_email_in_cart_id_cb ( $args ) {
+		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
+		?>
+			<input type="checkbox"
+				id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				name="<?php echo esc_attr( Cartlassi_Constants::DATA_OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				value="<?php echo isset( $options[ $args['label_for'] ] ) ? true : false ; ?>"
+				<?php echo isset( $options[ $args['label_for'] ] ) ? 'checked' : '' ; ?>
+			>
+			<p class="description">
+				<?php echo $args['cartlassi_custom_data']; ?>
+			</p>
+		<?php 
+	}
+
+	function cartlassi_field_extra_encryption_cb ( $args ) {
 		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
 		?>
 			<input type="checkbox"

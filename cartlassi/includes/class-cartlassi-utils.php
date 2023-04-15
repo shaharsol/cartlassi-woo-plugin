@@ -32,6 +32,17 @@ class Cartlassi_Utils {
 		$this->config = $config;
 	}
 
+	const AES_METHOD = 'aes-256-cbc';
+	private function encrypt($message, $password)
+	{
+		$iv_size        = openssl_cipher_iv_length(Self::AES_METHOD);
+		$iv             = openssl_random_pseudo_bytes($iv_size);
+		$ciphertext     = openssl_encrypt($message, Self::AES_METHOD, $password, OPENSSL_RAW_DATA, $iv);
+		$ciphertext_hex = bin2hex($ciphertext);
+		$iv_hex         = bin2hex($iv);
+		return "$iv_hex:$ciphertext_hex";
+	}
+
 	public function generate_cart_id () {
 		$cart_id = md5($_SERVER['REMOTE_ADDR']);
 		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
@@ -40,7 +51,12 @@ class Cartlassi_Utils {
 			$cart_id .= md5($customer->get_email());
 		}
 
-		return $cart_id;
+		if ( !isset($options[Cartlassi_Constants::EXTRA_ENCRYPTION_FIELD_NAME] )) {
+			return $cart_id;
+		}
+
+		return $this->encrypt($cart_id, str_replace('-','',get_option( Cartlassi_Constants::API_OPTIONS_NAME )[Cartlassi_Constants::API_SECRET_FIELD_NAME]));
+		
 	}
 
 	public function demo_cart_id ($include_email) {

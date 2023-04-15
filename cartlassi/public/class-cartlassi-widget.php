@@ -86,18 +86,25 @@ class Cartlassi_Widget extends WP_Widget {
 				$body = wp_remote_retrieve_body( $response );
 				$products = json_decode( $body );
 				error_log(var_export($products, true));
+				// error_log(var_export($cartItemToProductMap, true));
 
 				if (count($products) == 0) {
 					return; // TBD replace to wp_die() here?
 				}
-				$products = json_decode( $body );
-				$cartItemToProductMap = array_map(function($product){
-					return array ($product->cartItemId => $product->id);
-				}, $products);
-				error_log(var_export($cartItemToProductMap,true));
+				// $products = json_decode( $body );
+				$cartItemToProductMap = array_reduce($products, function($carry, $item){
+					if(count($carry) == 0) {
+						$carry = [strval($item->id) => $item->cartItemId];
+					} else {
+						$carry += [strval($item->id) => $item->cartItemId];
+					}
+					return $carry;
+				}, []);
+
 				$products = array_map(function($product) {
 					return $product->id;
 				}, $products);
+
 				error_log(var_export($products,true));
 				WC()->session->set(Cartlassi_Constants::CURRENT_MAP_NAME, $cartItemToProductMap);
 				$block_name = 'woocommerce/handpicked-products';

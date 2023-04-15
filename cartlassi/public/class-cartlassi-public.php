@@ -334,7 +334,9 @@ class Cartlassi_Public {
 		// TBD make sure this happens ONLY in cartlassi widget
 		// otherwise we take over links from every widget in the site...
 
-		$cartlassiCartItemId = array_search( $product->get_id(), WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
+		// $cartlassiCartItemId = array_search( $product->get_id(), WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
+		$map = WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME );
+		$cartlassiCartItemId = isset($map[$product->get_id()]) ? $map[$product->get_id()] : false; 
 		if ($cartlassiCartItemId) {
 			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
 			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);

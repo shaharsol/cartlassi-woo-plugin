@@ -52,7 +52,8 @@ class Cartlassi_Activator {
 			$body = wp_remote_retrieve_body( $response );
 			$data = json_decode( $body );
 			update_option (Cartlassi_Constants::API_OPTIONS_NAME, array (
-				Cartlassi_Constants::API_KEY_FIELD_NAME => $data->apiKey
+				Cartlassi_Constants::API_KEY_FIELD_NAME => $data->apiKey,
+				Cartlassi_Constants::API_SECRET_FIELD_NAME => $data->apiSecret,
 			));
 			
 		}
