@@ -27,9 +27,11 @@
 class Cartlassi_Utils {
 
 	protected $config;
+	protected $api;
 
-	public function __construct($config) {
+	public function __construct($config, $api) {
 		$this->config = $config;
+		$this->api = $api;
 	}
 
 	const AES_METHOD = 'aes-256-cbc';

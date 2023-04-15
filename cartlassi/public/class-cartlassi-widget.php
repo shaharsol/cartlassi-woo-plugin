@@ -3,6 +3,7 @@
 class Cartlassi_Widget extends WP_Widget {
 	private $config;
 	private $utils;
+	private $api;
 
 	public function __construct() {
 		parent::__construct(
@@ -11,7 +12,8 @@ class Cartlassi_Widget extends WP_Widget {
 			array( 'description' => __( 'Cartlassi Widget', 'text_domain' ) ) // Args
 		);
 		$this->config = new Cartlassi_Config();
-		$this->utils = new Cartlassi_Utils($this->config);
+		$this->api = new Cartlassi_Api($this->config);
+		$this->utils = new Cartlassi_Utils($this->config, $this->api);
 	}
 
 	public function widget( $args, $instance ) {
@@ -36,13 +38,13 @@ class Cartlassi_Widget extends WP_Widget {
 				// $title = apply_filters( 'widget_title', $instance['title'] );
 				$title = 'We think you may like...';
 				
-				$apiKey = get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+				// $apiKey = get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 		
-				$args = array(
-					'headers'     => array(
-						'Authorization' => "token {$apiKey}"
-					),
-				);
+				// $args = array(
+				// 	'headers'     => array(
+				// 		'Authorization' => "token {$apiKey}"
+				// 	),
+				// );
 				$cartId = $this->utils->generate_cart_id();
 				// $response = wp_remote_get( "{$this->config->get('api_url')}/carts/{$cartId}/shop", $args );
 		
@@ -74,17 +76,22 @@ class Cartlassi_Widget extends WP_Widget {
 				// 	}
 				// }
 		
-				$response = wp_remote_get( "{$this->config->get('api_url')}/shops/widget/{$cartId}", $args );
+				// $response = wp_remote_get( "{$this->config->get('api_url')}/shops/widget/{$cartId}", $args );
 
-				if ( is_wp_error( $response ) ) {
-					$error_message = $response->get_error_message();
-					echo "Something went wrong: $error_message";
-					error_log($error_message);
-					return;
-				}
+				// if ( is_wp_error( $response ) ) {
+				// 	$error_message = $response->get_error_message();
+				// 	echo "Something went wrong: $error_message";
+				// 	error_log($error_message);
+				// 	return;
+				// }
 
-				$body = wp_remote_retrieve_body( $response );
-				$products = json_decode( $body );
+
+				// $body = wp_remote_retrieve_body( $response );
+				// $products = json_decode( $body );
+				
+				
+				$products = $this->api->request("/shops/widget/{$cartId}");
+
 				error_log(var_export($products, true));
 				// error_log(var_export($cartItemToProductMap, true));
 

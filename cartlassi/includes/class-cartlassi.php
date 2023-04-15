@@ -66,6 +66,7 @@ class Cartlassi {
 	 */
 	protected $config;
 	protected $utils;
+	protected $api;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -87,6 +88,7 @@ class Cartlassi {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->load_config();
+		$this->load_api();
 		$this->load_utils();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
@@ -134,6 +136,8 @@ class Cartlassi {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cartlassi-i18n.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cartlassi-utils.php';
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cartlassi-api.php';
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
@@ -194,7 +198,13 @@ class Cartlassi {
 
 	private function load_utils() {
 
-		$this->utils = new Cartlassi_Utils($this->config);
+		$this->utils = new Cartlassi_Utils($this->config, $this->api);
+
+	}
+
+	private function load_api() {
+
+		$this->api = new Cartlassi_Api($this->config);
 
 	}
 
