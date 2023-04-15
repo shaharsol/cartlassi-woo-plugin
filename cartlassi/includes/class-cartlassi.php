@@ -65,6 +65,7 @@ class Cartlassi {
 	 * @var      string    $version    The current version of the plugin.
 	 */
 	protected $config;
+	protected $utils;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -79,13 +80,14 @@ class Cartlassi {
 		if ( defined( 'CARTLASSI_VERSION' ) ) {
 			$this->version = CARTLASSI_VERSION;
 		} else {
-			$this->version = '1.0.0';
+			$this->version = '1.0.1';
 		}
 		$this->plugin_name = 'cartlassi';
 
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->load_config();
+		$this->load_utils();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
@@ -190,6 +192,12 @@ class Cartlassi {
 
 	}
 
+	private function load_utils() {
+
+		$this->utils = new Cartlassi_Utils($this->config);
+
+	}
+
 	/**
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
@@ -199,7 +207,7 @@ class Cartlassi {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Cartlassi_Admin( $this->get_plugin_name(), $this->get_version(), $this->get_config() );
+		$plugin_admin = new Cartlassi_Admin( $this->get_plugin_name(), $this->get_version(), $this->get_config(), $this->get_utils() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -209,9 +217,13 @@ class Cartlassi {
 		// wordpress admin
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'cartlassi_wc_options_page' );
 		$this->loader->add_action( 'wp_ajax_cartlassi_regenerate_api_key', $plugin_admin, 'regenerate_api_key' );
+		$this->loader->add_action( 'wp_ajax_cartlassi_demo_hash', $plugin_admin, 'demo_hash' );
+		
+		$this->loader->add_action( 'activated_plugin', $plugin_admin, 'activation_redirect' );
+		$this->loader->add_action( 'admin_notices', $plugin_admin, 'display_admin_notices' );
+
 		$this->loader->add_filter( "plugin_action_links", $plugin_admin, 'add_action_links', 10, 2);
 		$this->loader->add_filter( 'set-screen-option', $plugin_admin , 'set_screen', 10, 3 );
-
 	}
 
 	/**
@@ -223,7 +235,7 @@ class Cartlassi {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Cartlassi_Public( $this->get_plugin_name(), $this->get_version(), $this->get_config() );
+		$plugin_public = new Cartlassi_Public( $this->get_plugin_name(), $this->get_version(), $this->get_config(), $this->get_utils() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -245,7 +257,8 @@ class Cartlassi {
 		$this->loader->add_action( 'wp_ajax_nopriv_cartlassi_load_widget', $plugin_public, 'load_widget' );
 		$this->loader->add_action( 'wp_ajax_cartlassi_log_click', $plugin_public, 'log_click' );
 		$this->loader->add_action( 'wp_ajax_nopriv_cartlassi_log_click', $plugin_public, 'log_click' );
-
+		$this->loader->add_action( 'rest_api_init', $plugin_public, 'cartlassi_api_init' );
+		
 		$this->loader->add_filter( 'woocommerce_blocks_product_grid_item_html', $plugin_public, 'add_tag_to_block_product_link', 10, 3 );
 		$this->loader->add_filter( 'query_vars', $plugin_public, 'expose_cartlassi_query_var' );
 	}
@@ -292,6 +305,10 @@ class Cartlassi {
 
 	public function get_config() {
 		return $this->config;
+	}
+
+	public function get_utils() {
+		return $this->utils;
 	}
 
 }

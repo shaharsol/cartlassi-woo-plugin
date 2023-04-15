@@ -40,6 +40,7 @@ class Cartlassi_Public {
 	 */
 	private $version;
 	private $config;
+	private $utils;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -48,11 +49,12 @@ class Cartlassi_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version, $config ) {
+	public function __construct( $plugin_name, $version, $config, $utils ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->config = $config;
+		$this->utils = $utils;
 
 	}
 
@@ -116,12 +118,30 @@ class Cartlassi_Public {
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
 		$apiKey = $this->getApiKey();
 		$product = wc_get_product( $product_id );
+		$tagIds = $product->get_tag_ids();
+		$tags = array_map(function($tagId) {
+			error_log(var_export(get_term($tagId), true));
+			return (get_term($tagId))->name;
+		}, $tagIds);
+		$description = $product->get_description();
+		if (!$description) {
+			$description = $product->get_short_description();
+		}
 		$body = array(
 			'shopProductId' => strval($product_id),
 			'shopCartId' 	=> strval($cart_id),
 			'sku'     		=> $product->get_sku(), //
-			'description'	=> $product->get_name(), // TBD consider get_short_description?
+			'title'			=> $product->get_name(),
 		);
+		
+		if ($description) {
+			$body['description'] = $description;
+		}
+		
+		if (count($tags) > 0) {
+			$body['tags'] = implode(', ', $tags);
+		}
+		
 		$args = array(
 			'body'        => $body,
 			'headers'     => array(
@@ -129,11 +149,11 @@ class Cartlassi_Public {
 			),
 		);
 
-		$cartId = Cartlassi_Utils::generate_cart_id();
-		$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${cartId}", $args );
+		$cartId = $this->utils->generate_cart_id();
+		$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("error in add_to_cart: ${error_message}");
+			error_log("error in add_to_cart: {$error_message}");
 		}
 	} 
 
@@ -162,11 +182,11 @@ class Cartlassi_Public {
 			),
 		);
 
-		$cartId = Cartlassi_Utils::generate_cart_id();
-		$response = wp_remote_request( "{$this->config->get('api_url')}/carts/${cartId}", $args );
+		$cartId = $this->utils->generate_cart_id();
+		$response = wp_remote_request( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			error_log("error in remove_from_cart: ${error_message}");
+			error_log("error in remove_from_cart: {$error_message}");
 		}
 	}
 
@@ -175,8 +195,8 @@ class Cartlassi_Public {
 			'name'          => __( 'Cartlassi Sidebar', 'textdomain' ),
 			'id'            => Cartlassi_Constants::SIDEBAR_ID,
 			'description'   => __( 'A sidebar for cartlassi plugin.', 'textdomain' ),
-			'before_widget' => '<li id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</li>',
+			'before_widget' => '<div id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</div>',
 			'before_title'  => '<h2 class="widgettitle">',
 			'after_title'   => '</h2>',
 		) );
@@ -228,7 +248,7 @@ class Cartlassi_Public {
 				return true;
 			}
 			if ($sidebarId == $cartlassiOptions[$optionName]) {
-				echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+				dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 			}
 			return false;
 		}
@@ -237,14 +257,13 @@ class Cartlassi_Public {
 	}
 
 	function display_widget($params) {
-
 		// First determine if to show the widget at all.
 		if ( is_cart() || is_checkout() || is_account_page() || is_wc_endpoint_url() ) {
 			return $params;
 		}
 
 		$sidebarId = $params[0]['id'];
-		$cartlassiOptions = get_option(Cartlassi_Constants::OPTIONS_NAME);
+		$cartlassiOptions = get_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME);
 
 		$invocations = array (
 			array (
@@ -285,7 +304,7 @@ class Cartlassi_Public {
 					|| ( ( $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME] ==  Cartlassi_Constants::OTHER_PAGES_OPTION_SHOW_EXCEPT ) && !$is_listed_page )
 				) {
 					if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME]) {
-						echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+						dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 					}
 				}
 			}
@@ -295,7 +314,7 @@ class Cartlassi_Public {
 	}
 
 	function load_widget() {
-		echo dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
+		dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 		wp_die();
 	}
 
@@ -315,7 +334,9 @@ class Cartlassi_Public {
 		// TBD make sure this happens ONLY in cartlassi widget
 		// otherwise we take over links from every widget in the site...
 
-		$cartlassiCartItemId = array_search( $product->get_id(), WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
+		// $cartlassiCartItemId = array_search( $product->get_id(), WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
+		$map = WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME );
+		$cartlassiCartItemId = isset($map[$product->get_id()]) ? $map[$product->get_id()] : false; 
 		if ($cartlassiCartItemId) {
 			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
 			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
@@ -355,7 +376,7 @@ class Cartlassi_Public {
 	// 		$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
 	// 		if ( is_wp_error( $response ) ) {
 	// 			$error_message = $response->get_error_message();
-	// 			error_log("error in log_click_to_product: ${error_message}");
+	// 			error_log("error in log_click_to_product: {$error_message}");
 	// 		}
 	// 	}
 	// }
@@ -379,7 +400,7 @@ class Cartlassi_Public {
 			$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
-				error_log("error in log_click: ${error_message}");
+				error_log("error in log_click: {$error_message}");
 			}
 		}
 		wp_die();
@@ -430,7 +451,7 @@ class Cartlassi_Public {
 	// 		$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
 	// 		if ( is_wp_error( $response ) ) {
 	// 			$error_message = $response->get_error_message();
-	// 			error_log("error in log_ajax_add_to_cart: ${error_message}");
+	// 			error_log("error in log_ajax_add_to_cart: {$error_message}");
 	// 		}
 	// 	}
 	// 	// no wp_die() here. we hook to an ajax action which will fire it itself. if we we wp_die
@@ -482,11 +503,11 @@ class Cartlassi_Public {
 				),
 			);
 
-			$cartId = Cartlassi_Utils::generate_cart_id();
-			$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${cartId}/checkout", $args );
+			$cartId = $this->utils->generate_cart_id();
+			$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}/checkout", $args );
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
-				error_log("WWWWWWWWWWW ${error_message}");
+				error_log("WWWWWWWWWWW {$error_message}");
 			}			
 
 		}
@@ -512,10 +533,10 @@ class Cartlassi_Public {
 						$args['body'] = array(
 							"shopCartId" => $cart_item_key
 						);
-						$response = wp_remote_post( "{$this->config->get('api_url')}/carts/${order_id}/refund", $args );
+						$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$order_id}/refund", $args );
 						if ( is_wp_error( $response ) ) {
 							$error_message = $response->get_error_message();
-							error_log("WWWWWWWWWWW ${error_message}");
+							error_log("WWWWWWWWWWW {$error_message}");
 						}	
 						// $order = wc_get_order( $order_id );
 						// error_log(var_export($order, true));
@@ -546,8 +567,52 @@ class Cartlassi_Public {
 	}
 
 	protected function getApiKey() {
-		return get_option(Cartlassi_Constants::OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	}
+
+	function get_product_feed() {
+		$products = wc_get_products( array(
+			'limit'  => -1, // All products
+			'status' => 'publish', // Only published products
+		) );
+		$filtered = array_map(function($product) {
+			$tagIds = $product->get_tag_ids();
+			$tags = array_map(function($tagId) {
+				return (get_term($tagId))->name;
+			}, $tagIds);
+
+			$categoryIds = $product->get_category_ids();
+			$categories = array_map(function($categoryId) {
+				$term = get_term_by( 'id', $categoryId, 'product_cat' );
+				return isset ($term->name) ? $term->name : '';
+			}, $categoryIds);
+			$description = $product->get_description();
+			if (!$description) {
+				$description = $product->get_short_description();
+			}
+			return array (
+				'id' => $product->get_id(),
+				'name' => $product->get_name(),
+				'description' => $product->get_description(),
+				'short_description' => $product->get_short_description(),
+				'tags'				=> implode(', ', $tags),
+				'categories'				=> implode(', ', $categories),
+				'sku'     		=> $product->get_sku(),
+			);
+		}, $products);
+		return $filtered;
+	}
+
+	function cartlassi_api_init() {
+		$reg = register_rest_route( 'cartlassi/v1', 'feed', array(
+			'methods' => WP_REST_Server::READABLE,
+			'callback' => array($this, 'get_product_feed'),
+			'permission_callback' => '__return_true',
+		) );
+	}
+
+	
+	
 	
 
 }

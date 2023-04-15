@@ -20,3 +20,13 @@
  #regenerate-api-key-button {
    margin-top: 8px;
  }
+
+ .cartlassi-admin-checkbox-reasons {
+   list-style: disc;
+   margin-left: 0px;
+   padding-left: 40px;
+ }
+
+ #cartlassi-demo-hash {
+   width: 100%;
+ }
