@@ -74,44 +74,10 @@ class Cartlassi_Utils {
 	}
 
 	public function get_payment_method () {
-		$apiKey = self::get_api_key();
-
-		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
-		);
-		
-		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payment-method", $args );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW {$error_message}");
-			return wp_send_json_error($response);
-		}
-		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body );
-		return $data;
+		return $this->api->request('/shops/payment-method');
 	}
 
 	public function get_payout_method () {
-		$apiKey = self::get_api_key();
-
-		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
-		);
-		
-		$response = wp_remote_get( "{$this->config->get('api_url')}/shops/payout-method", $args );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW {$error_message}");
-			return wp_send_json_error($response);
-		}
-		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body );
-		return $data;
+		return $this->api->request('/shops/payout-method');
 	}
 }

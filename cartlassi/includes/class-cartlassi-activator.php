@@ -43,8 +43,8 @@ class Cartlassi_Activator {
 			'method'	=> 'POST',
 			'body'        => $body,
 		);
-		$response = wp_remote_post( "{$config->get('api_url')}/shops/register", $args );
-		$response = $api->request( "/shops/register", $args );
+		// $response = wp_remote_post( "{$config->get('api_url')}/shops/register", $args );
+		$data = $api->request( "/shops/register", $args );
 		update_option (Cartlassi_Constants::API_OPTIONS_NAME, array (
 			Cartlassi_Constants::API_KEY_FIELD_NAME => $data->apiKey,
 			Cartlassi_Constants::API_SECRET_FIELD_NAME => $data->apiSecret,

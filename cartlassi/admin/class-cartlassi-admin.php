@@ -707,7 +707,8 @@ class Cartlassi_Admin {
 		$args = array(
 			'method' => 'POST'
 		);
-		$data = $this->api->request("/shops/regenerate-api-key", $args );
+		$data = $this->api->request("/shops/regenerate-api-key", $args);
+		error_log(var_export($data, true));
 		$options = get_option(Cartlassi_Constants::API_OPTIONS_NAME);
 		$options[Cartlassi_Constants::API_KEY_FIELD_NAME] = $data->apiKey;
 		update_option(Cartlassi_Constants::API_OPTIONS_NAME, $options);

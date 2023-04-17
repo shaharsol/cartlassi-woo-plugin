@@ -36,7 +36,9 @@
 			nonce: ajax_object.nonce,
 		};
 		return $.post(ajaxurl, data, function(response, status) {
+			alert(JSON.stringify(response));
 			if (status === "success") {
+				
 				const { apiKey } = JSON.parse(JSON.stringify(response));
 				$('#cartlassi_field_api_key').val(apiKey);	
 			} else {
