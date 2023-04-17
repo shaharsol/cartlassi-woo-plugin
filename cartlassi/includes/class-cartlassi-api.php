@@ -38,7 +38,6 @@ class Cartlassi_Api {
 				'Authorization' => "token {$api_key}"
 			),
 		));
-		error_log(var_export($args, true));
 		$response = wp_remote_request("{$this->config->get('api_url')}{$endpoint}", $args);
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();

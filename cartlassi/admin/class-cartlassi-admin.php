@@ -760,7 +760,7 @@ class Cartlassi_Admin {
 		
 		add_screen_option( $option, $args );
 		
-		$this->salesList = new Sales_List($this->config, $this->getApiKey());
+		$this->salesList = new Sales_List($this->config, $this->api);
 	}
 
 	public function screen_option_commissions() {
