@@ -150,11 +150,6 @@ class Cartlassi_Public {
 		);
 
 		$cartId = $this->utils->generate_cart_id();
-		// $response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
-		// if ( is_wp_error( $response ) ) {
-		// 	$error_message = $response->get_error_message();
-		// 	error_log("error in add_to_cart: {$error_message}");
-		// }
 		$response = $this->api->request("/carts/{$cartId}", $args);
 	} 
 
@@ -379,23 +374,15 @@ class Cartlassi_Public {
 		$cartlassi_id = $_POST['cartlassi_id'];
 		$product_id = $_POST['product_id'];
 		if ( $cartlassi_id &&  $product_id) {
-			$apiKey = $this->getApiKey();
-
 			$body = array(
 				'fromCartItemId' => $cartlassi_id,
 				'toShopProductId' => strval($product_id),
 			);
 			$args = array(
+				'method'	=> 'POST',
 				'body'        => $body,
-				'headers'     => array(
-					'Authorization' => "Bearer {$apiKey}"
-				),
 			);
-			$response = wp_remote_post( "{$this->config->get('api_url')}/clicks", $args );
-			if ( is_wp_error( $response ) ) {
-				$error_message = $response->get_error_message();
-				error_log("error in log_click: {$error_message}");
-			}
+			$response = $this->api->request("/clicks", $args );
 		}
 		wp_die();
 	}
@@ -496,11 +483,6 @@ class Cartlassi_Public {
 			);
 
 			$cartId = $this->utils->generate_cart_id();
-			// $response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}/checkout", $args );
-			// if ( is_wp_error( $response ) ) {
-			// 	$error_message = $response->get_error_message();
-			// 	error_log("WWWWWWWWWWW {$error_message}");
-			// }			
 			$response = $this->api->request("/carts/{$cartId}/checkout", $args);
 
 		}

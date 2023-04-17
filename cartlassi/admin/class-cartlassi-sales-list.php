@@ -26,27 +26,6 @@ class Sales_List extends WP_List_Table {
     * @return mixed
     */    
     public static function get_sales( $api, $per_page = 10, $page_number = 1 ) {
-        // $apiKey = self::getApiKey();
-
-		// $args = array(
-		// 	'headers'     => array(
-		// 		'Authorization' => "token {$apiKey}"
-		// 	),
-		// );
-		
-		// $response = wp_remote_get( "{$config->get('api_url')}/shops/sales-as-seller", $args );
-
-		// if ( is_wp_error( $response ) ) {
-		// 	$error_message = $response->get_error_message();
-		// 	error_log("WWWWWWWWWWW {$error_message}");
-		// 	return wp_send_json_error($response);
-		// }
-        // $body = wp_remote_retrieve_body( $response );
-        // // echo $body;
-        // $data = json_decode( $body, true );
-        // // var_dump($data);
-        // // TBD handle pagination here, i.e. extract only the portion required from $data
-        // return $data;
         return $api->request('/shops/sales-as-seller', [], true);
     }
 
@@ -56,24 +35,6 @@ class Sales_List extends WP_List_Table {
     * @return null|string
     */
     public static function record_count($api) {
-        // var_dump('in counttttttt');
-        // $apiKey = self::getApiKey();
-
-		// $args = array(
-		// 	'headers'     => array(
-		// 		'Authorization' => "token {$apiKey}"
-		// 	),
-		// );
-		
-		// $response = wp_remote_get( "{$config->get('api_url')}/shops/sales-as-seller", $args );
-
-		// if ( is_wp_error( $response ) ) {
-		// 	$error_message = $response->get_error_message();
-		// 	error_log("WWWWWWWWWWW {$error_message}");
-		// 	return wp_send_json_error($response);
-		// }
-        // $body = wp_remote_retrieve_body( $response );
-        // $data = json_decode( $body );
         $data = $api->request('/shops/sales-as-seller', [], true);
         return count($data);
     }

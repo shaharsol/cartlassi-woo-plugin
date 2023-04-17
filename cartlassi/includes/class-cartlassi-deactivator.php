@@ -34,7 +34,7 @@ class Cartlassi_Deactivator {
 		$api = new Cartlassi_Api($config);
 
 		$args = array(
-			'method'	  => 'DELETE',
+			'method' => 'DELETE',
 		);
 		$response = $api->request("/shops/register", $args );
 	}

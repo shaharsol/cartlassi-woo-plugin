@@ -35,24 +35,6 @@ class Commissions_List extends WP_List_Table {
     * @return null|string
     */
     public static function record_count($api) {
-        // var_dump('in counttttttt');
-        // $apiKey = self::getApiKey();
-
-		// $args = array(
-		// 	'headers'     => array(
-		// 		'Authorization' => "token {$apiKey}"
-		// 	),
-		// );
-		
-		// $response = wp_remote_get( "{$config->get('api_url')}/shops/sales-as-promoter", $args );
-
-		// if ( is_wp_error( $response ) ) {
-		// 	$error_message = $response->get_error_message();
-		// 	error_log("WWWWWWWWWWW {$error_message}");
-		// 	return wp_send_json_error($response);
-		// }
-        // $body = wp_remote_retrieve_body( $response );
-        // $data = json_decode( $body );
         $data = $api->request("/shops/sales-as-promoter", [], true);
         return count($data);
     }
