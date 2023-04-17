@@ -31,13 +31,14 @@ class Cartlassi_Api {
 		$this->config = $config;
 	}
 
-	public function request($endpoint, $args= []) {
+	public function request($endpoint, $args = []) {
 		$api_key = get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 		$args = array_merge($args, array(
 			'headers'     => array(
 				'Authorization' => "token {$api_key}"
 			),
 		));
+		error_log(var_export($args, true));
 		$response = wp_remote_request("{$this->config->get('api_url')}{$endpoint}", $args);
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
@@ -46,7 +47,7 @@ class Cartlassi_Api {
 			return false;
 		}
 		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body );
+		$data = json_decode( $body, true );
 		return $data;
 	}
 }

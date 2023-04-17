@@ -40,6 +40,7 @@ class Cartlassi_Public {
 	 */
 	private $version;
 	private $config;
+	private $api;
 	private $utils;
 
 	/**
@@ -49,11 +50,12 @@ class Cartlassi_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version, $config, $utils ) {
+	public function __construct( $plugin_name, $version, $config, $api, $utils ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->config = $config;
+		$this->api = $api;
 		$this->utils = $utils;
 
 	}
@@ -143,18 +145,17 @@ class Cartlassi_Public {
 		}
 		
 		$args = array(
-			'body'        => $body,
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
+			'method'	=> 'POST',
+			'body'      => $body,
 		);
 
 		$cartId = $this->utils->generate_cart_id();
-		$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("error in add_to_cart: {$error_message}");
-		}
+		// $response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
+		// if ( is_wp_error( $response ) ) {
+		// 	$error_message = $response->get_error_message();
+		// 	error_log("error in add_to_cart: {$error_message}");
+		// }
+		$response = $this->api->request("/carts/{$cartId}", $args);
 	} 
 
 	/**
@@ -165,7 +166,7 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	public function remove_from_cart($cart_item_key, $that) {
-		$apiKey = $this->getApiKey();
+		// $apiKey = $this->getApiKey();
 		// TBD get rid of the jsin_decode(jsin_encode)... make it work in another way
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
 
@@ -177,17 +178,10 @@ class Cartlassi_Public {
 		$args = array(
 			'method'	  => 'DELETE',
 			'body'        => $body,
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
 		);
 
 		$cartId = $this->utils->generate_cart_id();
-		$response = wp_remote_request( "{$this->config->get('api_url')}/carts/{$cartId}", $args );
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("error in remove_from_cart: {$error_message}");
-		}
+		$response = $this->api->request("/carts/{$cartId}", $args);
 	}
 
 	function cartlassi_widgets_init() {
@@ -497,29 +491,24 @@ class Cartlassi_Public {
 				'currency'		=> 'ILS',
 			);
 			$args = array(
+				'method'	=> 'POST',
 				'body'        => $body,
-				'headers'     => array(
-					'Authorization' => "token {$apiKey}"
-				),
 			);
 
 			$cartId = $this->utils->generate_cart_id();
-			$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}/checkout", $args );
-			if ( is_wp_error( $response ) ) {
-				$error_message = $response->get_error_message();
-				error_log("WWWWWWWWWWW {$error_message}");
-			}			
+			// $response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$cartId}/checkout", $args );
+			// if ( is_wp_error( $response ) ) {
+			// 	$error_message = $response->get_error_message();
+			// 	error_log("WWWWWWWWWWW {$error_message}");
+			// }			
+			$response = $this->api->request("/carts/{$cartId}/checkout", $args);
 
 		}
 	}
 
 	function order_refunded ( $order_id, $refund_id ) {
 		$apiKey = $this->getApiKey();
-		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
-		);
+		$args = [];
 		
 		$order = wc_get_order( $order_id );
 		$refunds = $order->get_refunds();
@@ -531,13 +520,15 @@ class Cartlassi_Public {
 					$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
 					if ($cart_item_key) {
 						$args['body'] = array(
+							"method"	=> 'POST',
 							"shopCartId" => $cart_item_key
 						);
-						$response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$order_id}/refund", $args );
-						if ( is_wp_error( $response ) ) {
-							$error_message = $response->get_error_message();
-							error_log("WWWWWWWWWWW {$error_message}");
-						}	
+						// $response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$order_id}/refund", $args );
+						$response = $this->api->request("/carts/{$order_id}/refund", $args );
+						// if ( is_wp_error( $response ) ) {
+						// 	$error_message = $response->get_error_message();
+						// 	error_log("WWWWWWWWWWW {$error_message}");
+						// }	
 						// $order = wc_get_order( $order_id );
 						// error_log(var_export($order, true));
 						// var_dump($order);
