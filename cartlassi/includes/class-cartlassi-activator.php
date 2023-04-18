@@ -31,8 +31,7 @@ class Cartlassi_Activator {
 	 */
 	public static function activate() {
 		$config = new Cartlassi_Config();
-
-		$blogInfo = get_bloginfo();
+		$api = new Cartlassi_Api($config);
 
 		$body = array(
 			'url'  	=> get_bloginfo('url'),
@@ -41,21 +40,13 @@ class Cartlassi_Activator {
 		);
 		error_log(var_export($body,true));
 		$args = array(
+			'method'	=> 'POST',
 			'body'        => $body,
 		);
-		$response = wp_remote_post( "{$config->get('api_url')}/shops/register", $args );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			echo "Something went wrong: $error_message";
-		} else {
-			$body = wp_remote_retrieve_body( $response );
-			$data = json_decode( $body );
-			update_option (Cartlassi_Constants::API_OPTIONS_NAME, array (
-				Cartlassi_Constants::API_KEY_FIELD_NAME => $data->apiKey,
-				Cartlassi_Constants::API_SECRET_FIELD_NAME => $data->apiSecret,
-			));
-			
-		}
+		$data = $api->request( "/shops/register", $args );
+		update_option (Cartlassi_Constants::API_OPTIONS_NAME, array (
+			Cartlassi_Constants::API_KEY_FIELD_NAME => $data->apiKey,
+			Cartlassi_Constants::API_SECRET_FIELD_NAME => $data->apiSecret,
+		));
 	}
 }

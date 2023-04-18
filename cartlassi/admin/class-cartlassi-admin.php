@@ -40,7 +40,10 @@ class Cartlassi_Admin {
 	 */
 	private $version;
 	private $config;
+	private $api;
 	private $utils;
+	private $commissionsList;
+	private $salesList;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -49,11 +52,12 @@ class Cartlassi_Admin {
 	 * @param      string    $plugin_name       The name of this cartlassi.
 	 * @param      string    $version    The version of this cartlassi.
 	 */
-	public function __construct( $plugin_name, $version, $config, $utils ) {
+	public function __construct( $plugin_name, $version, $config, $api, $utils ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->config = $config;
+		$this->api = $api;
 		$this->utils = $utils;
 
 	}
@@ -435,53 +439,8 @@ class Cartlassi_Admin {
 		<?php
 	}
 
-	public function get_payment_method () {
-		// $apiKey = $this->getApiKey();
-
-		// $args = array(
-		// 	'headers'     => array(
-		// 		'Authorization' => "token {$apiKey}"
-		// 	),
-		// );
-		
-		// $response = wp_remote_get( "{$this->config->get('api_url')}/shops/payment-method", $args );
-
-		// if ( is_wp_error( $response ) ) {
-		// 	$error_message = $response->get_error_message();
-		// 	error_log("WWWWWWWWWWW {$error_message}");
-		// 	return wp_send_json_error($response);
-		// }
-		// $body = wp_remote_retrieve_body( $response );
-		// $data = json_decode( $body );
-		// return $data;
-
-		return $this->utils->get_payment_method();
-	}
-
-	protected function get_payout_method () {
-		// $apiKey = $this->getApiKey();
-
-		// $args = array(
-		// 	'headers'     => array(
-		// 		'Authorization' => "token {$apiKey}"
-		// 	),
-		// );
-		
-		// $response = wp_remote_get( "{$this->config->get('api_url')}/shops/payout-method", $args );
-
-		// if ( is_wp_error( $response ) ) {
-		// 	$error_message = $response->get_error_message();
-		// 	error_log("WWWWWWWWWWW {$error_message}");
-		// 	return wp_send_json_error($response);
-		// }
-		// $body = wp_remote_retrieve_body( $response );
-		// $data = json_decode( $body );
-		// return $data;
-		return $this->utils->get_payout_method();
-	}
-
 	function cartlassi_field_payment_method_cb( $args ) {
-		$data = $this->get_payment_method();
+		$data = $this->utils->get_payment_method();
 		
 		if ($data->brand && $data->last4) {
 			echo "{$data->brand} {$data->last4}";
@@ -497,7 +456,7 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_field_payout_method_cb( $args ) {
-		$data = $this->get_payout_method();
+		$data = $this->utils->get_payout_method();
 		if ($data->stripeConnectAccountId && $data->stripeConnectConnected) {
 			esc_html_e( 'Connected via Stripe Connect', Cartlassi_Constants::TEXT_DOMAIN );
 		} else {
@@ -664,17 +623,13 @@ class Cartlassi_Admin {
 	
 		$stripeSessionId = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
 		if ($stripeSessionId) {
-			$apiKey = $this->getApiKey();
-
 			$args = array(
+				'method' => 'POST',
 				'body'			=> array(
 					'session_id' => $stripeSessionId
 				),
-				'headers'     => array(
-					'Authorization' => "token {$apiKey}"
-				),
 			);
-			$response = wp_remote_post( "{$this->config->get('api_url')}/shops/complete-stripe", $args );
+			$response = $this->api->request("/shops/complete-stripe", $args );
 		}
 
 		if ( isset( $_GET['account-connected'] )) {
@@ -682,11 +637,9 @@ class Cartlassi_Admin {
 			$apiKey = $this->getApiKey();
 
 			$args = array(
-				'headers'     => array(
-					'Authorization' => "token {$apiKey}"
-				),
+				'method' => 'POST',
 			);
-			$response = wp_remote_post( "{$this->config->get('api_url')}/shops/complete-stripe-connect", $args );
+			$response = $this->api->request("/shops/complete-stripe-connect", $args );
 		}
 
 		$welcome = isset( $_GET['welcome'] );
@@ -750,28 +703,16 @@ class Cartlassi_Admin {
 
 	function regenerate_api_key () {
 		check_ajax_referer(Cartlassi_Constants::NONCE_ADMIN_NAME, 'nonce');
-		$apiKey = $this->getApiKey();
 
 		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
+			'method' => 'POST'
 		);
-		$response = wp_remote_post( "{$this->config->get('api_url')}/shops/regenerate-api-key", $args );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW {$error_message}");
-			wp_send_json_error($response);
-		} else {
-			$body = wp_remote_retrieve_body( $response );
-			$data = json_decode( $body );
-			$options = get_option(Cartlassi_Constants::API_OPTIONS_NAME);
-			$options[Cartlassi_Constants::API_KEY_FIELD_NAME] = $data->apiKey;
-			update_option(Cartlassi_Constants::API_OPTIONS_NAME, $options);
-			// error_log("WWWWWWWWWWW $body");
-			echo $body;
-		}
+		$data = $this->api->request("/shops/regenerate-api-key", $args);
+		error_log(var_export($data, true));
+		$options = get_option(Cartlassi_Constants::API_OPTIONS_NAME);
+		$options[Cartlassi_Constants::API_KEY_FIELD_NAME] = $data->apiKey;
+		update_option(Cartlassi_Constants::API_OPTIONS_NAME, $options);
+		echo json_encode(array('apiKey' => $data->apiKey));
 		wp_die();
 	}
 
@@ -819,7 +760,7 @@ class Cartlassi_Admin {
 		
 		add_screen_option( $option, $args );
 		
-		$this->salesList = new Sales_List($this->config, $this->getApiKey());
+		$this->salesList = new Sales_List($this->config, $this->api);
 	}
 
 	public function screen_option_commissions() {
@@ -833,7 +774,7 @@ class Cartlassi_Admin {
 		
 		add_screen_option( $option, $args );
 		
-		$this->commissionsList = new Commissions_List($this->config, $this->getApiKey());
+		$this->commissionsList = new Commissions_List($this->config, $this->api);
 	}
 
 	public function activation_redirect($plugin) {
@@ -867,8 +808,8 @@ class Cartlassi_Admin {
 	}
 
 	protected function admin_notice_welcome() {
-		$paymentMethod = $this->get_payment_method();
-		$payoutMethod = $this->get_payout_method();
+		$paymentMethod = $this->utils->get_payment_method();
+		$payoutMethod = $this->utils->get_payout_method();
 		$isCollectingData = true;
 		$isPaymentMethod = ($paymentMethod->brand && $paymentMethod->last4) || $_GET['session_id'];
 		$isPayoutMethod = ($payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected) || $_GET['account-connected'];
