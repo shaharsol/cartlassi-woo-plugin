@@ -45,28 +45,31 @@ class Cartlassi_Utils {
 		return "$iv_hex:$ciphertext_hex";
 	}
 
-	public function generate_cart_id () {
-		$cart_id = md5($_SERVER['REMOTE_ADDR']);
-		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
-		if ( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] )) {
-			$customer = new WC_Customer(WC()->session->get_customer_id());
-			$cart_id .= md5($customer->get_email());
+	protected function get_cart_id ($ip, $email, $extra_encryption) {
+		$cart_id = md5($ip);
+		if ( $email ) {
+			$cart_id .= md5($email);
 		}
 
-		if ( !isset($options[Cartlassi_Constants::EXTRA_ENCRYPTION_FIELD_NAME] )) {
+		if ( !$extra_encryption ) {
 			return $cart_id;
 		}
 
 		return $this->encrypt($cart_id, str_replace('-','',get_option( Cartlassi_Constants::API_OPTIONS_NAME )[Cartlassi_Constants::API_SECRET_FIELD_NAME]));
-		
 	}
 
-	public function demo_cart_id ($include_email) {
-		$cart_id = md5($_SERVER['REMOTE_ADDR']);
-		if ( $include_email ) {
-			$cart_id .= md5(get_bloginfo('admin_email'));
+	public function generate_cart_id () {
+		$email = null;
+		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
+		if ( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] )) {
+			$customer = new WC_Customer(WC()->session->get_customer_id());
+			$email = $customer->get_email();
 		}
-		return $cart_id;
+		return $this->get_cart_id($_SERVER['REMOTE_ADDR'], $email, isset($options[Cartlassi_Constants::EXTRA_ENCRYPTION_FIELD_NAME] ));
+	}
+
+	public function demo_cart_id ($include_email, $extra_encryption) {
+		return $this->get_cart_id($_SERVER['REMOTE_ADDR'], $include_email ? get_bloginfo('admin_email') : null, $extra_encryption);
 	}
 
 	public function get_api_key() {

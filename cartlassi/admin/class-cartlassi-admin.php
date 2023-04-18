@@ -344,7 +344,7 @@ class Cartlassi_Admin {
 		?>
 		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure what data your shop shares with Cartlassi.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'FYI we never allow any of the raw data to leave your site. We hash the data before we send it to our servers. Here is what your own hash looks like:', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
-		<input id="cartlassi-demo-hash" type="text" disabled value="<?php $options = get_option(Cartlassi_Constants::DATA_OPTIONS_NAME); echo $this->utils->demo_cart_id( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] ) );?>">
+		<input id="cartlassi-demo-hash" type="text" disabled value="<?php $options = get_option(Cartlassi_Constants::DATA_OPTIONS_NAME); echo $this->utils->demo_cart_id( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] ), isset($options[Cartlassi_Constants::EXTRA_ENCRYPTION_FIELD_NAME] ) );?>">
 		<?php
 	}
 
@@ -765,8 +765,7 @@ class Cartlassi_Admin {
 
 	function demo_hash () {
 		check_ajax_referer(Cartlassi_Constants::NONCE_ADMIN_NAME, 'nonce');
-		error_log($_POST['include_email']);
-		$hash = $this->utils->demo_cart_id(filter_var($_POST['include_email'], FILTER_VALIDATE_BOOLEAN));
+		$hash = $this->utils->demo_cart_id(filter_var($_POST['include_email'], FILTER_VALIDATE_BOOLEAN), filter_var($_POST['extra_encryption'], FILTER_VALIDATE_BOOLEAN));
 		echo wp_json_encode(array('hash' => $hash));
 		wp_die();
 	}
