@@ -70,6 +70,8 @@ class Cartlassi_Constants {
 	const COMMISSION = 0.15;
 	const FEE = 0.015;
 	const PLUGIN_FILE = 'cartlassi/cartlassi.php';
+	const PAYMENT_METHOD_TRANSIENT = 'cartlassi_payment_method';
+	const PAYOUT_METHOD_TRANSIENT = 'cartlassi_payout_method';
 	
 	
 
