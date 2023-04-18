@@ -440,7 +440,7 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_field_payment_method_cb( $args ) {
-		$data = $this->utils->get_payment_method();
+		$data = $this->utils->get_payment_method(false); // $use_cache = false
 		
 		if ($data->brand && $data->last4) {
 			echo "{$data->brand} {$data->last4}";
@@ -456,7 +456,7 @@ class Cartlassi_Admin {
 	}
 
 	function cartlassi_field_payout_method_cb( $args ) {
-		$data = $this->utils->get_payout_method();
+		$data = $this->utils->get_payout_method(false); // $use_cache = false
 		if ($data->stripeConnectAccountId && $data->stripeConnectConnected) {
 			esc_html_e( 'Connected via Stripe Connect', Cartlassi_Constants::TEXT_DOMAIN );
 		} else {
@@ -708,7 +708,6 @@ class Cartlassi_Admin {
 			'method' => 'POST'
 		);
 		$data = $this->api->request("/shops/regenerate-api-key", $args);
-		error_log(var_export($data, true));
 		$options = get_option(Cartlassi_Constants::API_OPTIONS_NAME);
 		$options[Cartlassi_Constants::API_KEY_FIELD_NAME] = $data->apiKey;
 		update_option(Cartlassi_Constants::API_OPTIONS_NAME, $options);
@@ -808,8 +807,8 @@ class Cartlassi_Admin {
 	}
 
 	protected function admin_notice_welcome() {
-		$paymentMethod = $this->utils->get_payment_method();
-		$payoutMethod = $this->utils->get_payout_method();
+		$paymentMethod = $this->utils->get_payment_method(false);
+		$payoutMethod = $this->utils->get_payout_method(false);
 		$isCollectingData = true;
 		$isPaymentMethod = ($paymentMethod->brand && $paymentMethod->last4) || $_GET['session_id'];
 		$isPayoutMethod = ($payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected) || $_GET['account-connected'];

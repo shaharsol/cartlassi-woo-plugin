@@ -92,7 +92,6 @@ class Cartlassi_Widget extends WP_Widget {
 				
 				$products = $this->api->request("/shops/widget/{$cartId}");
 
-				error_log(var_export($products, true));
 				// error_log(var_export($cartItemToProductMap, true));
 
 				if (count($products) == 0) {

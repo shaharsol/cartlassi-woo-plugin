@@ -55,19 +55,23 @@ class Cartlassi_Config {
 		'local' => array (
 			'api_url' => 'http://host.docker.internal:3000',
 			'api_public_url' => 'http://localhost:3000',
-			'test_key' => 'local'
+			'test_key' => 'local',
+			'transient_expiration' => MINUTE_IN_SECONDS,
 		),
 		'development' => array (
 			'api_url' => 'http://host.docker.internal:3000',
-			'test_key' => 'development'
+			'test_key' => 'development',
+			'transient_expiration' => MINUTE_IN_SECONDS,
 		),
 		'staging' => array (
 			'api_url' => 'http://host.docker.internal:3000',
-			'test_key' => 'staging'
+			'test_key' => 'staging',
+			'transient_expiration' => MINUTE_IN_SECONDS,
 		),
 		'production' => array (
 			'api_url' => 'http://host.docker.internal:3000',
-			'test_key' => 'production'
+			'test_key' => 'production',
+			'transient_expiration' => HOUR_IN_SECONDS,
 		)
 	);
 

@@ -122,7 +122,6 @@ class Cartlassi_Public {
 		$product = wc_get_product( $product_id );
 		$tagIds = $product->get_tag_ids();
 		$tags = array_map(function($tagId) {
-			error_log(var_export(get_term($tagId), true));
 			return (get_term($tagId))->name;
 		}, $tagIds);
 		$description = $product->get_description();
@@ -477,7 +476,6 @@ class Cartlassi_Public {
 				'amount'		=> $item->get_total(),
 				'currency'		=> 'ILS', // TBD change to get_woocommerce_currency()? or extract from product?
 			);
-			error_log(var_export($body, true));
 			$args = array(
 				'method' => 'POST',
 				'body'   => $body,

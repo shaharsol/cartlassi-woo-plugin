@@ -38,7 +38,6 @@ class Cartlassi_Activator {
 			'email' => get_bloginfo('admin_email'),
 			'name'  => get_bloginfo('name'), //
 		);
-		error_log(var_export($body,true));
 		$args = array(
 			'method'	=> 'POST',
 			'body'        => $body,

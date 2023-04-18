@@ -73,15 +73,25 @@ class Cartlassi_Utils {
 		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 	}
 
-	public function get_payment_method () {
-		$cached = get_transient(Cartlassi_Constants::PAYMENT_METHOD_TRANSIENT);
+	public function get_payment_method ($use_cache = true) {
+		if ($use_cache) {
+			$cached = get_transient(Cartlassi_Constants::PAYMENT_METHOD_TRANSIENT);
+			if ($cached) {
+				return $cached;
+			}
+		}
+		$fresh = $this->api->request('/shops/payment-method');
+		set_transient(Cartlassi_Constants::PAYMENT_METHOD_TRANSIENT, $fresh, $this->config->get('transient_expiration'));
+		return $fresh;
+	}
+
+	public function get_payout_method ($use_cache = true) {
+		$cached = get_transient(Cartlassi_Constants::PAYOUT_METHOD_TRANSIENT);
 		if ($cached) {
 			return $cached;
 		}
-		return $this->api->request('/shops/payment-method');
-	}
-
-	public function get_payout_method () {
-		return $this->api->request('/shops/payout-method');
+		$fresh = $this->api->request('/shops/payout-method');
+		set_transient(Cartlassi_Constants::PAYOUT_METHOD_TRANSIENT, $fresh, $this->config->get('transient_expiration'));
+		return $fresh;
 	}
 }
