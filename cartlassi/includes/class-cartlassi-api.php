@@ -31,7 +31,7 @@ class Cartlassi_Api {
 		$this->config = $config;
 	}
 
-	public function request($endpoint, $args= []) {
+	public function request($endpoint, $args = [], $associative = null) {
 		$api_key = get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
 		$args = array_merge($args, array(
 			'headers'     => array(
@@ -46,7 +46,7 @@ class Cartlassi_Api {
 			return false;
 		}
 		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body );
+		$data = json_decode( $body, $associative );
 		return $data;
 	}
 }

@@ -31,22 +31,12 @@ class Cartlassi_Deactivator {
 	 */
 	public static function deactivate() {
 		$config = new Cartlassi_Config();
-		$apiKey = get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+		$api = new Cartlassi_Api($config);
+
 		$args = array(
-			'method'	  => 'DELETE',
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
+			'method' => 'DELETE',
 		);
-		$response = wp_remote_request( "{$config->get('api_url')}/shops/register", $args );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			echo "Something went wrong: $error_message";
-		} else {
-			// delete_option ('cartlassi_api_key');
-		}
-
+		$response = $api->request("/shops/register", $args );
 	}
 
 }

@@ -3,8 +3,9 @@
 class Commissions_List extends WP_List_Table {
 
     protected $config;
+    protected $api; 
     /** Class constructor */
-    public function __construct($config) {
+    public function __construct($config, $api) {
         
         parent::__construct( [
             'singular' => __( 'Commission', Cartlassi_Constants::TEXT_DOMAIN ), //singular name of the listed records
@@ -13,6 +14,7 @@ class Commissions_List extends WP_List_Table {
         ] );
 
         $this->config = $config;
+        $this->api = $api;
     }
 
     /**
@@ -23,29 +25,8 @@ class Commissions_List extends WP_List_Table {
     *
     * @return mixed
     */    
-    public static function get_commissions( $config, $per_page = 10, $page_number = 1 ) {
-        $apiKey = self::getApiKey();
-
-		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
-		);
-		
-		$response = wp_remote_get( "{$config->get('api_url')}/shops/sales-as-promoter", $args );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW {$error_message}");
-			return wp_send_json_error($response);
-		}
-        $body = wp_remote_retrieve_body( $response );
-        // echo $body;
-        $data = json_decode( $body, true );
-        // var_dump($data);
-        // TBD handle pagination here, i.e. extract only the portion required from $data
-        return $data;
-				
+    public static function get_commissions( $api, $per_page = 10, $page_number = 1 ) {
+        return $api->request("/shops/sales-as-promoter", [], true);
     }
 
     /**
@@ -53,25 +34,8 @@ class Commissions_List extends WP_List_Table {
     *
     * @return null|string
     */
-    public static function record_count($config) {
-        // var_dump('in counttttttt');
-        $apiKey = self::getApiKey();
-
-		$args = array(
-			'headers'     => array(
-				'Authorization' => "token {$apiKey}"
-			),
-		);
-		
-		$response = wp_remote_get( "{$config->get('api_url')}/shops/sales-as-promoter", $args );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			error_log("WWWWWWWWWWW {$error_message}");
-			return wp_send_json_error($response);
-		}
-        $body = wp_remote_retrieve_body( $response );
-        $data = json_decode( $body );
+    public static function record_count($api) {
+        $data = $api->request("/shops/sales-as-promoter", [], true);
         return count($data);
     }
 
@@ -189,7 +153,7 @@ class Commissions_List extends WP_List_Table {
         $per_page = $this->get_items_per_page( 'commissions_per_page', 10 );
         // var_dump($per_page);
         $current_page = $this->get_pagenum();
-        $total_items = self::record_count($this->config);
+        $total_items = self::record_count($this->api);
 
         // var_dump($current_page);
         // var_dump($total_items);
@@ -199,7 +163,8 @@ class Commissions_List extends WP_List_Table {
             'per_page' => $per_page //WE have to determine how many items to show on a page
         ] );
         
-        $this->items = self::get_commissions( $this->config, $per_page, $current_page );
+        $this->items = self::get_commissions( $this->api, $per_page, $current_page );
+
         // echo var_export($this->items, true).'<br/>';
     }
 
