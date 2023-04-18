@@ -36,7 +36,6 @@
 			nonce: ajax_object.nonce,
 		};
 		return $.post(ajaxurl, data, function(response, status) {
-			alert(JSON.stringify(response));
 			if (status === "success") {
 				
 				const { apiKey } = JSON.parse(JSON.stringify(response));
@@ -49,12 +48,37 @@
 		}, 'json');
 	};
 
+	function regenerateAPISecret () {
+
+		const data = {
+			action: 'cartlassi_regenerate_api_secret',
+			nonce: ajax_object.nonce,
+		};
+		return $.post(ajaxurl, data, function(response, status) {
+			if (status === "success") {
+				
+				const { apiSecret } = JSON.parse(JSON.stringify(response));
+				$('#cartlassi_field_api_secret').val(apiSecret);	
+			} else {
+				alert('error regenerating API secret', data);
+				
+			}
+			return false;
+		}, 'json');
+	};
+
 	$(function() {
 		$('#regenerate-api-key-button').click(function(event) {
 			event.preventDefault();		
 			regenerateAPIKey();
 			// // Event.stop(event); // suppress default click behavior, cancel the event
 		});
+		$('#regenerate-api-secret-button').click(function(event) {
+			event.preventDefault();		
+			regenerateAPISecret();
+			// // Event.stop(event); // suppress default click behavior, cancel the event
+		});
+
 		const queryParams = new Proxy(new URLSearchParams(window.location.search), {
 			get: (searchParams, prop) => searchParams.get(prop),
 		});
@@ -79,18 +103,14 @@
 		$('body').append(payoutMethodform);
 		$('#pay-button').click(function(event) {
 			event.preventDefault();
-			// alert('aloha');
 			$('#pay-form').submit();
-			// alert('shaloa');
 		});
 		if(queryParams['stripe-refresh']){
 			$('#pay-form').submit();
 		}
 		$('#payout-button').click(function(event) {
 			event.preventDefault();
-			// alert('aloha');
 			$('#payout-form').submit();
-			// alert('shaloa');
 		});
 		$('#cartlassi_field_include_email_in_cart_id').change(function(){
 			$.ajax({

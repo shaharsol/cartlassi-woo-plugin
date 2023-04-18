@@ -227,6 +227,7 @@ class Cartlassi {
 		// wordpress admin
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'cartlassi_wc_options_page' );
 		$this->loader->add_action( 'wp_ajax_cartlassi_regenerate_api_key', $plugin_admin, 'regenerate_api_key' );
+		$this->loader->add_action( 'wp_ajax_cartlassi_regenerate_api_secret', $plugin_admin, 'regenerate_api_secret' );
 		$this->loader->add_action( 'wp_ajax_cartlassi_demo_hash', $plugin_admin, 'demo_hash' );
 		
 		$this->loader->add_action( 'activated_plugin', $plugin_admin, 'activation_redirect' );

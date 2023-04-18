@@ -294,6 +294,19 @@ class Cartlassi_Admin {
 		);
 
 		add_settings_field(
+			Cartlassi_Constants::API_SECRET_FIELD_NAME, 
+			__( 'Your Cartlassi API Secret', Cartlassi_Constants::TEXT_DOMAIN ),
+			array($this, 'cartlassi_field_api_secret_cb'),
+			Cartlassi_Constants::API_SECTION_PAGE,
+			Cartlassi_Constants::API_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::API_SECRET_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => 'custom',
+			)
+		);
+
+		add_settings_field(
 			Cartlassi_Constants::PAYMENT_METHOD_FIELD_NAME, 
 			__( 'Payment Method', Cartlassi_Constants::TEXT_DOMAIN ),
 			array($this, 'cartlassi_field_payment_method_cb'),
@@ -436,6 +449,27 @@ class Cartlassi_Admin {
 			id="regenerate-api-key-button"
 			class="button button-secondary"
 		><?php esc_html_e( 'Regenerate API Key', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
+		<?php
+	}
+
+	function cartlassi_field_api_secret_cb( $args ) {
+		// Get the value of the setting we've registered with register_setting()
+		$options = get_option( Cartlassi_Constants::API_OPTIONS_NAME );
+		?>
+		<input type="text"
+				readonly
+				id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				name="<?php echo esc_attr( Cartlassi_Constants::API_OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				value="<?php echo isset( $options[ $args['label_for'] ] ) ? $options[ $args['label_for'] ] : '' ; ?>"
+				class="regular-text"
+				>
+		<p class="description">
+			<?php esc_attr_e( 'This is the secret your shop uses to create stronger signatures against Cartlassi servers. If you beleive your secret was tempered with, you can regenarate the API Secret by clicking the Regenerate button below', Cartlassi_Constants::TEXT_DOMAIN ); ?>
+		</p>
+		<button
+			id="regenerate-api-secret-button"
+			class="button button-secondary"
+		><?php esc_html_e( 'Regenerate API Secret', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
 		<?php
 	}
 
@@ -712,6 +746,20 @@ class Cartlassi_Admin {
 		$options[Cartlassi_Constants::API_KEY_FIELD_NAME] = $data->apiKey;
 		update_option(Cartlassi_Constants::API_OPTIONS_NAME, $options);
 		echo json_encode(array('apiKey' => $data->apiKey));
+		wp_die();
+	}
+
+	function regenerate_api_secret () {
+		check_ajax_referer(Cartlassi_Constants::NONCE_ADMIN_NAME, 'nonce');
+
+		$args = array(
+			'method' => 'POST'
+		);
+		$data = $this->api->request("/shops/regenerate-api-secret", $args);
+		$options = get_option(Cartlassi_Constants::API_OPTIONS_NAME);
+		$options[Cartlassi_Constants::API_SECRET_FIELD_NAME] = $data->apiSecret;
+		update_option(Cartlassi_Constants::API_OPTIONS_NAME, $options);
+		echo json_encode(array('apiSecret' => $data->apiSecret));
 		wp_die();
 	}
 
