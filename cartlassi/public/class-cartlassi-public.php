@@ -475,11 +475,12 @@ class Cartlassi_Public {
 				'shopCartId' 	=> strval($cart_item_key),
 				'shopOrderId'	=> strval($order_id),
 				'amount'		=> $item->get_total(),
-				'currency'		=> 'ILS',
+				'currency'		=> 'ILS', // TBD change to get_woocommerce_currency()? or extract from product?
 			);
+			error_log(var_export($body, true));
 			$args = array(
-				'method'	=> 'POST',
-				'body'        => $body,
+				'method' => 'POST',
+				'body'   => $body,
 			);
 
 			$cartId = $this->utils->generate_cart_id();
@@ -489,8 +490,6 @@ class Cartlassi_Public {
 	}
 
 	function order_refunded ( $order_id, $refund_id ) {
-		$apiKey = $this->getApiKey();
-		$args = [];
 		
 		$order = wc_get_order( $order_id );
 		$refunds = $order->get_refunds();
@@ -501,9 +500,12 @@ class Cartlassi_Public {
 					$item = $order->get_item($originalItemId);
 					$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
 					if ($cart_item_key) {
-						$args['body'] = array(
-							"method"	=> 'POST',
-							"shopCartId" => $cart_item_key
+						$body = array(
+							"shopCartId" => $cart_item_key,
+						);
+						$args = array(
+							'method' => 'POST',
+							'body'	 => $body,
 						);
 						// $response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$order_id}/refund", $args );
 						$response = $this->api->request("/carts/{$order_id}/refund", $args );
