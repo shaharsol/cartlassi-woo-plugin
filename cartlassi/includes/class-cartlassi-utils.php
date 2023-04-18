@@ -74,6 +74,11 @@ class Cartlassi_Utils {
 	}
 
 	public function get_payment_method () {
+		$cached = get_transient(Cartlassi_Constants::PAYMENT_METHOD_TRANSIENT);
+		if ($cached) {
+			return $cached;
+		}
+		
 		$apiKey = self::get_api_key();
 
 		$args = array(
