@@ -89,9 +89,11 @@ class Cartlassi_Utils {
 	}
 
 	public function get_payout_method ($use_cache = true) {
-		$cached = get_transient(Cartlassi_Constants::PAYOUT_METHOD_TRANSIENT);
-		if ($cached) {
-			return $cached;
+		if ($use_cache) {
+			$cached = get_transient(Cartlassi_Constants::PAYOUT_METHOD_TRANSIENT);
+			if ($cached) {
+				return $cached;
+			}
 		}
 		$fresh = $this->api->request('/shops/payout-method');
 		set_transient(Cartlassi_Constants::PAYOUT_METHOD_TRANSIENT, $fresh, $this->config->get('transient_expiration'));

@@ -36,7 +36,8 @@ class Cartlassi_Activator {
 		$body = array(
 			'url'  	=> get_bloginfo('url'),
 			'email' => get_bloginfo('admin_email'),
-			'name'  => get_bloginfo('name'), //
+			'name'  => get_bloginfo('name'),
+			'country' => wc_get_base_location()['country']
 		);
 		$args = array(
 			'method'	=> 'POST',
