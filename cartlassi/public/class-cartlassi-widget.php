@@ -38,7 +38,8 @@ class Cartlassi_Widget extends WP_Widget {
 				$title = 'We think you may like...';
 				
 				$cartId = $this->utils->generate_cart_id();
-				$products = $this->api->request("/shops/widget/{$cartId}");
+				$limit = wc_get_theme_support( 'product_blocks::default_columns', 3 );
+				$products = $this->api->request("/shops/widget/{$cartId}?limit={$limit}");
 
 				if (count($products) == 0) {
 					return; // TBD replace to wp_die() here?
