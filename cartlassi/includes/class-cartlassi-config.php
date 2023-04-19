@@ -30,15 +30,15 @@ class Cartlassi_Config {
 		'local', 'development', 'staging', 'production'
 	);
 
-	protected $calculatedConfig;
+	protected $calculated_config;
 
 	function __construct() {
-		$currentEnv = wp_get_environment_type();
-		$arraysToMerge = array();
-		for($i = 0; $i <= array_search($currentEnv, self::ENVIRONMENTS) ; $i++) {
-			$arraysToMerge += $this->config[self::ENVIRONMENTS[$i]];	
+		$current_env = wp_get_environment_type();
+		$arrays_to_merge = array();
+		for($i = 0; $i <= array_search($current_env, self::ENVIRONMENTS) ; $i++) {
+			$arrays_to_merge += $this->config[self::ENVIRONMENTS[$i]];	
 		}
-		$this->calculatedConfig = array_merge($arraysToMerge);
+		$this->calculated_config = array_merge($arrays_to_merge);
 	}
 	/**
 	 * Load the plugin text domain for translation.
@@ -47,7 +47,7 @@ class Cartlassi_Config {
 	 */
 	public function get($index) {
 
-		return $this->calculatedConfig[$index];
+		return $this->calculated_config[$index];
 
 	}
 

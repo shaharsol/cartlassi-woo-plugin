@@ -42,8 +42,8 @@ class Cartlassi_Admin {
 	private $config;
 	private $api;
 	private $utils;
-	private $commissionsList;
-	private $salesList;
+	private $commissions_list;
+	private $sales_list;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -103,13 +103,12 @@ class Cartlassi_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		$apiKey = $this->getApiKey();
 		$nonce = wp_create_nonce( Cartlassi_Constants::NONCE_ADMIN_NAME );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cartlassi-admin.js', array( 'jquery' ), $this->version, false );
 
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 		wp_localize_script( $this->plugin_name, 'ajax_object',
-				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $apiKey , 'nonce' => $nonce, 'api_url' => $this->config->get('api_public_url')) 
+				array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'api_key' => $this->utils->get_api_key() , 'nonce' => $nonce, 'api_url' => $this->config->get('api_public_url')) 
 		);
 	}
 
@@ -623,8 +622,8 @@ class Cartlassi_Admin {
 							<div class="meta-box-sortables ui-sortable">
 								<form method="post">
 									<?php
-										$this->salesList->prepare_items();
-										$this->salesList->display(); 
+										$this->sales_list->prepare_items();
+										$this->sales_list->display(); 
 									?>
 								</form>
 							</div>
@@ -647,8 +646,8 @@ class Cartlassi_Admin {
 							<div class="meta-box-sortables ui-sortable">
 								<form method="post">
 									<?php
-										$this->commissionsList->prepare_items();
-										$this->commissionsList->display(); 
+										$this->commissions_list->prepare_items();
+										$this->commissions_list->display(); 
 									?>
 								</form>
 							</div>
@@ -667,12 +666,12 @@ class Cartlassi_Admin {
 			return;
 		}
 	
-		$stripeSessionId = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
-		if ($stripeSessionId) {
+		$stripe_session_id = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
+		if ($stripe_session_id) {
 			$args = array(
 				'method' => 'POST',
 				'body'			=> array(
-					'session_id' => $stripeSessionId
+					'session_id' => $stripe_session_id
 				),
 			);
 			$response = $this->api->request("/shops/complete-stripe", $args );
@@ -680,8 +679,6 @@ class Cartlassi_Admin {
 
 		if ( isset( $_GET['account-connected'] )) {
 			// a stripe connect process has just ended, need to process it.
-			$apiKey = $this->getApiKey();
-
 			$args = array(
 				'method' => 'POST',
 			);
@@ -782,19 +779,12 @@ class Cartlassi_Admin {
 		wp_die();
 	}
 
-	
-
-	protected function getApiKey() {
-		// return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
-		return $this->utils->get_api_key();
-	}
-
 	public function add_action_links($links, $file){
 		if ($file == 'cartlassi/cartlassi.php') {
-			$mylinks = array(
+			$my_links = array(
 			 '<a href="' . admin_url( 'admin.php?page=cartlassi' ) . '">Settings</a>',
 			);
-			return array_merge( $mylinks , $links );
+			return array_merge( $my_links , $links );
 		}else{
 			return $links;
 		}
@@ -818,7 +808,7 @@ class Cartlassi_Admin {
 		
 		add_screen_option( $option, $args );
 		
-		$this->salesList = new Sales_List($this->config, $this->api);
+		$this->sales_list = new Sales_List($this->config, $this->api);
 	}
 
 	public function screen_option_commissions() {
@@ -832,7 +822,7 @@ class Cartlassi_Admin {
 		
 		add_screen_option( $option, $args );
 		
-		$this->commissionsList = new Commissions_List($this->config, $this->api);
+		$this->commissions_list = new Commissions_List($this->config, $this->api);
 	}
 
 	public function activation_redirect($plugin) {
@@ -866,33 +856,33 @@ class Cartlassi_Admin {
 	}
 
 	protected function admin_notice_welcome() {
-		$paymentMethod = $this->utils->get_payment_method(false);
-		$payoutMethod = $this->utils->get_payout_method(false);
-		$isCollectingData = true;
-		$isPaymentMethod = ($paymentMethod->brand && $paymentMethod->last4) || isset($_GET['session_id']);
-		$isPayoutMethod = ($payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected) || isset($_GET['account-connected']);
-		$isAppearanceSet = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
+		$payment_method = $this->utils->get_payment_method(false);
+		$payout_method = $this->utils->get_payout_method(false);
+		$is_collecting_data = true;
+		$is_payment_method = ($payment_method->brand && $payment_method->last4) || isset($_GET['session_id']);
+		$is_payout_method = ($payout_method->stripeConnectAccountId && $payout_method->stripeConnectConnected) || isset($_GET['account-connected']);
+		$is_appearance_set = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
 
-		$isDisplayingWidget = $isAppearanceSet && $isPaymentMethod;
+		$is_displaying_widget = $is_appearance_set && $is_payment_method;
 		?>
 			<div data-dismissible="disable-done-notice-forever" class="notice notice-success is-dismissible">
 				<h2><?php _e('Welcome to Cartlassi.')?></h2>
 				<h3><?php _e('Please take a few minutes to complete the setup. Hopefully by the end of it you\'ll have all boxes checked.'); ?></h3> 
 				<ul>
-					<li><input disabled type="checkbox" id="is-collecting-data" <?php checked($isCollectingData, true)?>><?php _e('Your shop is collecting data and monetizing your abandoned carts')?></li>
-					<li><input disabled type="checkbox" id="is-displaying-widget" <?php checked($isDisplayingWidget, true)?>><?php _e('Cartlassi widget is displaying on your shop driving more sales')?></li>
-					<?php if (!$isPaymentMethod) { ?>
+					<li><input disabled type="checkbox" id="is-collecting-data" <?php checked($is_collecting_data, true)?>><?php _e('Your shop is collecting data and monetizing your abandoned carts')?></li>
+					<li><input disabled type="checkbox" id="is-displaying-widget" <?php checked($is_displaying_widget, true)?>><?php _e('Cartlassi widget is displaying on your shop driving more sales')?></li>
+					<?php if (!$is_payment_method) { ?>
 						<ul class="cartlassi-admin-checkbox-reasons">
 							<li>Paymet method not set.</li>
 						</ul>
 					<?php } ?>
-					<?php if (!$isAppearanceSet) { ?>
+					<?php if (!$is_appearance_set) { ?>
 						<ul class="cartlassi-admin-checkbox-reasons">
 							<li>Appearance settings not set.</li>
 						</ul>
 					<?php } ?>
-					<li><input disabled type="checkbox" id="is-payout" <?php checked($isPayoutMethod, true)?>><?php _e('You\'ve established a payout method so we can pay you your earnings with us.')?></li>
-					<?php if (!$isPayoutMethod) { ?>
+					<li><input disabled type="checkbox" id="is-payout" <?php checked($is_payout_method, true)?>><?php _e('You\'ve established a payout method so we can pay you your earnings with us.')?></li>
+					<?php if (!$is_payout_method) { ?>
 						<ul id="" class="cartlassi-admin-checkbox-reasons">
 							<li>Payout method not set</li>
 						</ul>
@@ -903,19 +893,27 @@ class Cartlassi_Admin {
 	}
 
 	public function display_admin_notices() {
+		// in welcome mode we're not showing other notices, only the welcome notice
 		$welcome = isset( $_GET['welcome'] );
 		if ($welcome) {
 			$this->admin_notice_welcome();
 			return;
 		}
+
 		// if no stripe connect, notice that we can't pay
 		if (!get_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME)) {
 			$this->admin_notice_no_appearance_setting();
 		}
-		// $this->admin_notice_no_payout_method();
-		// $this->admin_notice_no_payment_method();
-		// if no stripe checkout, notice that we can't display widget
-		// if appearance is not set, notice that we can't display the widget
+
+		$payment_method = $this->utils->get_payment_method();
+		if ( !($payment_method->brand && $payment_method->last4) ) {
+			$this->admin_notice_no_payment_method();
+		}
+
+		$payout_method = $this->utils->get_payout_method();
+		if ( !($payout_method->stripeConnectAccountId && $payout_method->stripeConnectConnected) ) {
+			$this->admin_notice_no_payout_method();
+		}
 	}
 
 	public function cancel_payment_method() {

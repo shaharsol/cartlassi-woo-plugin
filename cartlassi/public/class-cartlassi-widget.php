@@ -27,25 +27,25 @@ class Cartlassi_Widget extends WP_Widget {
 		if (wp_doing_ajax()) {
 			check_ajax_referer(Cartlassi_Constants::NONCE_PUBLIC_NAME, 'nonce');
 
-			$paymentMethod = $this->utils->get_payment_method();
-			$isPaymentMethod = $paymentMethod->brand && $paymentMethod->last4;
-			$isAppearanceSet = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
-			$isDisplayingWidget = $isAppearanceSet && $isPaymentMethod;
+			$payment_method = $this->utils->get_payment_method();
+			$is_payment_method = $payment_method->brand && $payment_method->last4;
+			$is_appearance_set = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
+			$is_displaying_widget = $is_appearance_set && $is_payment_method;
 
-			if ( $isDisplayingWidget ) {
+			if ( $is_displaying_widget ) {
 				extract( $args );
 
 				$title = 'We think you may like...';
 				
-				$cartId = $this->utils->generate_cart_id();
+				$cart_id = $this->utils->generate_cart_id();
 				$limit = wc_get_theme_support( 'product_blocks::default_columns', 3 );
-				$products = $this->api->request("/shops/widget/{$cartId}?limit={$limit}");
+				$products = $this->api->request("/shops/widget/{$cart_id}?limit={$limit}");
 
 				if (count($products) == 0) {
 					return; // TBD replace to wp_die() here?
 				}
 				
-				$cartItemToProductMap = array_reduce($products, function($carry, $item){
+				$cart_item_to_product_map = array_reduce($products, function($carry, $item){
 					if(count($carry) == 0) {
 						$carry = [strval($item->id) => $item->cartItemId];
 					} else {
@@ -58,7 +58,7 @@ class Cartlassi_Widget extends WP_Widget {
 					return $product->id;
 				}, $products);
 
-				WC()->session->set(Cartlassi_Constants::CURRENT_MAP_NAME, $cartItemToProductMap);
+				WC()->session->set(Cartlassi_Constants::CURRENT_MAP_NAME, $cart_item_to_product_map);
 				$block_name = 'woocommerce/handpicked-products';
 				$converted_block = new WP_Block_Parser_Block( $block_name, array(
 					'products' => $products,

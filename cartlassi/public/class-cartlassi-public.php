@@ -118,18 +118,17 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
-		$apiKey = $this->getApiKey();
 		$product = wc_get_product( $product_id );
-		$tagIds = $product->get_tag_ids();
-		$tags = array_map(function($tagId) {
-			return (get_term($tagId))->name;
-		}, $tagIds);
+		$tag_ids = $product->get_tag_ids();
+		$tags = array_map(function($tag_id) {
+			return (get_term($tag_id))->name;
+		}, $tag_ids);
 
-		$categoryIds = $product->get_category_ids();
-		$categories = array_map(function($categoryId) {
-			$term = get_term_by( 'id', $categoryId, 'product_cat' );
+		$category_ids = $product->get_category_ids();
+		$categories = array_map(function($category_id) {
+			$term = get_term_by( 'id', $category_id, 'product_cat' );
 			return isset ($term->name) ? $term->name : '';
-		}, $categoryIds);
+		}, $category_ids);
 
 		$description = $product->get_description();
 		if (!$description) {
@@ -159,8 +158,8 @@ class Cartlassi_Public {
 			'body'      => $body,
 		);
 
-		$cartId = $this->utils->generate_cart_id();
-		$response = $this->api->request("/carts/{$cartId}", $args);
+		$cart_id = $this->utils->generate_cart_id();
+		$response = $this->api->request("/carts/{$cart_id}", $args);
 	} 
 
 	/**
@@ -171,7 +170,6 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	public function remove_from_cart($cart_item_key, $that) {
-		// $apiKey = $this->getApiKey();
 		// TBD get rid of the jsin_decode(jsin_encode)... make it work in another way
 		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
 
@@ -185,8 +183,8 @@ class Cartlassi_Public {
 			'body'        => $body,
 		);
 
-		$cartId = $this->utils->generate_cart_id();
-		$response = $this->api->request("/carts/{$cartId}", $args);
+		$cart_id = $this->utils->generate_cart_id();
+		$response = $this->api->request("/carts/{$cart_id}", $args);
 	}
 
 	function cartlassi_widgets_init() {
@@ -241,12 +239,12 @@ class Cartlassi_Public {
 	 * 
 	 * @since    1.0.0
 	 */
-	function display_widget_helper ($boolFunc, $optionName, $sidebarId, $cartlassiOptions) {
-		if ( $boolFunc() ) {
-			if ( !isset($cartlassiOptions[$optionName]) || !$cartlassiOptions[$optionName] ) {
+	function display_widget_helper ($bool_func, $option_name, $sidebar_id, $cartlassi_options) {
+		if ( $bool_func() ) {
+			if ( !isset($cartlassi_options[$option_name]) || !$cartlassi_options[$option_name] ) {
 				return true;
 			}
-			if ($sidebarId == $cartlassiOptions[$optionName]) {
+			if ($sidebar_id == $cartlassi_options[$option_name]) {
 				dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 			}
 			return false;
@@ -261,8 +259,8 @@ class Cartlassi_Public {
 			return $params;
 		}
 
-		$sidebarId = $params[0]['id'];
-		$cartlassiOptions = get_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME);
+		$sidebar_id = $params[0]['id'];
+		$cartlassi_options = get_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME);
 
 		$invocations = array (
 			array (
@@ -284,7 +282,7 @@ class Cartlassi_Public {
 		);
 
 		foreach($invocations as $invocation) {
-			$continue = $this->display_widget_helper($invocation['bool_func'], $invocation['option_name'], $sidebarId, $cartlassiOptions);
+			$continue = $this->display_widget_helper($invocation['bool_func'], $invocation['option_name'], $sidebar_id, $cartlassi_options);
 			if ( !$continue ) {
 				break;
 			}
@@ -292,17 +290,17 @@ class Cartlassi_Public {
 
 		if ($continue) {
 			if ( is_page() ) {
-				if ( isset($cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME]) ) {
-					$is_listed_page = is_page(explode(',',$cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME]));
+				if ( isset($cartlassi_options[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME]) ) {
+					$is_listed_page = is_page(explode(',',$cartlassi_options[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_PAGES_FIELD_NAME]));
 				} else {
 					$is_listed_page = false;
 				}
 
 				if ( 
-					( ( $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME] ==  Cartlassi_Constants::OTHER_PAGES_OPTION_DONT_SHOW_BUT ) && $is_listed_page )
-					|| ( ( $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME] ==  Cartlassi_Constants::OTHER_PAGES_OPTION_SHOW_EXCEPT ) && !$is_listed_page )
+					( ( $cartlassi_options[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME] ==  Cartlassi_Constants::OTHER_PAGES_OPTION_DONT_SHOW_BUT ) && $is_listed_page )
+					|| ( ( $cartlassi_options[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_STRATEGY_FIELD_NAME] ==  Cartlassi_Constants::OTHER_PAGES_OPTION_SHOW_EXCEPT ) && !$is_listed_page )
 				) {
-					if ($sidebarId == $cartlassiOptions[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME]) {
+					if ($sidebar_id == $cartlassi_options[Cartlassi_Constants::BEFORE_SIDEBAR_OTHER_PAGES_FIELD_NAME]) {
 						dynamic_sidebar(Cartlassi_Constants::SIDEBAR_ID);
 					}
 				}
@@ -338,7 +336,13 @@ class Cartlassi_Public {
 		$cartlassiCartItemId = isset($map[$product->get_id()]) ? $map[$product->get_id()] : false; 
 		if ($cartlassiCartItemId) {
 			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
-			$withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
+			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
+			$withCartlassiHrefs = preg_replace('/href="(([^?]+)(?:\??))([^"]*?)"/i', 'href="$2?cartlassi='.$cartlassiCartItemId.'&$3"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
+
+
+			// $withCartlassiHrefs = preg_replace('/(href=["\'])([^"\'])(\?[^"\'])?([#"\'][^>]*)/i', '$1$2$3' . (empty($3) ? '?' : '&') . 'cartlassi='.$cartlassiCartItemId.'$4 data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
+
+
 			return $withCartlassiHrefs;
 		}
 		return $html;
@@ -470,7 +474,6 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	function payment_complete ( $order_id ) {
-		$apiKey = $this->getApiKey();
 		$order = wc_get_order( $order_id );
 		$order_items = $order->get_items();
 
@@ -492,8 +495,8 @@ class Cartlassi_Public {
 				'body'   => $body,
 			);
 
-			$cartId = $this->utils->generate_cart_id();
-			$response = $this->api->request("/carts/{$cartId}/checkout", $args);
+			$cart_id = $this->utils->generate_cart_id();
+			$response = $this->api->request("/carts/{$cart_id}/checkout", $args);
 
 		}
 	}
@@ -505,8 +508,8 @@ class Cartlassi_Public {
 		foreach ($refunds as $refund) {
 			if($refund->id == $refund_id) {
 				foreach( $refund->get_items() as $refunded_item_id => $refunded_item ) {
-					$originalItemId = $refunded_item->get_meta('_refunded_item_id');
-					$item = $order->get_item($originalItemId);
+					$original_item_id = $refunded_item->get_meta('_refunded_item_id');
+					$item = $order->get_item($original_item_id);
 					$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
 					if ($cart_item_key) {
 						$body = array(
@@ -516,15 +519,7 @@ class Cartlassi_Public {
 							'method' => 'POST',
 							'body'	 => $body,
 						);
-						// $response = wp_remote_post( "{$this->config->get('api_url')}/carts/{$order_id}/refund", $args );
 						$response = $this->api->request("/carts/{$order_id}/refund", $args );
-						// if ( is_wp_error( $response ) ) {
-						// 	$error_message = $response->get_error_message();
-						// 	error_log("WWWWWWWWWWW {$error_message}");
-						// }	
-						// $order = wc_get_order( $order_id );
-						// error_log(var_export($order, true));
-						// var_dump($order);
 					}
 				}
 				break;
@@ -550,26 +545,22 @@ class Cartlassi_Public {
 		$item->update_meta_data( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY, $cart_item_key );
 	}
 
-	protected function getApiKey() {
-		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
-	}
-
 	function get_product_feed() {
 		$products = wc_get_products( array(
 			'limit'  => -1, // All products
 			'status' => 'publish', // Only published products
 		) );
 		$filtered = array_map(function($product) {
-			$tagIds = $product->get_tag_ids();
-			$tags = array_map(function($tagId) {
-				return (get_term($tagId))->name;
-			}, $tagIds);
+			$tag_ids = $product->get_tag_ids();
+			$tags = array_map(function($tag_id) {
+				return (get_term($tag_id))->name;
+			}, $tag_ids);
 
-			$categoryIds = $product->get_category_ids();
-			$categories = array_map(function($categoryId) {
-				$term = get_term_by( 'id', $categoryId, 'product_cat' );
+			$category_ids = $product->get_category_ids();
+			$categories = array_map(function($category_id) {
+				$term = get_term_by( 'id', $category_id, 'product_cat' );
 				return isset ($term->name) ? $term->name : '';
-			}, $categoryIds);
+			}, $category_ids);
 
 			$description = $product->get_description();
 			if (!$description) {

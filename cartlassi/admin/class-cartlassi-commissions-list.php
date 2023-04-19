@@ -168,8 +168,8 @@ class Commissions_List extends WP_List_Table {
         // echo var_export($this->items, true).'<br/>';
     }
 
-    protected static function getApiKey() {
-		return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
-	}
+    // protected static function getApiKey() {
+	// 	return get_option(Cartlassi_Constants::API_OPTIONS_NAME)[Cartlassi_Constants::API_KEY_FIELD_NAME];
+	// }
     
 }
