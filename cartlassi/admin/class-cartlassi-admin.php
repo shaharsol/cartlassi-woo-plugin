@@ -477,7 +477,13 @@ class Cartlassi_Admin {
 		$data = $this->utils->get_payment_method(false); // $use_cache = false
 		
 		if ($data->brand && $data->last4) {
-			echo "{$data->brand} {$data->last4}";
+			?>
+			<span class="cartlassi-payment-method"><?php echo "{$data->brand} {$data->last4} &nbsp;"; ?></span>
+			<button
+				id="cancel-payment-method-button"
+				class="cartlassi-payment-method button button-secondary"
+			><?php esc_html_e( 'Remove', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
+			<?php
 		} else {
 			?>
 	
@@ -492,7 +498,13 @@ class Cartlassi_Admin {
 	function cartlassi_field_payout_method_cb( $args ) {
 		$data = $this->utils->get_payout_method(false); // $use_cache = false
 		if ($data->stripeConnectAccountId && $data->stripeConnectConnected) {
-			esc_html_e( 'Connected via Stripe Connect', Cartlassi_Constants::TEXT_DOMAIN );
+			?>
+			<span class="cartlassi-payment-method"><?php esc_html_e( 'Connected via Stripe Connect &nbsp;', Cartlassi_Constants::TEXT_DOMAIN ); ?></span>
+			<button
+				id="cancel-payout-method-button"
+				class="cartlassi-payment-method button button-secondary"
+			><?php esc_html_e( 'Remove', Cartlassi_Constants::TEXT_DOMAIN ); ?></button>
+			<?php
 		} else {
 			?>
 	
@@ -857,8 +869,8 @@ class Cartlassi_Admin {
 		$paymentMethod = $this->utils->get_payment_method(false);
 		$payoutMethod = $this->utils->get_payout_method(false);
 		$isCollectingData = true;
-		$isPaymentMethod = ($paymentMethod->brand && $paymentMethod->last4) || $_GET['session_id'];
-		$isPayoutMethod = ($payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected) || $_GET['account-connected'];
+		$isPaymentMethod = ($paymentMethod->brand && $paymentMethod->last4) || isset($_GET['session_id']);
+		$isPayoutMethod = ($payoutMethod->stripeConnectAccountId && $payoutMethod->stripeConnectConnected) || isset($_GET['account-connected']);
 		$isAppearanceSet = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
 
 		$isDisplayingWidget = $isAppearanceSet && $isPaymentMethod;
@@ -904,5 +916,29 @@ class Cartlassi_Admin {
 		// $this->admin_notice_no_payment_method();
 		// if no stripe checkout, notice that we can't display widget
 		// if appearance is not set, notice that we can't display the widget
+	}
+
+	public function cancel_payment_method() {
+		check_ajax_referer(Cartlassi_Constants::NONCE_ADMIN_NAME, 'nonce');
+
+		$args = array(
+			'method' => 'DELETE'
+		);
+		$data = $this->api->request("/shops/payment-method", $args);
+		echo json_encode(array());
+		wp_die();
+
+	}
+
+	public function cancel_payout_method() {
+		check_ajax_referer(Cartlassi_Constants::NONCE_ADMIN_NAME, 'nonce');
+
+		$args = array(
+			'method' => 'DELETE'
+		);
+		$data = $this->api->request("/shops/payout-method", $args);
+		echo json_encode(array());
+		wp_die();
+
 	}
 }

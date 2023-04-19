@@ -86,6 +86,40 @@
 		});
 	}
 
+	function cancelPaymentMethod () {
+		$.ajax({
+			url: ajax_object.ajax_url,
+			type: 'post',
+			data: {
+				action: 'cartlassi_cancel_payment_method',
+				nonce: ajax_object.nonce,
+			},
+			success: (data, status) => {
+				location.reload();
+			},
+			error: (err) => {
+				// alert(JSON.stringify(err));
+			}
+		});
+	}
+
+	function cancelPayoutMethod () {
+		$.ajax({
+			url: ajax_object.ajax_url,
+			type: 'post',
+			data: {
+				action: 'cartlassi_cancel_payout_method',
+				nonce: ajax_object.nonce,
+			},
+			success: (data, status) => {
+				location.reload();
+			},
+			error: (err) => {
+				// alert(JSON.stringify(err));
+			}
+		});
+	}
+
 	$(function() {
 		$('#regenerate-api-key-button').click(function(event) {
 			event.preventDefault();		
@@ -96,6 +130,14 @@
 			event.preventDefault();		
 			regenerateAPISecret();
 			// // Event.stop(event); // suppress default click behavior, cancel the event
+		});
+		$('#cancel-payment-method-button').click(function(event) {
+			event.preventDefault();		
+			cancelPaymentMethod();
+		});
+		$('#cancel-payout-method-button').click(function(event) {
+			event.preventDefault();		
+			cancelPayoutMethod();
 		});
 
 		const queryParams = new Proxy(new URLSearchParams(window.location.search), {

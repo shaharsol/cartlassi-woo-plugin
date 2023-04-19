@@ -30,3 +30,7 @@
  #cartlassi-demo-hash {
    width: 100%;
  }
+
+ .cartlassi-payment-method {
+   vertical-align: middle !important;
+ }
