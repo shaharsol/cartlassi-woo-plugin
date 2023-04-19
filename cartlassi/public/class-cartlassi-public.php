@@ -580,8 +580,10 @@ class Cartlassi_Public {
 				'name' => $product->get_name(),
 				'description' => $product->get_description(),
 				'short_description' => $product->get_short_description(),
-				'tags'				=> implode(', ', $tags),
-				'categories'				=> implode(', ', $categories),
+				// 'tags'				=> implode(', ', $tags),
+				// 'categories'				=> implode(', ', $categories),
+				'tags'				=> $tags,
+				'categories'				=> $categories,
 				'sku'     		=> $product->get_sku(),
 			);
 		}, $products);
