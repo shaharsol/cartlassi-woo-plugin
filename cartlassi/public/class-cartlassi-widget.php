@@ -75,7 +75,7 @@ class Cartlassi_Widget extends WP_Widget {
 			
 			extract( $args );
 			// echo $before_widget;
-			echo '<div id="cartlassi-widget-container"><span id="cartlassi-widget-title">We think you may like</span>';
+			echo '<div id="cartlassi-widget-container"><div id="cartlassi-widget-title">We think you may like</div>';
 			if ( ! empty( $title ) ) {
 				//echo $before_title . $title . $after_title;
 			}

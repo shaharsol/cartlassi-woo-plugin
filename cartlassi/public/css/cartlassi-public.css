@@ -15,8 +15,6 @@
  }
 
  #cartlassi-widget-title {
-    position: absolute;
-    left: 4px;
-    top: 4px;
-    font-size: 16px;
+    margin: 10px;
+    font-size: 18px;
 }
