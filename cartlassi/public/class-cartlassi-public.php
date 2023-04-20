@@ -331,16 +331,16 @@ class Cartlassi_Public {
 		// TBD make sure this happens ONLY in cartlassi widget
 		// otherwise we take over links from every widget in the site...
 
-		// $cartlassiCartItemId = array_search( $product->get_id(), WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
+		// $cartlassi_cart_item_id = array_search( $product->get_id(), WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME ) ); 
 		$map = WC()->session->get( Cartlassi_Constants::CURRENT_MAP_NAME );
-		$cartlassiCartItemId = isset($map[$product->get_id()]) ? $map[$product->get_id()] : false; 
-		if ($cartlassiCartItemId) {
-			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
-			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
-			// $withCartlassiHrefs = preg_replace('/href="(([^?]+)(?:\??))([^"]*?)"/i', 'href="$2?cartlassi='.$cartlassiCartItemId.'&$3"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
-			$withCartlassiHrefs = preg_replace('/href="([^?"]+)(?:\??)(.*?)"/i', 'href="$1?cartlassi='.$cartlassiCartItemId.'&$2" data-cartlassi="'.$cartlassiCartItemId.'" data-product-id="'.$product->get_id().'"', $html);
+		$cartlassi_cart_item_id = isset($map[$product->get_id()]) ? $map[$product->get_id()] : false; 
+		if ($cartlassi_cart_item_id) {
+			// $with_cartlassi_hrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassi_cart_item_id.'"', $html);
+			// $with_cartlassi_hrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassi_cart_item_id.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassi_cart_item_id.'"', $html);
+			// $with_cartlassi_hrefs = preg_replace('/href="(([^?]+)(?:\??))([^"]*?)"/i', 'href="$2?cartlassi='.$cartlassi_cart_item_id.'&$3"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassi_cart_item_id.'"', $html);
+			$with_cartlassi_hrefs = preg_replace('/href="([^?"]+)(?:\??)(.*?)"/i', 'href="$1?cartlassi='.$cartlassi_cart_item_id.'&$2" data-cartlassi="'.$cartlassi_cart_item_id.'" data-product-id="'.$product->get_id().'"', $html);
 
-			return $withCartlassiHrefs;
+			return $with_cartlassi_hrefs;
 		}
 		return $html;
 	}
