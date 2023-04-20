@@ -42,7 +42,7 @@ class Cartlassi_Widget extends WP_Widget {
 				$products = $this->api->request("/shops/widget/{$cart_id}?limit={$limit}");
 
 				if (count($products) == 0) {
-					return; // TBD replace to wp_die() here?
+					return wp_die(); // TBD replace to wp_die() here?
 				}
 				
 				$cart_item_to_product_map = array_reduce($products, function($carry, $item){
@@ -67,21 +67,24 @@ class Cartlassi_Widget extends WP_Widget {
 		
 				$rendered_block = render_block( (array) $converted_block );
 				
+				echo '<div id="cartlassi-widget-container"><div id="cartlassi-widget-title">We think you may like</div>';
 				echo $rendered_block;
-			}
+				echo '<div id="powered-by-cartlassi">powered by <a href="https://cartlassi.com">Cartlassi</a></div>';
+				echo '</div>';
+				}
 
 			wp_die();
 		} else {
 			
 			extract( $args );
 			// echo $before_widget;
-			echo '<div id="cartlassi-widget-container"><div id="cartlassi-widget-title">We think you may like</div>';
-			if ( ! empty( $title ) ) {
-				//echo $before_title . $title . $after_title;
-			}
+			// echo '<div id="cartlassi-widget-container"><div id="cartlassi-widget-title">We think you may like</div>';
+			// if ( ! empty( $title ) ) {
+			// 	//echo $before_title . $title . $after_title;
+			// }
 			echo '<div id="cartlassi-ajax-widget"></div>';
-			echo '<div id="powered-by-cartlassi">powered by <a href="https://cartlassi.com">Cartlassi</a></div>';
-			echo '</div>';
+			// echo '<div id="powered-by-cartlassi">powered by <a href="https://cartlassi.com">Cartlassi</a></div>';
+			// echo '</div>';
 			// echo $after_widget;
 		}
 	}

@@ -488,7 +488,7 @@ class Cartlassi_Public {
 				'shopCartId' 	=> strval($cart_item_key),
 				'shopOrderId'	=> strval($order_id),
 				'amount'		=> $item->get_total(),
-				'currency'		=> 'ILS', // TBD change to get_woocommerce_currency()? or extract from product?
+				'currency'		=> get_woocommerce_currency(), // TBD change to get_woocommerce_currency()? or extract from product?
 			);
 			$args = array(
 				'method' => 'POST',

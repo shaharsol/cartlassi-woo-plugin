@@ -42,6 +42,8 @@ define( 'CARTLASSI_VERSION', '1.0.0' );
  * This action is documented in includes/class-plugin-name-activator.php
  */
 function activate_cartlassi() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-cartlassi-config.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-cartlassi-api.php';
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-cartlassi-activator.php';
 	Cartlassi_Activator::activate();
 }
