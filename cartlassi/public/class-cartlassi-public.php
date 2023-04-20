@@ -337,11 +337,8 @@ class Cartlassi_Public {
 		if ($cartlassiCartItemId) {
 			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"', $html);
 			// $withCartlassiHrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassiCartItemId.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
-			$withCartlassiHrefs = preg_replace('/href="(([^?]+)(?:\??))([^"]*?)"/i', 'href="$2?cartlassi='.$cartlassiCartItemId.'&$3"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
-
-
-			// $withCartlassiHrefs = preg_replace('/(href=["\'])([^"\'])(\?[^"\'])?([#"\'][^>]*)/i', '$1$2$3' . (empty($3) ? '?' : '&') . 'cartlassi='.$cartlassiCartItemId.'$4 data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
-
+			// $withCartlassiHrefs = preg_replace('/href="(([^?]+)(?:\??))([^"]*?)"/i', 'href="$2?cartlassi='.$cartlassiCartItemId.'&$3"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassiCartItemId.'"', $html);
+			$withCartlassiHrefs = preg_replace('/href="([^?"]+)(?:\??)(.*?)"/i', 'href="$1?cartlassi='.$cartlassiCartItemId.'&$2" data-cartlassi="'.$cartlassiCartItemId.'" data-product-id="'.$product->get_id().'"', $html);
 
 			return $withCartlassiHrefs;
 		}
