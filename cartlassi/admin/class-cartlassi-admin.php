@@ -678,7 +678,8 @@ class Cartlassi_Admin {
 					<div id="post-body" class="metabox-holder columns-2">
 						<div id="post-body-content">
 							<div class="meta-box-sortables ui-sortable">
-								<div id="chart"></div>
+								<div id="sales-chart"></div>
+								<div id="promoter-chart"></div>
 							</div>
 						</div>
 					</div> 

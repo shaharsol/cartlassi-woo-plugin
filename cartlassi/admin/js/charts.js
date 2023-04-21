@@ -10,14 +10,15 @@ function drawChart() {
         ['2006',  660,       1120],
         ['2007',  1030,      540]
     ]
-    var options = {
-        title: 'Shop Stats',
+    const options = {
         curveType: 'function',
         legend: { position: 'bottom' },
         width: '100%',
     };
 
-    var chart = new google.visualization.LineChart(document.getElementById('chart'));
+    const salesChart = new google.visualization.LineChart(document.getElementById('sales-chart'));
+    const promoterChart = new google.visualization.LineChart(document.getElementById('promoter-chart'));
 
-    chart.draw(google.visualization.arrayToDataTable(cartlassi_chart.data), options);
+    salesChart.draw(google.visualization.arrayToDataTable(cartlassi_chart.data.sales), {title: 'Sellings Stats', ...options});
+    promoterChart.draw(google.visualization.arrayToDataTable(cartlassi_chart.data.promoter), {title: 'Promoting Stats', ...options});
 }
