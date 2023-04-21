@@ -221,6 +221,7 @@ class Cartlassi {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'init_chart_scripts' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'cartlassi_settings_init' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'cartlassi_options_page' );
 		// TBD this one still not working, its about integrating with woocommerce admin, and not outside in general

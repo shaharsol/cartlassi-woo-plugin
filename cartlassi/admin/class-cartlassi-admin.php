@@ -599,6 +599,16 @@ class Cartlassi_Admin {
 			array($this, 'cartlassi_commissions_page_html')
 		);
 		add_action( "load-$hook", [ $this, 'screen_option_commissions' ] );
+
+		$hook = add_submenu_page(
+			Cartlassi_Constants::TOP_MENU_SLUG,
+			'Stats',
+			'Stats',
+			'manage_options',
+			'cartlassi-stats',
+			array($this, 'cartlassi_stats_page_html')
+		);
+		add_action( "admin_print_scripts-$hook", [ $this, 'enqueue_chart_scripts' ] );
 	}
 
 	function cartlassi_wc_options_page() {
@@ -650,6 +660,25 @@ class Cartlassi_Admin {
 										$this->commissions_list->display(); 
 									?>
 								</form>
+							</div>
+						</div>
+					</div> 
+					<br class="clear">
+					</div>
+				</div>
+			</div>
+		<?php
+	}
+
+	function cartlassi_stats_page_html() {
+		?>
+			<div class="wrap">
+
+				<div id="poststuff">
+					<div id="post-body" class="metabox-holder columns-2">
+						<div id="post-body-content">
+							<div class="meta-box-sortables ui-sortable">
+								<div id="chart"></div>
 							</div>
 						</div>
 					</div> 
@@ -824,6 +853,26 @@ class Cartlassi_Admin {
 		
 		$this->commissions_list = new Commissions_List($this->config, $this->api);
 	}
+
+	public function init_chart_scripts() {
+		$google_api = 'https://www.gstatic.com/charts/loader.js';
+        wp_register_script( 'cartlassi_google_api', $google_api, array('jquery'), null, false );
+		wp_register_script( 'cartlassi_chart_script', plugin_dir_url( __FILE__ ) . 'js/charts.js', array( 'jquery' ), $this->version, false );
+	}
+
+	public function enqueue_chart_scripts () {
+
+		$data = $this->api->request('/shops/stats');
+        wp_enqueue_script( 'cartlassi_google_api' );
+		wp_enqueue_script( 'cartlassi_chart_script');
+		wp_localize_script( 'cartlassi_chart_script', 'cartlassi_chart', 
+            array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'nonce' => wp_create_nonce( Cartlassi_Constants::NONCE_ADMIN_NAME ),
+				'data'	=> $data,
+            ) );
+
+    }
 
 	public function activation_redirect($plugin) {
 		if( $plugin == Cartlassi_Constants::PLUGIN_FILE ) {
