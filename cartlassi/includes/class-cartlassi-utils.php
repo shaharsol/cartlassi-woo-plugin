@@ -58,18 +58,36 @@ class Cartlassi_Utils {
 		return $this->encrypt($cart_id, str_replace('-','',get_option( Cartlassi_Constants::API_OPTIONS_NAME )[Cartlassi_Constants::API_SECRET_FIELD_NAME]));
 	}
 
+	private function getUserIpAddress(){
+		if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+			//ip from share internet
+			$ip = $_SERVER['HTTP_CLIENT_IP'];
+		}elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+			//ip pass from proxy
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}elseif(!empty($_SERVER['UPSTREAM_ADDR'])){
+			//ip pass from proxy
+			$ip = $_SERVER['UPSTREAM_ADDR'];
+		}else{
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+		return $ip;
+	}
+
 	public function generate_cart_id () {
+		$ipAddress = $this->getUserIpAddress();
+		error_log('server IP is'.$ipAddress);
 		$email = null;
 		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
 		if ( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] )) {
 			$customer = new WC_Customer(WC()->session->get_customer_id());
 			$email = $customer->get_email();
 		}
-		return $this->get_cart_id($_SERVER['REMOTE_ADDR'], $email, isset($options[Cartlassi_Constants::EXTRA_ENCRYPTION_FIELD_NAME] ));
+		return $this->get_cart_id($ipAddress, $email, isset($options[Cartlassi_Constants::EXTRA_ENCRYPTION_FIELD_NAME] ));
 	}
 
 	public function demo_cart_id ($include_email, $extra_encryption) {
-		return $this->get_cart_id($_SERVER['REMOTE_ADDR'], $include_email ? get_bloginfo('admin_email') : null, $extra_encryption);
+		return $this->get_cart_id($ipAddress, $include_email ? get_bloginfo('admin_email') : null, $extra_encryption);
 	}
 
 	public function get_api_key() {
