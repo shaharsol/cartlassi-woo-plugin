@@ -11,7 +11,7 @@ function drawChart() {
         ['2007',  1030,      540]
     ]
     const options = {
-        curveType: 'function',
+        // curveType: 'function',
         legend: { position: 'bottom' },
         width: '100%',
     };
