@@ -480,22 +480,20 @@ class Cartlassi_Public {
 			$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
 			// $product = wc_get_product( $product_id );
 
-			if ($cart_item_key) {
-				$body = array(
-					'shopProductId' => strval($product_id),
-					'shopCartId' 	=> strval($cart_item_key),
-					'shopOrderId'	=> strval($order_id),
-					'amount'		=> $item->get_total(),
-					'currency'		=> get_woocommerce_currency(), // TBD change to get_woocommerce_currency()? or extract from product?
-				);
-				$args = array(
-					'method' => 'POST',
-					'body'   => $body,
-				);
+			$body = array(
+				'shopProductId' => strval($product_id),
+				'shopCartId' 	=> strval($cart_item_key),
+				'shopOrderId'	=> strval($order_id),
+				'amount'		=> $item->get_total(),
+				'currency'		=> get_woocommerce_currency(), // TBD change to get_woocommerce_currency()? or extract from product?
+			);
+			$args = array(
+				'method' => 'POST',
+				'body'   => $body,
+			);
 
-				$cart_id = $this->utils->generate_cart_id();
-				$response = $this->api->request("/carts/{$cart_id}/checkout", $args);
-			}
+			$cart_id = $this->utils->generate_cart_id();
+			$response = $this->api->request("/carts/{$cart_id}/checkout", $args);
 		}
 	}
 

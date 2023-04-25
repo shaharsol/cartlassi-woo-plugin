@@ -34,11 +34,14 @@ class Cartlassi_Config {
 
 	function __construct() {
 		$current_env = wp_get_environment_type();
-		$arrays_to_merge = array();
-		for($i = 0; $i <= array_search($current_env, self::ENVIRONMENTS) ; $i++) {
-			$arrays_to_merge += $this->config[self::ENVIRONMENTS[$i]];	
+		$result = [];
+		foreach(self::ENVIRONMENTS as $env) {
+			$result = array_merge($result, $this->config[$env]);
+			if ($env == $current_env) {
+				break;
+			}
 		}
-		$this->calculated_config = array_merge($arrays_to_merge);
+		$this->calculated_config = $result;
 	}
 	/**
 	 * Load the plugin text domain for translation.
@@ -69,7 +72,8 @@ class Cartlassi_Config {
 			'transient_expiration' => MINUTE_IN_SECONDS,
 		),
 		'production' => array (
-			'api_url' => 'http://host.docker.internal:3000',
+			'api_url' => 'https://cartlassi.herokuapp.com',
+			'api_public_url' => 'https://cartlassi.herokuapp.com',
 			'test_key' => 'production',
 			'transient_expiration' => HOUR_IN_SECONDS,
 		)
@@ -78,3 +82,5 @@ class Cartlassi_Config {
 
 
 }
+
+
