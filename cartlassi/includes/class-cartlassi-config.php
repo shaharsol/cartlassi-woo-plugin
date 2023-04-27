@@ -56,24 +56,24 @@ class Cartlassi_Config {
 
 	protected $config = array(
 		'local' => array (
-			'api_url' => 'http://host.docker.internal:3000',
+			'api_url' => 'http://host.docker.internal:3000/v1',
 			'api_public_url' => 'http://localhost:3000',
 			'test_key' => 'local',
 			'transient_expiration' => MINUTE_IN_SECONDS,
 		),
 		'development' => array (
-			'api_url' => 'http://host.docker.internal:3000',
+			'api_url' => 'http://host.docker.internal:3000/v1',
 			'test_key' => 'development',
 			'transient_expiration' => MINUTE_IN_SECONDS,
 		),
 		'staging' => array (
-			'api_url' => 'http://host.docker.internal:3000',
+			'api_url' => 'http://host.docker.internal:3000/v1',
 			'test_key' => 'staging',
 			'transient_expiration' => MINUTE_IN_SECONDS,
 		),
 		'production' => array (
-			'api_url' => 'https://cartlassi.herokuapp.com',
-			'api_public_url' => 'https://cartlassi.herokuapp.com',
+			'api_url' => 'https://cartlassi.herokuapp.com/v1',
+			'api_public_url' => 'https://cartlassi.herokuapp.com/v1',
 			'test_key' => 'production',
 			'transient_expiration' => HOUR_IN_SECONDS,
 		)
