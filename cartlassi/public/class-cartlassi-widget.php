@@ -42,9 +42,11 @@ class Cartlassi_Widget extends WP_Widget {
 				$products = $this->api->request("/shops/widget/{$cart_id}?limit={$limit}");
 
 				if (count($products) == 0) {
+					Cartlassi_Logger::log('info', "0 products found for {$cart_id}");
 					return wp_die(); // TBD replace to wp_die() here?
 				}
-				
+				Cartlassi_Logger::log('info', "{count($products)} products found for {$cart_id}");
+
 				$cart_item_to_product_map = array_reduce($products, function($carry, $item){
 					if(count($carry) == 0) {
 						$carry = [strval($item->id) => $item->cartItemId];

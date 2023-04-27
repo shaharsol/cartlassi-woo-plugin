@@ -42,7 +42,10 @@ class Cartlassi_Api {
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			echo "Something went wrong: $error_message";
-			error_log($error_message);
+			// error_log($error_message);
+			wc_get_logger()->error( "Cartlassi API Error: {$error_message}", array(
+				'source' => Cartlassi_Constants::PLUGIN_NAME
+			) );
 			return false;
 		}
 		$body = wp_remote_retrieve_body( $response );

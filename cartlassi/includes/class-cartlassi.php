@@ -81,9 +81,14 @@ class Cartlassi {
 		if ( defined( 'CARTLASSI_VERSION' ) ) {
 			$this->version = CARTLASSI_VERSION;
 		} else {
-			$this->version = '1.0.1';
+			$this->version = '1.0.0';
 		}
-		$this->plugin_name = 'cartlassi';
+		if ( defined( 'CARTLASSI_PLUGIN_NAME' ) ) {
+			$this->plugin_name = CARTLASSI_PLUGIN_NAME;
+		} else {
+			$this->plugin_name = 'cartlassi';
+		}
+		
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -114,9 +119,14 @@ class Cartlassi {
 	private function load_dependencies() {
 
 		/**
-		 * The class responsible for config.
+		 * The class responsible for constants.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cartlassi-constants.php';
+
+		/**
+		 * The class responsible for logging.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cartlassi-logger.php';
 
 		/**
 		 * The class responsible for config.

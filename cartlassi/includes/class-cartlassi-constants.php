@@ -26,6 +26,7 @@
  */
 class Cartlassi_Constants {
 
+	const PLUGIN_NAME				='cartlassi'; 
 	const OPTIONS_NAME 				= 'cartlassi_options';
 	const APPEARANCE_OPTIONS_NAME 	= 'cartlassi_options_appearance';
 	const DATA_OPTIONS_NAME 		= 'cartlassi_options_data';

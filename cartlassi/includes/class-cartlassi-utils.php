@@ -76,7 +76,6 @@ class Cartlassi_Utils {
 
 	public function generate_cart_id () {
 		$ipAddress = $this->getUserIpAddress();
-		error_log('server IP is'.$ipAddress);
 		$email = null;
 		$options = get_option( Cartlassi_Constants::DATA_OPTIONS_NAME );
 		if ( isset($options[Cartlassi_Constants::INCLUDE_EMAIL_IN_CART_ID_FIELD_NAME] )) {
