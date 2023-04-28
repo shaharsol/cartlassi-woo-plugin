@@ -110,6 +110,9 @@ class Cartlassi_Public {
 		);
 	}
 
+	protected function is_accepted_tos () {
+		return !!get_option( Cartlassi_Constants::TOS_OPTIONS_NAME );
+	}
 	/**
 	 * action: woocommerce_add_to_cart
 	 *
@@ -118,21 +121,25 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
-		$product = wc_get_product( $product_id );
-		$body = array(
-			'shopProductId' => strval($product_id),
-			'shopCartId' 	=> strval($cart_id),
-			'sku'     		=> $product->get_sku(), //
-			'url'			=> get_permalink($product_id),
-		);
 		
-		$args = array(
-			'method'	=> 'POST',
-			'body'      => $body,
-		);
-
-		$cart_id = $this->utils->generate_cart_id();
-		$response = $this->api->request("/carts/{$cart_id}", $args);
+		if ( $this->is_accepted_tos ( )) {
+			$product = wc_get_product( $product_id );
+			$body = array(
+				'shopProductId' => strval($product_id),
+				'shopCartId' 	=> strval($cart_id),
+				'sku'     		=> $product->get_sku(), //
+				'url'			=> get_permalink($product_id),
+			);
+			
+			$args = array(
+				'method'	=> 'POST',
+				'body'      => $body,
+			);
+	
+			$cart_id = $this->utils->generate_cart_id();
+			$response = $this->api->request("/carts/{$cart_id}", $args);
+	
+		}
 	} 
 
 	/**
@@ -143,21 +150,23 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	public function remove_from_cart($cart_item_key, $that) {
-		// TBD get rid of the jsin_decode(jsin_encode)... make it work in another way
-		$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
+		if ( $this->is_accepted_tos ( )) {
+			// TBD get rid of the jsin_decode(jsin_encode)... make it work in another way
+			$product_id = json_decode(json_encode($that))->removed_cart_contents->{$cart_item_key}->product_id;
 
-		$body = array(
-			'shopProductId' => strval($product_id),
-			'shopCartId'	=> strval($cart_item_key),
-		);
+			$body = array(
+				'shopProductId' => strval($product_id),
+				'shopCartId'	=> strval($cart_item_key),
+			);
 
-		$args = array(
-			'method'	  => 'DELETE',
-			'body'        => $body,
-		);
+			$args = array(
+				'method'	  => 'DELETE',
+				'body'        => $body,
+			);
 
-		$cart_id = $this->utils->generate_cart_id();
-		$response = $this->api->request("/carts/{$cart_id}", $args);
+			$cart_id = $this->utils->generate_cart_id();
+			$response = $this->api->request("/carts/{$cart_id}", $args);
+		}
 	}
 
 	function cartlassi_widgets_init() {
@@ -444,54 +453,57 @@ class Cartlassi_Public {
 	 * @since    1.0.0
 	 */
 	function payment_complete ( $order_id ) {
-		$order = wc_get_order( $order_id );
-		$order_items = $order->get_items();
-
-		foreach( $order_items as $item_id => $item ){
-		
-			$product_id = $item->get_product_id(); // the Product id
-			$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
-			// $product = wc_get_product( $product_id );
-
-			$body = array(
-				'shopProductId' => strval($product_id),
-				'shopCartId' 	=> strval($cart_item_key),
-				'shopOrderId'	=> strval($order_id),
-				'amount'		=> $item->get_total(),
-				'currency'		=> get_woocommerce_currency(), // TBD change to get_woocommerce_currency()? or extract from product?
-			);
-			$args = array(
-				'method' => 'POST',
-				'body'   => $body,
-			);
-
-			$cart_id = $this->utils->generate_cart_id();
-			$response = $this->api->request("/carts/{$cart_id}/checkout", $args);
+		if ( $this->is_accepted_tos ( )) {
+			$order = wc_get_order( $order_id );
+			$order_items = $order->get_items();
+	
+			foreach( $order_items as $item_id => $item ){
+			
+				$product_id = $item->get_product_id(); // the Product id
+				$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
+				// $product = wc_get_product( $product_id );
+	
+				$body = array(
+					'shopProductId' => strval($product_id),
+					'shopCartId' 	=> strval($cart_item_key),
+					'shopOrderId'	=> strval($order_id),
+					'amount'		=> $item->get_total(),
+					'currency'		=> get_woocommerce_currency(), // TBD change to get_woocommerce_currency()? or extract from product?
+				);
+				$args = array(
+					'method' => 'POST',
+					'body'   => $body,
+				);
+	
+				$cart_id = $this->utils->generate_cart_id();
+				$response = $this->api->request("/carts/{$cart_id}/checkout", $args);
+			}
 		}
 	}
 
 	function order_refunded ( $order_id, $refund_id ) {
-		
-		$order = wc_get_order( $order_id );
-		$refunds = $order->get_refunds();
-		foreach ($refunds as $refund) {
-			if($refund->id == $refund_id) {
-				foreach( $refund->get_items() as $refunded_item_id => $refunded_item ) {
-					$original_item_id = $refunded_item->get_meta('_refunded_item_id');
-					$item = $order->get_item($original_item_id);
-					$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
-					if ($cart_item_key) {
-						$body = array(
-							"shopCartId" => $cart_item_key,
-						);
-						$args = array(
-							'method' => 'POST',
-							'body'	 => $body,
-						);
-						$response = $this->api->request("/carts/{$order_id}/refund", $args );
+		if ( $this->is_accepted_tos ( )) {
+			$order = wc_get_order( $order_id );
+			$refunds = $order->get_refunds();
+			foreach ($refunds as $refund) {
+				if($refund->id == $refund_id) {
+					foreach( $refund->get_items() as $refunded_item_id => $refunded_item ) {
+						$original_item_id = $refunded_item->get_meta('_refunded_item_id');
+						$item = $order->get_item($original_item_id);
+						$cart_item_key = $item->get_meta( Cartlassi_Constants::ORDER_ITEM_CART_ITEM_KEY );
+						if ($cart_item_key) {
+							$body = array(
+								"shopCartId" => $cart_item_key,
+							);
+							$args = array(
+								'method' => 'POST',
+								'body'	 => $body,
+							);
+							$response = $this->api->request("/carts/{$order_id}/refund", $args );
+						}
 					}
+					break;
 				}
-				break;
 			}
 		}
 

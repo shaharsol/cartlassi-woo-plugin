@@ -30,7 +30,9 @@ class Cartlassi_Widget extends WP_Widget {
 			$payment_method = $this->utils->get_payment_method();
 			$is_payment_method = $payment_method->brand && $payment_method->last4;
 			$is_appearance_set = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
-			$is_displaying_widget = $is_appearance_set && $is_payment_method;
+			$is_accepted_tos = !!get_option( Cartlassi_Constants::TOS_OPTIONS_NAME );
+			
+			$is_displaying_widget = $is_appearance_set && $is_payment_method && $is_accepted_tos;
 
 			if ( $is_displaying_widget ) {
 				extract( $args );

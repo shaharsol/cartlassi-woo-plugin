@@ -26,36 +26,47 @@
  */
 class Cartlassi_Constants {
 
-	const PLUGIN_NAME				='cartlassi'; 
+	const PLUGIN_NAME				= 'cartlassi'; 
 	const OPTIONS_NAME 				= 'cartlassi_options';
+	
 	const APPEARANCE_OPTIONS_NAME 	= 'cartlassi_options_appearance';
 	const DATA_OPTIONS_NAME 		= 'cartlassi_options_data';
 	const API_OPTIONS_NAME 			= 'cartlassi_options_api';
 	const PAYMENTS_OPTIONS_NAME 	= 'cartlassi_options_payments';
+	const TOS_OPTIONS_NAME			= 'cartlassi_options_tos';
+	
 	const OPTIONS_PAGE 				= 'cartlassi';
 	const OPTION_GROUP				= 'cartlassi';
 	const TOP_MENU_SLUG				= 'cartlassi';
 	const TEXT_DOMAIN 				= 'cartlassi';
+	
 	const API_KEY_FIELD_NAME 		= 'cartlassi_field_api_key';
 	const API_SECRET_FIELD_NAME		= 'cartlassi_field_api_secret';
 	const PAYMENT_METHOD_FIELD_NAME	= 'cartlassi_field_payment_method';
 	const PAYOUT_METHOD_FIELD_NAME	= 'cartlassi_field_payout_method';
 	const BEFORE_SIDEBAR_FIELD_NAME	= 'cartlassi_field_before_sidebar';
 	const EXTRA_ENCRYPTION_FIELD_NAME = 'cartlassi_field_extra_encryption';
+	const TOS_FIELD_NAME			= 'cartlassi_field_tos';
+
 	const SIDEBAR_ID 				= 'sidebar-cartlassi';
 	const ORDER_ITEM_CART_ITEM_KEY 	= '_cartlassi_cart_item_key';
 	const CURRENT_MAP_NAME			= 'cartlassi_current_map';
 	const NONCE_ADMIN_NAME			= 'cartlassi-admin-nonce';
 	const NONCE_PUBLIC_NAME			= 'cartlassi-public-nonce';
+	
 	const DEFAULT_SECTION_NAME 		= 'cartlassi_section_default';
 	const APPEARANCE_SECTION_NAME 	= 'cartlassi_section_appearance';
 	const DATA_SECTION_NAME 		= 'cartlassi_section_data';
 	const API_SECTION_NAME 			= 'cartlassi_section_api';
 	const PAYMENTS_SECTION_NAME 		= 'cartlassi_section_payments';
+	const TOS_SECTION_NAME			= 'cartlassi_section_tos';
+	
 	const APPEARANCE_SECTION_PAGE 	= 'cartlassi_page_appearance';
 	const DATA_SECTION_PAGE 		= 'cartlassi_page_data';
 	const API_SECTION_PAGE 			= 'cartlassi_page_api';
 	const PAYMENTS_SECTION_PAGE 		= 'cartlassi_page_payments';
+	const TOS_SECTION_PAGE 		= 'cartlassi_page_tos';
+	
 	const OPTIONS_ROW_CLASS_NAME 	= 'cartlassi_row';	
 	const BEFORE_SIDEBAR_SHOP_FIELD_NAME 				= 'cartlassi_field_before_sidebar_shop';
 	const BEFORE_SIDEBAR_CATEGORY_FIELD_NAME 			= 'cartlassi_field_before_sidebar_category';
