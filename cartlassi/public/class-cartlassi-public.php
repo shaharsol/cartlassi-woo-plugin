@@ -119,39 +119,12 @@ class Cartlassi_Public {
 	 */
 	public function add_to_cart($cart_id, $product_id, $request_quantity, $variation_id, $variation, $cart_item_data) {
 		$product = wc_get_product( $product_id );
-		$tag_ids = $product->get_tag_ids();
-		$tags = array_map(function($tag_id) {
-			return (get_term($tag_id))->name;
-		}, $tag_ids);
-
-		$category_ids = $product->get_category_ids();
-		$categories = array_map(function($category_id) {
-			$term = get_term_by( 'id', $category_id, 'product_cat' );
-			return isset ($term->name) ? $term->name : '';
-		}, $category_ids);
-
-		$description = $product->get_description();
-		if (!$description) {
-			$description = $product->get_short_description();
-		}
 		$body = array(
 			'shopProductId' => strval($product_id),
 			'shopCartId' 	=> strval($cart_id),
 			'sku'     		=> $product->get_sku(), //
-			'title'			=> $product->get_name(),
+			'url'			=> get_permalink($product_id),
 		);
-		
-		if ($description) {
-			$body['description'] = $description;
-		}
-		
-		if (count($tags) > 0) {
-			$body['tags'] = implode(', ', $tags);
-		}
-		
-		if (count($categories) > 0) {
-			$body['categories'] = implode(', ', $categories);
-		}
 		
 		$args = array(
 			'method'	=> 'POST',
