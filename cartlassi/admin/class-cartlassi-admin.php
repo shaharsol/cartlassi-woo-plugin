@@ -118,6 +118,7 @@ class Cartlassi_Admin {
 		register_setting( Cartlassi_Constants::DATA_SECTION_NAME, Cartlassi_Constants::DATA_OPTIONS_NAME );
 		register_setting( Cartlassi_Constants::API_SECTION_NAME, Cartlassi_Constants::API_OPTIONS_NAME );
 		register_setting( Cartlassi_Constants::PAYMENTS_SECTION_NAME, Cartlassi_Constants::PAYMENTS_OPTIONS_NAME );
+		register_setting( Cartlassi_Constants::TOS_SECTION_NAME, Cartlassi_Constants::TOS_OPTIONS_NAME );
 	
 		// Register a new section in the "cartlassi" page.
 		add_settings_section(
@@ -146,6 +147,13 @@ class Cartlassi_Admin {
 			__( 'Payment Method Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_payment_method_callback'),
 			Cartlassi_Constants::PAYMENTS_SECTION_PAGE,
+		);
+	
+		add_settings_section(
+			Cartlassi_Constants::TOS_SECTION_NAME,
+			__( 'Terms of Service', Cartlassi_Constants::TEXT_DOMAIN ), 
+			array($this, 'cartlassi_section_tos_callback'),
+			Cartlassi_Constants::TOS_SECTION_PAGE,
 		);
 	
 		// Register a new field in the "cartlassi_section_developers" section, inside the "cartlassi" page.
@@ -330,6 +338,19 @@ class Cartlassi_Admin {
 				'cartlassi_custom_data' => 'custom',
 			)
 		);
+
+		add_settings_field(
+			Cartlassi_Constants::TOS_FIELD_NAME, 
+			__( 'Accpet terms of service', Cartlassi_Constants::TEXT_DOMAIN ),
+			array($this, 'cartlassi_field_tos_cb'),
+			Cartlassi_Constants::TOS_SECTION_PAGE,
+			Cartlassi_Constants::TOS_SECTION_NAME,
+			array(
+				'label_for'         => Cartlassi_Constants::TOS_FIELD_NAME,
+				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
+				'cartlassi_custom_data' => __('Please accept Cartlassi\'s <a href="https://cartlassi.com/tos">terms of service</a>.', Cartlassi_Constants::TEXT_DOMAIN ),
+			)
+		);
 	}
 
 	function cartlassi_section_default_callback( $args ) {
@@ -356,6 +377,12 @@ class Cartlassi_Admin {
 	function cartlassi_section_payment_method_callback( $args ) {
 		?>
 		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure your payment and payout methods.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
+		<?php
+	}
+
+	function cartlassi_section_tos_callback( $args ) {
+		?>
+		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can accept Cartlassi terms of service.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
@@ -561,6 +588,22 @@ class Cartlassi_Admin {
 		<?php 
 	}
 
+	function cartlassi_field_tos_cb ( $args ) {
+		$options = get_option( Cartlassi_Constants::TOS_OPTIONS_NAME );
+		?>
+			<input type="checkbox"
+				id="<?php echo esc_attr( $args['label_for'] ); ?>"
+				name="<?php echo esc_attr( Cartlassi_Constants::TOS_OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
+				value="<?php echo isset( $options[ $args['label_for'] ] ) ? true : false ; ?>"
+				<?php echo isset( $options[ $args['label_for'] ] ) ? 'checked' : '' ; ?>
+				<?php echo isset( $options[ $args['label_for'] ] ) ? ' disabled' : '' ;?>
+			>
+			<p class="description">
+				<?php echo $args['cartlassi_custom_data']; ?>
+			</p>
+		<?php 
+	}
+
 	function cartlassi_options_page() {
 		add_menu_page(
 			'',
@@ -738,6 +781,7 @@ class Cartlassi_Admin {
 				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=data<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'data' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Data Sharing', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
 				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=api<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'api' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'API Settings', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
 				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=billing<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'billing' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Payment & Payout', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=tos<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'tos' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Terms of Service', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
 			</h2>
 
 			<form action="options.php" method="post">
@@ -754,6 +798,10 @@ class Cartlassi_Admin {
 					case 'billing':
 						settings_fields( Cartlassi_Constants::PAYMENTS_SECTION_NAME );
 						do_settings_sections( Cartlassi_Constants::PAYMENTS_SECTION_PAGE );
+						break;
+					case 'tos':
+						settings_fields( Cartlassi_Constants::TOS_SECTION_NAME );
+						do_settings_sections( Cartlassi_Constants::TOS_SECTION_PAGE );
 						break;
 					case 'appearance':
 					default:
@@ -908,19 +956,32 @@ class Cartlassi_Admin {
 	protected function admin_notice_welcome() {
 		$payment_method = $this->utils->get_payment_method(false);
 		$payout_method = $this->utils->get_payout_method(false);
-		$is_collecting_data = true;
 		$is_payment_method = ($payment_method->brand && $payment_method->last4) || isset($_GET['session_id']);
 		$is_payout_method = ($payout_method->stripeConnectAccountId && $payout_method->stripeConnectConnected) || isset($_GET['account-connected']);
 		$is_appearance_set = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
+		$is_accepted_tos = !!get_option( Cartlassi_Constants::TOS_OPTIONS_NAME );
 
-		$is_displaying_widget = $is_appearance_set && $is_payment_method;
+		$is_collecting_data = $is_accepted_tos;
+		$is_displaying_widget = $is_appearance_set && $is_payment_method && $is_accepted_tos;
+		$is_able_to_pay = $is_payout_method && $is_accepted_tos;
 		?>
 			<div data-dismissible="disable-done-notice-forever" class="notice notice-success is-dismissible">
 				<h2><?php _e('Welcome to Cartlassi.')?></h2>
 				<h3><?php _e('Please take a few minutes to complete the setup. Hopefully by the end of it you\'ll have all boxes checked.'); ?></h3> 
 				<ul>
 					<li><input disabled type="checkbox" id="is-collecting-data" <?php checked($is_collecting_data, true)?>><?php _e('Your shop is collecting data and monetizing your abandoned carts')?></li>
+					<?php if (!$is_accepted_tos) { ?>
+						<ul class="cartlassi-admin-checkbox-reasons">
+							<li>Terms of service not accepted.</li>
+						</ul>
+					<?php } ?>
+					
 					<li><input disabled type="checkbox" id="is-displaying-widget" <?php checked($is_displaying_widget, true)?>><?php _e('Cartlassi widget is displaying on your shop driving more sales')?></li>
+					<?php if (!$is_accepted_tos) { ?>
+						<ul class="cartlassi-admin-checkbox-reasons">
+							<li>Terms of service not accepted.</li>
+						</ul>
+					<?php } ?>
 					<?php if (!$is_payment_method) { ?>
 						<ul class="cartlassi-admin-checkbox-reasons">
 							<li>Paymet method not set.</li>
@@ -931,7 +992,13 @@ class Cartlassi_Admin {
 							<li>Appearance settings not set.</li>
 						</ul>
 					<?php } ?>
-					<li><input disabled type="checkbox" id="is-payout" <?php checked($is_payout_method, true)?>><?php _e('You\'ve established a payout method so we can pay you your earnings with us.')?></li>
+					
+					<li><input disabled type="checkbox" id="is-payout" <?php checked($is_able_to_pay, true)?>><?php _e('You\'ve established a payout method so we can pay you your earnings with us.')?></li>
+					<?php if (!$is_accepted_tos) { ?>
+						<ul class="cartlassi-admin-checkbox-reasons">
+							<li>Terms of service not accepted.</li>
+						</ul>
+					<?php } ?>
 					<?php if (!$is_payout_method) { ?>
 						<ul id="" class="cartlassi-admin-checkbox-reasons">
 							<li>Payout method not set</li>
