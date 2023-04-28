@@ -21,6 +21,7 @@
  * @author     Your Name <email@example.com>
  */
 use \Automattic\WooCommerce\Admin\Features\Navigation\Menu;
+use \Automattic\WooCommerce\Admin\Features\Features;
 
 class Cartlassi_Admin {
 
@@ -622,29 +623,14 @@ class Cartlassi_Admin {
 		// 	)
 		// );
 		// Add woocommerce menu subitem
-		add_submenu_page(
-			'woocommerce',
-			__( 'Cartlassi for WooCommerce', 'cartlassi-for-woocommerce' ),
-			__( 'Cartlassi', 'cartlassi-for-woocommerce' ),
-			'manage_options',
-			$this->plugin_name,
-			array( $this, 'display_plugin_setup_page' )
-		);
-
-		// Add the WooCommerce navigation items if the feauture exists.
-		if ( ! class_exists( '\Automattic\WooCommerce\Admin\Features\Navigation\Menu' ) ) {
-			return;
-		}
-
-		Menu::add_plugin_item(
-			array(
-				'id'         => 'cartlassi-for-woocommerce',
-				'title'      => __( 'Cartlassi', 'cartlassi-for-woocommerce' ),
-				'capability' => 'manage_options',
-				'url'        => $this->plugin_name,
-			)
-		);
-
+		// add_submenu_page(
+		// 	'woocommerce',
+		// 	__( 'Cartlassi for WooCommerce', 'cartlassi-for-woocommerce' ),
+		// 	__( 'Cartlassi', 'cartlassi-for-woocommerce' ),
+		// 	'manage_options',
+		// 	$this->plugin_name,
+		// 	array( $this, 'display_plugin_setup_page' )
+		// );
 		wc_admin_connect_page(
 			array(
 				'id'        => $this->plugin_name,
@@ -652,6 +638,79 @@ class Cartlassi_Admin {
 				'title'     => __( 'Cartlassi for WooCommerce', 'cartlassi-for-woocommerce' ),
 			)
 		);
+		// if (
+		// 	! method_exists( Menu::class, 'add_plugin_item' ) ||
+		// 	! method_exists( Menu::class, 'add_plugin_category' ) ||
+		// 	! Features::is_enabled( 'navigation' )
+		// ) {
+		// 	return;
+		// }
+		
+		// Menu::add_plugin_item(
+		// 	array(
+		// 		'id'         => 'cartlassi-for-woocommerce',
+		// 		'title'      => __( 'Cartlassi', 'cartlassi-for-woocommerce' ),
+		// 		'capability' => 'manage_options',
+		// 		'url'        => $this->plugin_name,
+		// 	)
+		// );
+
+
+		// Menu::add_plugin_category(
+		// 	array(
+		// 		'id'     => 'cartlassi-settings',
+		// 		'title'  => 'Cartlassi Settings',
+		// 		'parent' => 'woocommerce',
+		// 	)
+		// );
+
+		// Menu::add_plugin_category(
+		// 	array(
+		// 		'id'     => 'cartlassi-sales',
+		// 		'title'  => 'Cartlassi Sales',
+		// 		'parent' => 'woocommerce',
+		// 	)
+		// );
+
+		// Menu::add_plugin_item(
+		// 	array(
+		// 		'id'         => 'cartlassi-sales-page',
+		// 		'title'      => 'Cartlassi Sales',
+		// 		'capability' => 'manage_woocommerce',
+		// 		'url'        => 'my-extension-slug-cat-page',
+		// 		'parent'     => 'cartlassi-sales',
+		// 	)
+		// );
+
+		// Menu::add_plugin_category(
+		// 	array(
+		// 		'id'     => 'cartlassi-commissions',
+		// 		'title'  => 'Cartlassi Commisions',
+		// 		'parent' => 'woocommerce',
+		// 	)
+		// );
+
+		// Menu::add_plugin_category(
+		// 	array(
+		// 		'id'     => 'cartlassi-stats',
+		// 		'title'  => 'Cartlassi Stats',
+		// 		'parent' => 'woocommerce',
+		// 	)
+		// );
+
+		// Menu::add_plugin_item(
+		// 	array(
+		// 		'id'         => 'my-extension-cat-page',
+		// 		'title'      => 'My Extension Cat Page',
+		// 		'capability' => 'manage_woocommerce',
+		// 		'url'        => 'my-extension-slug-cat-page',
+		// 		'parent'     => 'my-extension-category',
+		// 	)
+		// );
+
+
+
+		
 	}
 
 	function cartlassi_sales_page_html() {
