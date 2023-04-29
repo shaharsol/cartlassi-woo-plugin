@@ -118,7 +118,6 @@ class Cartlassi_Admin {
 		register_setting( Cartlassi_Constants::DATA_SECTION_NAME, Cartlassi_Constants::DATA_OPTIONS_NAME );
 		register_setting( Cartlassi_Constants::API_SECTION_NAME, Cartlassi_Constants::API_OPTIONS_NAME );
 		register_setting( Cartlassi_Constants::PAYMENTS_SECTION_NAME, Cartlassi_Constants::PAYMENTS_OPTIONS_NAME );
-		register_setting( Cartlassi_Constants::TOS_SECTION_NAME, Cartlassi_Constants::TOS_OPTIONS_NAME );
 	
 		// Register a new section in the "cartlassi" page.
 		add_settings_section(
@@ -147,13 +146,6 @@ class Cartlassi_Admin {
 			__( 'Payment Method Settings', Cartlassi_Constants::TEXT_DOMAIN ), 
 			array($this, 'cartlassi_section_payment_method_callback'),
 			Cartlassi_Constants::PAYMENTS_SECTION_PAGE,
-		);
-	
-		add_settings_section(
-			Cartlassi_Constants::TOS_SECTION_NAME,
-			__( 'Terms of Service', Cartlassi_Constants::TEXT_DOMAIN ), 
-			array($this, 'cartlassi_section_tos_callback'),
-			Cartlassi_Constants::TOS_SECTION_PAGE,
 		);
 	
 		// Register a new field in the "cartlassi_section_developers" section, inside the "cartlassi" page.
@@ -338,19 +330,6 @@ class Cartlassi_Admin {
 				'cartlassi_custom_data' => 'custom',
 			)
 		);
-
-		add_settings_field(
-			Cartlassi_Constants::TOS_FIELD_NAME, 
-			__( 'Accpet terms of service', Cartlassi_Constants::TEXT_DOMAIN ),
-			array($this, 'cartlassi_field_tos_cb'),
-			Cartlassi_Constants::TOS_SECTION_PAGE,
-			Cartlassi_Constants::TOS_SECTION_NAME,
-			array(
-				'label_for'         => Cartlassi_Constants::TOS_FIELD_NAME,
-				'class'             => Cartlassi_Constants::OPTIONS_ROW_CLASS_NAME,
-				'cartlassi_custom_data' => __('Please accept Cartlassi\'s <a href="https://cartlassi.com/tos">terms of service</a>.', Cartlassi_Constants::TEXT_DOMAIN ),
-			)
-		);
 	}
 
 	function cartlassi_section_default_callback( $args ) {
@@ -377,12 +356,6 @@ class Cartlassi_Admin {
 	function cartlassi_section_payment_method_callback( $args ) {
 		?>
 		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can configure your payment and payout methods.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
-		<?php
-	}
-
-	function cartlassi_section_tos_callback( $args ) {
-		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can accept Cartlassi terms of service.', Cartlassi_Constants::TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 
@@ -588,22 +561,6 @@ class Cartlassi_Admin {
 		<?php 
 	}
 
-	function cartlassi_field_tos_cb ( $args ) {
-		$options = get_option( Cartlassi_Constants::TOS_OPTIONS_NAME );
-		?>
-			<input type="checkbox"
-				id="<?php echo esc_attr( $args['label_for'] ); ?>"
-				name="<?php echo esc_attr( Cartlassi_Constants::TOS_OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
-				value="<?php echo isset( $options[ $args['label_for'] ] ) ? true : false ; ?>"
-				<?php echo isset( $options[ $args['label_for'] ] ) ? 'checked' : '' ; ?>
-				<?php echo isset( $options[ $args['label_for'] ] ) ? ' disabled' : '' ;?>
-			>
-			<p class="description">
-				<?php echo $args['cartlassi_custom_data']; ?>
-			</p>
-		<?php 
-	}
-
 	function cartlassi_options_page() {
 		add_menu_page(
 			'',
@@ -733,93 +690,125 @@ class Cartlassi_Admin {
 		<?php
 	}
 
+	function connect_shop() {
+		$body = array(
+			'url'  	=> get_bloginfo('url'),
+			'email' => get_bloginfo('admin_email'),
+			'name'  => get_bloginfo('name'),
+			'country' => wc_get_base_location()['country']
+		);
+		$args = array(
+			'method'	=> 'POST',
+			'body'        => $body,
+		);
+		$data = $this->api->request( "/shops/register", $args );
+		error_log(var_export($data, true));
+		update_option (Cartlassi_Constants::API_OPTIONS_NAME, array (
+			Cartlassi_Constants::API_KEY_FIELD_NAME => $data->apiKey,
+			Cartlassi_Constants::API_SECRET_FIELD_NAME => $data->apiSecret,
+		));
+
+		exit( wp_redirect( admin_url( "admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE."&welcome=true" ) ) );
+	}
+
 	function cartlassi_options_page_html() {
-		// check user capabilities
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-	
-		$stripe_session_id = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
-		if ($stripe_session_id) {
-			$args = array(
-				'method' => 'POST',
-				'body'			=> array(
-					'session_id' => $stripe_session_id
-				),
-			);
-			$response = $this->api->request("/shops/complete-stripe", $args );
-		}
-
-		if ( isset( $_GET['account-connected'] )) {
-			// a stripe connect process has just ended, need to process it.
-			$args = array(
-				'method' => 'POST',
-			);
-			$response = $this->api->request("/shops/complete-stripe-connect", $args );
-		}
-
-		$welcome = isset( $_GET['welcome'] );
-	
-		// check if the user have submitted the settings
-		// WordPress will add the "settings-updated" $_GET parameter to the url
-		if ( isset( $_GET['settings-updated'] ) ) {
-			// add settings saved message with the class of "updated"
-			add_settings_error( 'cartlassi_messages', 'cartlassi_message', __( 'Settings Saved', Cartlassi_Constants::TEXT_DOMAIN ), 'updated' );
-		}
-	
-		// show error/update messages
-		settings_errors( 'cartlassi_messages' );
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-
-			<?php
-				$active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'appearance';
+		// do we show splash (sign up page)?
+		if (!get_option(Cartlassi_Constants::API_OPTIONS_NAME)) {
 			?>
-			<h2 class="nav-tab-wrapper">
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=appearance<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'appearance' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Appearance', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=data<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'data' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Data Sharing', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=api<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'api' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'API Settings', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=billing<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'billing' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Payment & Payout', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
-				<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=tos<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'tos' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Terms of Service', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
-			</h2>
+				<div class="cartlassi-connect-div">
+					<h1><?php echo __('Connect your Shop to Cartlassi')?></h1>
+					<h3><?php echo __('Start monetizing abandoned carts.')?></h3>
+					<form method="POST" action="/wp-admin/admin-post.php">
+						<input type="hidden" name="action" value="connect_shop">
+						<p><input type="submit" id="cartlassi-connect-button" class="button button-primary" value="Connect Shop"></p>
+						<p><input type="checkbox" id="cartlassi-tos" name="tos"> <label for="cartlassi-tos">Please accept <a href="https://cartlassi.com/tos">terms of service</a></label></p>
+					</form>
+				</div>
+			<?php
+		} else {
+			// check user capabilities
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+		
+			$stripe_session_id = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
+			if ($stripe_session_id) {
+				$args = array(
+					'method' => 'POST',
+					'body'			=> array(
+						'session_id' => $stripe_session_id
+					),
+				);
+				$response = $this->api->request("/shops/complete-stripe", $args );
+			}
 
-			<form action="options.php" method="post">
+			if ( isset( $_GET['account-connected'] )) {
+				// a stripe connect process has just ended, need to process it.
+				$args = array(
+					'method' => 'POST',
+				);
+				$response = $this->api->request("/shops/complete-stripe-connect", $args );
+			}
+
+			$welcome = isset( $_GET['welcome'] );
+		
+			// check if the user have submitted the settings
+			// WordPress will add the "settings-updated" $_GET parameter to the url
+			if ( isset( $_GET['settings-updated'] ) ) {
+				// add settings saved message with the class of "updated"
+				add_settings_error( 'cartlassi_messages', 'cartlassi_message', __( 'Settings Saved', Cartlassi_Constants::TEXT_DOMAIN ), 'updated' );
+			}
+		
+			// show error/update messages
+			settings_errors( 'cartlassi_messages' );
+			?>
+			<div class="wrap">
+				<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+
 				<?php
-				switch($active_tab) {
-					case 'data':
-						settings_fields( Cartlassi_Constants::DATA_SECTION_NAME );
-						do_settings_sections( Cartlassi_Constants::DATA_SECTION_PAGE );
-						break;
-					case 'api':
-						settings_fields( Cartlassi_Constants::API_SECTION_NAME );
-						do_settings_sections( Cartlassi_Constants::API_SECTION_PAGE );
-						break;
-					case 'billing':
-						settings_fields( Cartlassi_Constants::PAYMENTS_SECTION_NAME );
-						do_settings_sections( Cartlassi_Constants::PAYMENTS_SECTION_PAGE );
-						break;
-					case 'tos':
-						settings_fields( Cartlassi_Constants::TOS_SECTION_NAME );
-						do_settings_sections( Cartlassi_Constants::TOS_SECTION_PAGE );
-						break;
-					case 'appearance':
-					default:
-						settings_fields( Cartlassi_Constants::APPEARANCE_SECTION_NAME );
-						do_settings_sections( Cartlassi_Constants::APPEARANCE_SECTION_PAGE );
-						break;
-	
-				}
-				// output security fields for the registered setting "cartlassi"
-				// output setting sections and their fields
-				// (sections are registered for "cartlassi", each field is registered to a specific section)
-				// do_settings_sections( Cartlassi_Constants::OPTIONS_PAGE );
-				// output save settings button
-				submit_button( 'Save Settings' );
+					$active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'appearance';
 				?>
-			</form>
-		</div>
-		<?php
+				<h2 class="nav-tab-wrapper">
+					<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=appearance<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'appearance' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Appearance', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+					<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=data<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'data' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Data Sharing', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+					<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=api<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'api' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'API Settings', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+					<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=billing<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'billing' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Payment & Payout', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>
+				</h2>
+
+				<form action="options.php" method="post">
+					<?php
+					switch($active_tab) {
+						case 'data':
+							settings_fields( Cartlassi_Constants::DATA_SECTION_NAME );
+							do_settings_sections( Cartlassi_Constants::DATA_SECTION_PAGE );
+							break;
+						case 'api':
+							settings_fields( Cartlassi_Constants::API_SECTION_NAME );
+							do_settings_sections( Cartlassi_Constants::API_SECTION_PAGE );
+							break;
+						case 'billing':
+							settings_fields( Cartlassi_Constants::PAYMENTS_SECTION_NAME );
+							do_settings_sections( Cartlassi_Constants::PAYMENTS_SECTION_PAGE );
+							break;
+						case 'appearance':
+						default:
+							settings_fields( Cartlassi_Constants::APPEARANCE_SECTION_NAME );
+							do_settings_sections( Cartlassi_Constants::APPEARANCE_SECTION_PAGE );
+							break;
+		
+					}
+					// output security fields for the registered setting "cartlassi"
+					// output setting sections and their fields
+					// (sections are registered for "cartlassi", each field is registered to a specific section)
+					// do_settings_sections( Cartlassi_Constants::OPTIONS_PAGE );
+					// output save settings button
+					submit_button( 'Save Settings' );
+					?>
+				</form>
+			</div>
+			<?php
+
+		}
 	}
 
 	function regenerate_api_key () {
@@ -925,7 +914,7 @@ class Cartlassi_Admin {
 
 	public function activation_redirect($plugin) {
 		if( $plugin == Cartlassi_Constants::PLUGIN_FILE ) {
-			exit( wp_redirect( admin_url( "admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE."&welcome=true" ) ) );
+			exit( wp_redirect( admin_url( "admin.php?page=".Cartlassi_Constants::OPTIONS_PAGE ) ) );
 		}
 	}
 
@@ -959,29 +948,18 @@ class Cartlassi_Admin {
 		$is_payment_method = ($payment_method->brand && $payment_method->last4) || isset($_GET['session_id']);
 		$is_payout_method = ($payout_method->stripeConnectAccountId && $payout_method->stripeConnectConnected) || isset($_GET['account-connected']);
 		$is_appearance_set = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
-		$is_accepted_tos = !!get_option( Cartlassi_Constants::TOS_OPTIONS_NAME );
 
-		$is_collecting_data = $is_accepted_tos;
-		$is_displaying_widget = $is_appearance_set && $is_payment_method && $is_accepted_tos;
-		$is_able_to_pay = $is_payout_method && $is_accepted_tos;
+		$is_collecting_data = true;
+		$is_displaying_widget = $is_appearance_set && $is_payment_method;
+		$is_able_to_pay = $is_payout_method;
 		?>
 			<div data-dismissible="disable-done-notice-forever" class="notice notice-success is-dismissible">
 				<h2><?php _e('Welcome to Cartlassi.')?></h2>
 				<h3><?php _e('Please take a few minutes to complete the setup. Hopefully by the end of it you\'ll have all boxes checked.'); ?></h3> 
 				<ul>
 					<li><input disabled type="checkbox" id="is-collecting-data" <?php checked($is_collecting_data, true)?>><?php _e('Your shop is collecting data and monetizing your abandoned carts')?></li>
-					<?php if (!$is_accepted_tos) { ?>
-						<ul class="cartlassi-admin-checkbox-reasons">
-							<li>Terms of service not accepted.</li>
-						</ul>
-					<?php } ?>
 					
 					<li><input disabled type="checkbox" id="is-displaying-widget" <?php checked($is_displaying_widget, true)?>><?php _e('Cartlassi widget is displaying on your shop driving more sales')?></li>
-					<?php if (!$is_accepted_tos) { ?>
-						<ul class="cartlassi-admin-checkbox-reasons">
-							<li>Terms of service not accepted.</li>
-						</ul>
-					<?php } ?>
 					<?php if (!$is_payment_method) { ?>
 						<ul class="cartlassi-admin-checkbox-reasons">
 							<li>Paymet method not set.</li>
@@ -994,11 +972,6 @@ class Cartlassi_Admin {
 					<?php } ?>
 					
 					<li><input disabled type="checkbox" id="is-payout" <?php checked($is_able_to_pay, true)?>><?php _e('You\'ve established a payout method so we can pay you your earnings with us.')?></li>
-					<?php if (!$is_accepted_tos) { ?>
-						<ul class="cartlassi-admin-checkbox-reasons">
-							<li>Terms of service not accepted.</li>
-						</ul>
-					<?php } ?>
 					<?php if (!$is_payout_method) { ?>
 						<ul id="" class="cartlassi-admin-checkbox-reasons">
 							<li>Payout method not set</li>
@@ -1010,6 +983,10 @@ class Cartlassi_Admin {
 	}
 
 	public function display_admin_notices() {
+		// before connect_shop we're not showing any notice
+		if (!get_option(Cartlassi_Constants::API_OPTIONS_NAME)) {
+			return;
+		}
 		// in welcome mode we're not showing other notices, only the welcome notice
 		$welcome = isset( $_GET['welcome'] );
 		if ($welcome) {
@@ -1056,4 +1033,5 @@ class Cartlassi_Admin {
 		wp_die();
 
 	}
+
 }
