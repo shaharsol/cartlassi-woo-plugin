@@ -242,6 +242,8 @@ class Cartlassi {
 		$this->loader->add_action( 'wp_ajax_cartlassi_demo_hash', $plugin_admin, 'demo_hash' );
 		$this->loader->add_action( 'wp_ajax_cartlassi_cancel_payment_method', $plugin_admin, 'cancel_payment_method' );
 		$this->loader->add_action( 'wp_ajax_cartlassi_cancel_payout_method', $plugin_admin, 'cancel_payout_method' );
+		$this->loader->add_action( 'admin_post_connect_shop', $plugin_admin, 'connect_shop' );
+		$this->loader->add_action( 'admin_post_nopriv_connect_shop', $plugin_admin, 'connect_shop' );
 		
 		$this->loader->add_action( 'activated_plugin', $plugin_admin, 'activation_redirect' );
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'display_admin_notices' );

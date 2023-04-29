@@ -34,3 +34,9 @@
  .cartlassi-payment-method {
    vertical-align: middle !important;
  }
+
+ .cartlassi-connect-div {
+  background: #fff;
+  padding: 40px;
+  margin: 10px;
+ }

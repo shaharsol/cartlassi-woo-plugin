@@ -179,5 +179,12 @@
 		$('#cartlassi_field_extra_encryption').change(function(){
 			regenrateHash();				
 		});
+
+		$('#cartlassi-connect-button').click(function(event) {
+			if (!$('#cartlassi-tos').is(':checked')) {
+				event.preventDefault();		
+				alert('Please accept the terms of service');
+			}
+		});
 	})
 })( jQuery );
