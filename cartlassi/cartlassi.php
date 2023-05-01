@@ -17,8 +17,6 @@
  * Plugin URI:        https://cartlassi.com/
  * Description:       Let abandoned carts work for you! Earn commissions from selling and promoting abandoned cart items.
  * Version:           1.0.0
- * Author:            Cartlassi
- * Author URI:        https://cartlassi.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       cartlassi
