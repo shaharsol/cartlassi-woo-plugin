@@ -39,4 +39,11 @@ class Cartlassi_Deactivator {
 		$response = $api->request("/shops/register", $args );
 	}
 
+	public static function uninstall() {
+		delete_option(Cartlassi_Constants::API_OPTIONS_NAME);
+		delete_option(Cartlassi_Constants::APPEARANCE_OPTIONS_NAME);
+		delete_option(Cartlassi_Constants::DATA_OPTIONS_NAME);
+		delete_option(Cartlassi_Constants::PAYMENTS_OPTIONS_NAME);
+	}
+
 }

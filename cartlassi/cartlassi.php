@@ -14,11 +14,11 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Cartlassi
- * Plugin URI:        http://cartlassi.com/
+ * Plugin URI:        https://cartlassi.com/
  * Description:       Let abandoned carts work for you! Earn commissions from selling and promoting abandoned cart items.
  * Version:           1.0.0
- * Author:            DepressedBrothersInc
- * Author URI:        http://abarbanel.com/
+ * Author:            Cartlassi
+ * Author URI:        https://cartlassi.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       cartlassi
@@ -58,8 +58,14 @@ function deactivate_cartlassi() {
 	Cartlassi_Deactivator::deactivate();
 }
 
+function uninstall_cartlassi() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-cartlassi-deactivator.php';
+	Cartlassi_Deactivator::uninstall();
+}
+
 register_activation_hook( __FILE__, 'activate_cartlassi' );
 register_deactivation_hook( __FILE__, 'deactivate_cartlassi' );
+register_uninstall_hook( __FILE__, 'uninstall_cartlassi' );
 
 /**
  * The core plugin class that is used to define internationalization,
