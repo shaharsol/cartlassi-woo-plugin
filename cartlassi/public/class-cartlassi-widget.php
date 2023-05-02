@@ -46,7 +46,8 @@ class Cartlassi_Widget extends WP_Widget {
 					Cartlassi_Logger::log('info', "0 products found for {$cart_id}");
 					return wp_die(); // TBD replace to wp_die() here?
 				}
-				Cartlassi_Logger::log('info', "{count($products)} products found for {$cart_id}");
+				$cnt = count($products);
+				Cartlassi_Logger::log('info', "{$cnt} products found for {$cart_id}");
 
 				$cart_item_to_product_map = array_reduce($products, function($carry, $item){
 					if(count($carry) == 0) {
@@ -64,7 +65,7 @@ class Cartlassi_Widget extends WP_Widget {
 				WC()->session->set(Cartlassi_Constants::CURRENT_MAP_NAME, $cart_item_to_product_map);
 				$block_name = 'woocommerce/handpicked-products';
 				$converted_block = new WP_Block_Parser_Block( $block_name, array(
-					'products' => $products,
+					'products' 	=> $products,
 					'title'		=> 'We think you may like...'
 				), array(), '', array() );
 		
