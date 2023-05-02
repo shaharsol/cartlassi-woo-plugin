@@ -269,13 +269,7 @@ class Cartlassi {
 		$this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_public, 'remove_from_cart', 10, 2 );
 		$this->loader->add_action( 'widgets_init', $plugin_public, 'cartlassi_widgets_init' );
 		$this->loader->add_action( 'dynamic_sidebar_params', $plugin_public, 'display_widget' );
-		// deprecated
-		// $this->loader->add_action( 'woocommerce_before_single_product', $plugin_public, 'log_click_to_product' );
 		$this->loader->add_action( 'woocommerce_init', $plugin_public, 'initiate_wc_sessions' );
-		// deprecated
-		// $this->loader->add_action( 'woocommerce_before_cart', $plugin_public, 'log_click_to_cart' , 10, 1);
-		// deprecated
-		// $this->loader->add_action( 'woocommerce_ajax_added_to_cart', $plugin_public, 'log_ajax_add_to_cart', 1, 10);
 		$this->loader->add_action( 'woocommerce_payment_complete', $plugin_public, 'payment_complete' );
 		$this->loader->add_action( 'woocommerce_order_refunded', $plugin_public, 'order_refunded', 10, 2 );
 		$this->loader->add_action( 'woocommerce_checkout_create_order_line_item', $plugin_public, 'save_cart_item_key_as_custom_order_item_metadata', 10, 4 );
