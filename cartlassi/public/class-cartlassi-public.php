@@ -313,7 +313,7 @@ class Cartlassi_Public {
 			// $with_cartlassi_hrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassi_cart_item_id.'"', $html);
 			// $with_cartlassi_hrefs = preg_replace('/href="([^"]+?)"/i', 'href="$1&cartlassi='.$cartlassi_cart_item_id.'"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassi_cart_item_id.'"', $html);
 			// $with_cartlassi_hrefs = preg_replace('/href="(([^?]+)(?:\??))([^"]*?)"/i', 'href="$2?cartlassi='.$cartlassi_cart_item_id.'&$3"  data-product-id="'.$product->get_id().'" data-cartlassi="'.$cartlassi_cart_item_id.'"', $html);
-			$with_cartlassi_hrefs = preg_replace('/href="([^?"]+)(?:\??)(.*?)"/i', 'href="$1?cartlassi='.$cartlassi_cart_item_id.'&$2" data-cartlassi="'.$cartlassi_cart_item_id.'" data-product-id="'.$product->get_id().'"', $html);
+			$with_cartlassi_hrefs = preg_replace('/href="([^?"]*)(?:\??)(.*?)"/i', 'href="$1?cartlassi='.$cartlassi_cart_item_id.'&$2" data-cartlassi="'.$cartlassi_cart_item_id.'" data-product-id="'.$product->get_id().'"', $html);
 
 			return $with_cartlassi_hrefs;
 		}
