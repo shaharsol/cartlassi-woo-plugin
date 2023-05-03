@@ -86,6 +86,7 @@ class Cartlassi_Utils {
 	}
 
 	public function demo_cart_id ($include_email, $extra_encryption) {
+		$ipAddress = $this->getUserIpAddress();
 		return $this->get_cart_id($ipAddress, $include_email ? get_bloginfo('admin_email') : null, $extra_encryption);
 	}
 

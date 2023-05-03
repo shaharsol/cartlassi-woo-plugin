@@ -39,14 +39,19 @@ class Cartlassi_Widget extends WP_Widget {
 				$title = 'We think you may like...';
 				
 				$cart_id = $this->utils->generate_cart_id();
-				$limit = wc_get_theme_support( 'product_blocks::default_columns', 3 );
-				$products = $this->api->request("/shops/widget/{$cart_id}?limit={$limit}");
+				$cache_key = Cartlassi_Constants::WIDGET_CACHE_NAME.':'.WC()->session->get_customer_id();
+				$products = get_transient($cache_key);
+				if (!$products) {
+					$limit = wc_get_theme_support( 'product_blocks::default_columns', 3 );
+					$products = $this->api->request("/shops/widget/{$cart_id}?limit={$limit}");
+					set_transient($cache_key, $products, $this->config->get('widget_cache_expiration'));
+				}
 
-				if (count($products) == 0) {
+				$cnt = count($products);
+				if ($cnt == 0) {
 					Cartlassi_Logger::log('info', "0 products found for {$cart_id}");
 					return wp_die(); // TBD replace to wp_die() here?
 				}
-				$cnt = count($products);
 				Cartlassi_Logger::log('info', "{$cnt} products found for {$cart_id}");
 
 				$cart_item_to_product_map = array_reduce($products, function($carry, $item){
