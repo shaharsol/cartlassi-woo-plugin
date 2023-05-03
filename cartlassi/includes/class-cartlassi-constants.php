@@ -80,7 +80,7 @@ class Cartlassi_Constants {
 	const PLUGIN_FILE = 'cartlassi/cartlassi.php';
 	const PAYMENT_METHOD_TRANSIENT = 'cartlassi_payment_method';
 	const PAYOUT_METHOD_TRANSIENT = 'cartlassi_payout_method';
-	
+	const WIDGET_CACHE_NAME = 'cartlassi_widget_cache';
 	
 
 }
