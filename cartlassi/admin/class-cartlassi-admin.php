@@ -374,20 +374,20 @@ class Cartlassi_Admin {
 					foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) { 
 						if (is_active_sidebar($sidebar['id']) && $sidebar['id'] !== Cartlassi_Constants::SIDEBAR_ID) {
 				?>
-							<option value="<?php echo ( $sidebar['id'] ); ?>" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], $sidebar['id'] , false ) ) : ( '' ); ?>>
-									<?php echo ( $sidebar['name'] ); ?>
+							<option value="<?php echo ( $sidebar['id'] ); ?>" <?php echo isset( $options[ $args['label_for'] ] ) ? esc_html( selected( $options[ $args['label_for'] ], $sidebar['id'] , false ) ) : ( '' ); ?>>
+									<?php echo esc_html( $sidebar['name'] ); ?>
 							</option>
 				<?php
 						}
 					} 
 				?>
-				<option value="do-not-show" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], 'do-not-show' , false ) ) : ( '' ); ?>>
+				<option value="do-not-show" <?php echo isset( $options[ $args['label_for'] ] ) ? esc_html( selected( $options[ $args['label_for'] ], 'do-not-show' , false ) ) : ( '' ); ?>>
 					<?php echo __( 'Don\'t show at all', Cartlassi_Constants::TEXT_DOMAIN ); ?>
 				</option>
 
 		</select>
 		<p class="description">
-			<?php echo $args['cartlassi_custom_data']; ?>
+			<?php echo esc_html($args['cartlassi_custom_data']); ?>
 		</p>
 		<?php
 		
@@ -419,7 +419,7 @@ class Cartlassi_Admin {
 		<input type="text"
 			id="<?php echo esc_attr( $args['label_for'] ); ?>"
 			name="<?php echo esc_attr( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
-			value="<?php echo isset( $options[ $args['label_for'] ] ) ? $options[ $args['label_for'] ] : '' ; ?>"
+			value="<?php echo isset( $options[ $args['label_for'] ] ) ? esc_html($options[ $args['label_for'] ]) : '' ; ?>"
 			class="regular-text"
 			>
 		<p class="description">
@@ -438,7 +438,7 @@ class Cartlassi_Admin {
 				readonly
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
 				name="<?php echo esc_attr( Cartlassi_Constants::API_OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
-				value="<?php echo isset( $options[ $args['label_for'] ] ) ? $options[ $args['label_for'] ] : '' ; ?>"
+				value="<?php echo isset( $options[ $args['label_for'] ] ) ? esc_html($options[ $args['label_for'] ]) : '' ; ?>"
 				class="regular-text"
 				>
 		<p class="description">
@@ -459,7 +459,7 @@ class Cartlassi_Admin {
 				readonly
 				id="<?php echo esc_attr( $args['label_for'] ); ?>"
 				name="<?php echo esc_attr( Cartlassi_Constants::API_OPTIONS_NAME ); ?>[<?php echo esc_attr( $args['label_for'] ); ?>]"
-				value="<?php echo isset( $options[ $args['label_for'] ] ) ? $options[ $args['label_for'] ] : '' ; ?>"
+				value="<?php echo isset( $options[ $args['label_for'] ] ) ? esc_html($options[ $args['label_for'] ]) : '' ; ?>"
 				class="regular-text"
 				>
 		<p class="description">
@@ -477,7 +477,7 @@ class Cartlassi_Admin {
 		
 		if ($data->brand && $data->last4) {
 			?>
-			<span class="cartlassi-payment-method"><?php echo "{$data->brand} {$data->last4} &nbsp;"; ?></span>
+			<span class="cartlassi-payment-method"><?php echo esc_html("{$data->brand} {$data->last4} &nbsp;"); ?></span>
 			<button
 				id="cancel-payment-method-button"
 				class="cartlassi-payment-method button button-secondary"
@@ -731,7 +731,7 @@ class Cartlassi_Admin {
 				return;
 			}
 		
-			$stripe_session_id = isset( $_GET['session_id'] ) ? $_GET['session_id'] : false;
+			$stripe_session_id = isset( $_GET['session_id'] ) ? sanitize_key($_GET['session_id']) : false;
 			if ($stripe_session_id) {
 				$args = array(
 					'method' => 'POST',
@@ -766,7 +766,7 @@ class Cartlassi_Admin {
 				<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 				<?php
-					$active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'appearance';
+					$active_tab = isset( $_GET[ 'tab' ] ) ? sanitize_key($_GET[ 'tab' ]) : 'appearance';
 				?>
 				<h2 class="nav-tab-wrapper">
 					<a href="?page=<?php esc_html_e(Cartlassi_Constants::OPTIONS_PAGE); ?>&tab=appearance<?php if($welcome) { echo '&welcome=true'; } ?>" class="nav-tab <?php echo $active_tab == 'appearance' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Appearance', Cartlassi_Constants::TEXT_DOMAIN ); ?></a>

@@ -23,3 +23,5 @@ node_modules/
 *.sqlite
 
 vendor/*
+.DS_Store
+cartlassi/.DS_Store

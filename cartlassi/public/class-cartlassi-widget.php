@@ -23,14 +23,12 @@ class Cartlassi_Widget extends WP_Widget {
 	
 		// when the widget is rendered, it adds a placeholder div tag into which
 		// a 2nd ajax call will poor content into 
-
 		if (wp_doing_ajax()) {
 			check_ajax_referer(Cartlassi_Constants::NONCE_PUBLIC_NAME, 'nonce');
 
 			$payment_method = $this->utils->get_payment_method();
 			$is_payment_method = $payment_method->brand && $payment_method->last4;
 			$is_appearance_set = !!get_option( Cartlassi_Constants::APPEARANCE_OPTIONS_NAME );
-			
 			$is_displaying_widget = $is_appearance_set && $is_payment_method;
 
 			if ( $is_displaying_widget ) {
@@ -46,6 +44,8 @@ class Cartlassi_Widget extends WP_Widget {
 					$products = $this->api->request("/shops/widget/{$cart_id}?limit={$limit}");
 					set_transient($cache_key, $products, $this->config->get('widget_cache_expiration'));
 				}
+				error_log('products ');			
+				error_log(var_export($products, true));
 
 				$cnt = count($products);
 				if ($cnt == 0) {
